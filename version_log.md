@@ -2,7 +2,7 @@
 
 Fecha de referencia: 2026-08-07
 
-Este registro resume la evolucion funcional del proyecto desde una base inicial hasta la version actual `1.1.1`. Las versiones tempranas agrupan hitos historicos reconstruidos desde el estado del repositorio y la documentacion disponible.
+Este registro resume la evolucion funcional del proyecto desde una base inicial hasta la version actual `1.1.1a`. Las versiones tempranas agrupan hitos historicos reconstruidos desde el estado del repositorio y la documentacion disponible.
 
 ## 0.0.x - Exploracion y base de datos inicial
 
@@ -127,6 +127,7 @@ Este registro resume la evolucion funcional del proyecto desde una base inicial 
 ## 1.1.x - Operacion PostgreSQL
 
 - `1.1.1`: respaldo PostgreSQL en formato custom mediante `pg_dump`, verificacion con `pg_restore --list`, retencion y ejecucion desde la pantalla administrativa. Version centralizada y repositorio preparado para GitHub sin bases, respaldos, CSV, Excel ni secretos.
+- `1.1.1a`: README principal reconstruido desde la documentacion tecnica y operativa, con instalacion, arquitectura, modulos, seguridad, ETL, backups, pruebas, privacidad y roadmap.
 - Frontend real planificado por fases en `docs/21_PLAN_FRONTEND_REAL.md` con Next.js/TypeScript, API Django y despliegue progresivo.
 
 ### Actualizacion documental post `0.9.4`

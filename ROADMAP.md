@@ -2,7 +2,7 @@
 
 Fecha de referencia: 2026-08-07
 
-Version actual del sistema: `1.1.1`.
+Version actual del sistema: `1.1.1a`.
 
 Hitos previos integrados:
 
@@ -20,6 +20,7 @@ Hitos previos integrados:
 - `1.0.9`: ensayo SQLite a PostgreSQL completado con migraciones y carga integral de datos.
 - `1.0.10`: PostgreSQL activado como base principal y contenido historico validado.
 - `1.1.1`: backup PostgreSQL verificado, pantalla administrativa adaptada y preparacion segura para GitHub.
+- `1.1.1a`: README principal consolidado, instalacion segura, operacion PostgreSQL y navegacion documental.
 
 ## v0.3 - Plataforma base
 - [x] DATA_scope remuneraciones

@@ -1,0 +1,66 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Contabilidad | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Contabilidad</h1>
+        <p class="lead">Base v0.7: plan de cuentas, centros de costo, mapeos, asientos y reportes iniciales.</p>
+    </div>
+    {% if perms.Accounting.generate_journal_entries %}
+        <a class="button" href="{% url 'accounting:generate_payroll_journal' %}">Generar asiento</a>
+    {% endif %}
+</section>
+
+<section class="metrics">
+    <div class="metric"><span>Cuentas</span><strong>{{ summary.accounts }}</strong></div>
+    <div class="metric"><span>Centros de costo</span><strong>{{ summary.cost_centers }}</strong></div>
+    <div class="metric"><span>Mapeos</span><strong>{{ summary.mappings }}</strong></div>
+    <div class="metric"><span>Asientos</span><strong>{{ summary.journal_entries }}</strong></div>
+</section>
+
+<section class="grid two">
+    <article class="panel">
+        <h2>Configuracion</h2>
+        <div class="action-row">
+            <a class="button secondary" href="{% url 'accounting:chart_accounts' %}">Plan de cuentas</a>
+            <a class="button secondary" href="{% url 'accounting:cost_centers' %}">Centros de costo</a>
+            <a class="button secondary" href="{% url 'accounting:mappings' %}">Mapeos</a>
+        </div>
+        <p class="muted">Items sin mapeo: {{ summary.mapping_gaps }}</p>
+    </article>
+    <article class="panel">
+        <h2>Totales contables</h2>
+        <div class="metrics compact">
+            <div class="metric"><span>Debe</span><strong>{{ summary.total_debit }}</strong></div>
+            <div class="metric"><span>Haber</span><strong>{{ summary.total_credit }}</strong></div>
+        </div>
+        <a class="button secondary" href="{% url 'accounting:reports' %}">Ver reportes</a>
+    </article>
+</section>
+
+<section class="panel">
+    <h2>Asientos recientes</h2>
+    <div class="table-scroll">
+        <table>
+            <thead>
+                <tr><th>Numero</th><th>Periodo</th><th>Fecha</th><th>Estado</th><th></th></tr>
+            </thead>
+            <tbody>
+                {% for entry in recent_entries %}
+                    <tr>
+                        <td>{{ entry.number }}</td>
+                        <td>{{ entry.period.periodo }}</td>
+                        <td>{{ entry.date }}</td>
+                        <td>{{ entry.get_status_display }}</td>
+                        <td><a class="button secondary" href="{% url 'accounting:journal_detail' entry.id %}">Ver</a></td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="5">Sin asientos registrados.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

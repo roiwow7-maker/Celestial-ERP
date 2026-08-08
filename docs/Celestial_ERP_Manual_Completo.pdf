@@ -1,0 +1,1113 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+2 0 obj
+<< /Length 2041 >>
+stream
+BT
+/F1 10 Tf
+48 790 Td
+14 TL
+() Tj
+T*
+(MANUAL COMPLETO CELESTIAL ERP) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Fecha de referencia: 2026-07-20) Tj
+T*
+() Tj
+T*
+(Version documentada: `1.0.8`) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(PROPOSITO DEL DOCUMENTO) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Este manual consolida la documentacion operativa de Celestial ERP en un solo documento:) Tj
+T*
+(manual de uso, implementacion, gestion interna, ETL, seguridad, backups, administracion y) Tj
+T*
+(roadmap. Esta pensado para operacion local o red interna controlada.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(1. VISION GENERAL) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Celestial ERP es una plataforma Django para gestionar datos historicos y operativos de) Tj
+T*
+(remuneraciones. El sistema nacio como un ETL para liquidaciones historicas y evoluciono a) Tj
+T*
+(una webapp con modulos de remuneraciones, contabilidad, inventario, compras/ventas,) Tj
+T*
+(asistencia, auditoria, backups, API interna y administracion multiusuario.) Tj
+T*
+() Tj
+T*
+(La version actual es `1.0.8`. PostgreSQL esta preparado documentalmente, pero la operacion) Tj
+T*
+(actual sigue sobre SQLite por limitaciones de permisos e infraestructura. La migracion real) Tj
+T*
+(queda para `v1.0.9` y `v1.0.10`.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(2. ALCANCE FUNCIONAL) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Modulos principales:) Tj
+T*
+() Tj
+T*
+(- Applet: portal, navegacion, estado del sistema, auditoria, backups, seguridad y kanban.) Tj
+T*
+(- DATA_scope: remuneraciones, trabajadores, periodos, items, movimientos, liquidaciones,) Tj
+T*
+(reportes y cargas ETL.) Tj
+T*
+(- ERP_api: API interna protegida por login/permisos.) Tj
+T*
+(- Accounting: plan de cuentas, centros de costo, mapeos, asientos y reportes contables.) Tj
+T*
+(- Inventory: productos, bodegas, stock, movimientos y valorizacion.) Tj
+T*
+(- Commerce: proveedores, clientes, compras, ventas y reportes comerciales.) Tj
+T*
+(- Attendance: asistencia historica diaria, mensual y por trabajador.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(3. MANUAL DE USO) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(3.1 Ingreso al sistema) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+ET
+endstream
+endobj
+3 0 obj
+<< /Type /Page /Parent 22 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 1 0 R >> >> /Contents 2 0 R >>
+endobj
+4 0 obj
+<< /Length 2028 >>
+stream
+BT
+/F1 10 Tf
+48 790 Td
+14 TL
+(1. Abrir la URL local o LAN del sistema.) Tj
+T*
+(2. Iniciar sesion con usuario nominal.) Tj
+T*
+(3. Usar la barra superior para entrar a modulos visibles segun permisos.) Tj
+T*
+(4. No compartir claves ni operar con usuarios genericos salvo emergencia controlada.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(3.2 Navegacion) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(La navbar muestra opciones segun rol:) Tj
+T*
+() Tj
+T*
+(- General: portal, modulos y estado del sistema.) Tj
+T*
+(- Remuneraciones: dashboard, trabajadores, periodos, items, movimientos, liquidaciones,) Tj
+T*
+(reportes y cargas.) Tj
+T*
+(- Contabilidad: dashboard, plan de cuentas, centros de costo, mapeos, asientos y reportes.) Tj
+T*
+(- Inventario: productos, bodegas, stock, movimientos y valorizacion.) Tj
+T*
+(- Comercio: proveedores, clientes, compras, ventas y reportes.) Tj
+T*
+(- Control: administracion, seguridad, auditoria y backups.) Tj
+T*
+(- Herramientas: kanban y API interna.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(3.3 Remuneraciones) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Uso recomendado:) Tj
+T*
+() Tj
+T*
+(1. Revisar dashboard general.) Tj
+T*
+(2. Buscar trabajador por nombre, RUT o codigo de ficha.) Tj
+T*
+(3. Revisar periodos y liquidaciones.) Tj
+T*
+(4. Crear o editar datos manuales solo con permiso adecuado.) Tj
+T*
+(5. Usar reportes para filtros por departamento, periodo, categoria y rango liquido.) Tj
+T*
+(6. Exportar CSV cuando se requiera analisis externo.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(3.4 Cargas ETL) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(La carga web permite subir Excel historico o CSV transformado. La carga genera estado por) Tj
+T*
+(corrida y permite revisar salidas. Para cargas grandes se recomienda ejecutar desde consola) Tj
+T*
+(con `run_etl.py`.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(3.5 Contabilidad) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Flujo base:) Tj
+T*
+() Tj
+T*
+(1. Revisar plan de cuentas.) Tj
+T*
+(2. Revisar centros de costo.) Tj
+T*
+(3. Mantener mapeos item remuneracion a cuenta contable.) Tj
+T*
+(4. Generar asientos desde liquidaciones.) Tj
+T*
+(5. Revisar reportes contables iniciales.) Tj
+T*
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 22 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 1 0 R >> >> /Contents 4 0 R >>
+endobj
+6 0 obj
+<< /Length 1366 >>
+stream
+BT
+/F1 10 Tf
+48 790 Td
+14 TL
+() Tj
+T*
+() Tj
+T*
+(3.6 Inventario) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Flujo base:) Tj
+T*
+() Tj
+T*
+(1. Mantener productos y bodegas.) Tj
+T*
+(2. Revisar saldos de stock.) Tj
+T*
+(3. Registrar movimientos de entrada, salida o ajuste.) Tj
+T*
+(4. Revisar valorizacion por costo promedio.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(3.7 Compras y ventas) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Flujo base:) Tj
+T*
+() Tj
+T*
+(1. Mantener proveedores y clientes.) Tj
+T*
+(2. Registrar compras y ventas.) Tj
+T*
+(3. Revisar documentos y lineas.) Tj
+T*
+(4. Consultar reportes comerciales.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(3.8 Asistencia) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Flujo base:) Tj
+T*
+() Tj
+T*
+(1. Crear registros diarios por trabajador.) Tj
+T*
+(2. Mantener hora de entrada, salida, estado y fuente.) Tj
+T*
+(3. Revisar historico por trabajador.) Tj
+T*
+(4. Revisar reporte mensual.) Tj
+T*
+(5. Exportar CSV o imprimir/guardar como PDF desde navegador.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(4. MANUAL DE IMPLEMENTACION) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(4.1 Requisitos) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(- Windows con Python disponible.) Tj
+T*
+(- Dependencias en `requirements.txt`.) Tj
+T*
+(- Acceso al workspace `C:\\Users\\RoyGabrielZaioLopez\\Desktop\\ETL`.) Tj
+T*
+(- SQLite para operacion actual.) Tj
+T*
+(- PostgreSQL solo cuando exista servidor autorizado.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(4.2 Instalacion local) Tj
+T*
+() Tj
+T*
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 22 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 1 0 R >> >> /Contents 6 0 R >>
+endobj
+8 0 obj
+<< /Length 1529 >>
+stream
+BT
+/F1 10 Tf
+48 790 Td
+14 TL
+() Tj
+T*
+(Pasos generales:) Tj
+T*
+() Tj
+T*
+(cd C:\\Users\\RoyGabrielZaioLopez\\Desktop\\ETL) Tj
+T*
+(python -m venv venv) Tj
+T*
+(venv\\Scripts\\activate) Tj
+T*
+(pip install -r requirements.txt) Tj
+T*
+(python Celestial_ERP\\manage.py migrate) Tj
+T*
+(python Celestial_ERP\\manage.py check) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(4.3 Ejecucion local) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(python Celestial_ERP\\manage.py runserver) Tj
+T*
+() Tj
+T*
+(Para red interna, usar configuracion LAN documentada en `docs/18_DEPLOY_LAN.md`, ajustar) Tj
+T*
+(`ALLOWED_HOSTS` y firewall local.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(4.4 Variables y configuracion) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(La configuracion sensible no debe guardarse en git. Usar `.env` o variables de entorno segun) Tj
+T*
+(el entorno. Revisar `.env.example`.) Tj
+T*
+() Tj
+T*
+(Variables importantes:) Tj
+T*
+() Tj
+T*
+(- `DJANGO_SECRET_KEY`) Tj
+T*
+(- `DJANGO_DEBUG`) Tj
+T*
+(- `DJANGO_ALLOWED_HOSTS`) Tj
+T*
+(- `DJANGO_SETTINGS_MODULE`) Tj
+T*
+(- `ERP_AUTO_BACKUP_ENABLED`) Tj
+T*
+(- `ERP_AUTO_BACKUP_INTERVAL_MINUTES`) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(5. MANUAL DE GESTION INTERNA) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(5.1 Roles) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Roles funcionales:) Tj
+T*
+() Tj
+T*
+(- Administrador: acceso total, seguridad, backups, admin y datos.) Tj
+T*
+(- RRHH: operacion de remuneraciones y asistencia segun permisos.) Tj
+T*
+(- Contabilidad: lectura/exportacion y modulo contable.) Tj
+T*
+(- Solo lectura: consulta controlada sin escritura sensible.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(5.2 Usuarios) Tj
+T*
+ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 22 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 1 0 R >> >> /Contents 8 0 R >>
+endobj
+10 0 obj
+<< /Length 1657 >>
+stream
+BT
+/F1 10 Tf
+48 790 Td
+14 TL
+() Tj
+T*
+() Tj
+T*
+(Buenas practicas:) Tj
+T*
+() Tj
+T*
+(- Usar usuarios nominales.) Tj
+T*
+(- Evitar usuarios compartidos.) Tj
+T*
+(- Desactivar usuarios que ya no operan.) Tj
+T*
+(- Revisar permisos antes de entregar acceso.) Tj
+T*
+(- Registrar cambios relevantes mediante auditoria.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(5.3 Auditoria) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(La auditoria registra usuario, modulo, accion, descripcion, objeto, ID, representacion y) Tj
+T*
+(cambios JSON cuando aplica. La vista permite filtrar por modulo, accion, objeto, ID y texto.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(5.4 Django Admin) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(El Django Admin queda reservado para administracion interna. Debe usarse con cuidado porque) Tj
+T*
+(permite cambios directos en datos y configuracion. La UI del admin esta personalizada con) Tj
+T*
+(colores del sistema y tema claro/oscuro.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(6. MANUAL ETL) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(6.1 Flujo general) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(1. Entrada: Excel historico o CSV transformado.) Tj
+T*
+(2. `dataload.py`: transforma Excel a `transformed.csv`.) Tj
+T*
+(3. `tabcreated.py`: separa CSV por categoria.) Tj
+T*
+(4. `build_liquidaciones_csvs.py`: genera CSV equivalentes a liquidaciones.) Tj
+T*
+(5. `transfer_liquidaciones_to_excel.py`: crea Excel final.) Tj
+T*
+(6. Importacion Django con `import_payroll_data`.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(6.2 Ejecucion completa) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(python run_etl.py --input "ITEMS_ACUMULADOS_Historico Payroll.xlsx") Tj
+T*
+() Tj
+T*
+(Opciones utiles:) Tj
+T*
+() Tj
+T*
+(- `--skip-excel`) Tj
+T*
+(- `--skip-import`) Tj
+T*
+(- `--clear`) Tj
+T*
+(- `--rut-empresa`) Tj
+T*
+ET
+endstream
+endobj
+11 0 obj
+<< /Type /Page /Parent 22 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 1 0 R >> >> /Contents 10 0 R >>
+endobj
+12 0 obj
+<< /Length 1897 >>
+stream
+BT
+/F1 10 Tf
+48 790 Td
+14 TL
+(- `--source-format historic_excel`) Tj
+T*
+(- `--source-format transformed_csv`) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(6.3 Cargas SEGCEI y COSESO) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Herramienta reusable:) Tj
+T*
+() Tj
+T*
+(python tools\\load_item_to_liquidaciones_workbook.py --source) Tj
+T*
+("csv_por_categoria\\contribucion_empleador.csv" --workbook) Tj
+T*
+("Liquidaciones_Historicas_Cargadas_SEGCEI_COSESO_workcopy.xlsx" --item-code SEGCEI --output) Tj
+T*
+("Liquidaciones_Historicas_Cargadas_SEGCEI_COSESO_FINAL.xlsx") Tj
+T*
+(python tools\\load_item_to_liquidaciones_workbook.py --source "ITEMS_ACUMULADOS_Historico) Tj
+T*
+(Payroll.xlsx" --workbook "Liquidaciones_Historicas_Cargadas_SEGCEI_workcopy.xlsx" --item-) Tj
+T*
+(code COSESO --output "Liquidaciones_Historicas_Cargadas_SEGCEI_COSESO_workcopy.xlsx") Tj
+T*
+() Tj
+T*
+(Mapeos:) Tj
+T*
+() Tj
+T*
+(- `SEGCEI` hacia `Seguro Cesantia Empleador \(Ley proteccion empleo\)`.) Tj
+T*
+(- `COSESO` hacia `Cotizacion Expectativa de Vida`.) Tj
+T*
+() Tj
+T*
+(El generador `build_liquidaciones_csvs.py` tambien calcula `COSESO` para la columna) Tj
+T*
+(`Cotizacion Expectativa de Vida`.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(7. OPERACION Y BACKUPS) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(7.1 Backup manual) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(python Celestial_ERP\\manage.py backup_sqlite) Tj
+T*
+() Tj
+T*
+(Opciones:) Tj
+T*
+() Tj
+T*
+(python Celestial_ERP\\manage.py backup_sqlite --retention-days 30 --keep-last 5) Tj
+T*
+(python Celestial_ERP\\manage.py backup_sqlite --no-verify) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(7.2 Restauracion validada) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Desde `v1.0.4`:) Tj
+T*
+() Tj
+T*
+(python Celestial_ERP\\manage.py validate_backup_restore) Tj
+T*
+(python Celestial_ERP\\manage.py validate_backup_restore --backup-path) Tj
+T*
+(backups\\db_AAAAMMDD_HHMMSS.sqlite3) Tj
+T*
+() Tj
+T*
+(El comando valida una restauracion en copia temporal sin tocar la base activa.) Tj
+T*
+() Tj
+T*
+ET
+endstream
+endobj
+13 0 obj
+<< /Type /Page /Parent 22 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 1 0 R >> >> /Contents 12 0 R >>
+endobj
+14 0 obj
+<< /Length 1455 >>
+stream
+BT
+/F1 10 Tf
+48 790 Td
+14 TL
+() Tj
+T*
+(7.3 Salud SQLite) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(python Celestial_ERP\\manage.py check_sqlite_operational_health) Tj
+T*
+() Tj
+T*
+(Valida integridad, WAL, claves foraneas, ultimo backup, uploads y conteos base.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(8. SEGURIDAD OPERATIVA) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Principios:) Tj
+T*
+() Tj
+T*
+(- Login obligatorio.) Tj
+T*
+(- Permisos por modulo y accion.) Tj
+T*
+(- Usuarios nominales.) Tj
+T*
+(- Backups frecuentes.) Tj
+T*
+(- Datos sensibles fuera de git.) Tj
+T*
+(- Red interna controlada.) Tj
+T*
+(- PostgreSQL antes de multiusuario sostenido.) Tj
+T*
+() Tj
+T*
+(Comando recomendado:) Tj
+T*
+() Tj
+T*
+(python Celestial_ERP\\manage.py check_operational_security) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(9. API INTERNA) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Ruta principal:) Tj
+T*
+() Tj
+T*
+(/api/) Tj
+T*
+() Tj
+T*
+(La API requiere sesion. Los endpoints de remuneraciones requieren permisos de payroll. El) Tj
+T*
+(explorador visual muestra endpoints en acordeon y permite consultar el indice JSON con:) Tj
+T*
+() Tj
+T*
+(/api/?format=json) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(10. TESTING Y VALIDACION) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Comandos:) Tj
+T*
+() Tj
+T*
+(python Celestial_ERP\\manage.py check) Tj
+T*
+(python Celestial_ERP\\manage.py makemigrations --check --dry-run) Tj
+T*
+(python Celestial_ERP\\manage.py test Applet DATA_scope ERP_api Accounting Inventory Commerce) Tj
+T*
+(Attendance) Tj
+T*
+() Tj
+T*
+(Estado validado al 2026-07-20:) Tj
+T*
+() Tj
+T*
+ET
+endstream
+endobj
+15 0 obj
+<< /Type /Page /Parent 22 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 1 0 R >> >> /Contents 14 0 R >>
+endobj
+16 0 obj
+<< /Length 1483 >>
+stream
+BT
+/F1 10 Tf
+48 790 Td
+14 TL
+(- `check`: OK.) Tj
+T*
+(- migraciones pendientes: ninguna.) Tj
+T*
+(- suite completa: 48 tests OK.) Tj
+T*
+(- SQLite: `integrity_check` OK.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(11. DEPLOY LAN) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Uso recomendado:) Tj
+T*
+() Tj
+T*
+(1. Definir IP del equipo servidor.) Tj
+T*
+(2. Ajustar `ALLOWED_HOSTS`.) Tj
+T*
+(3. Ejecutar migraciones.) Tj
+T*
+(4. Crear usuarios nominales.) Tj
+T*
+(5. Probar acceso desde otro equipo.) Tj
+T*
+(6. Validar firewall.) Tj
+T*
+(7. Ejecutar backup inicial.) Tj
+T*
+(8. Probar restauracion del backup.) Tj
+T*
+() Tj
+T*
+(No exponer a internet sin hardening adicional.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(12. IA LOCAL) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(La IA local cuantizada queda planificada como servicio LAN separado. No debe ejecutarse) Tj
+T*
+(dentro del proceso Django. Debe tener endpoint interno, logs propios, limites de memoria,) Tj
+T*
+(timeouts y acceso controlado sin conectar directo a la base productiva.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(13. POSTGRESQL) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Estado actual:) Tj
+T*
+() Tj
+T*
+(- Preparacion documentada en `v1.0.8`.) Tj
+T*
+(- Ensayo pendiente en `v1.0.9`.) Tj
+T*
+(- Migracion real pendiente en `v1.0.10`.) Tj
+T*
+() Tj
+T*
+(No migrar sin:) Tj
+T*
+() Tj
+T*
+(- servidor autorizado;) Tj
+T*
+(- backup validado;) Tj
+T*
+(- plan de reversa;) Tj
+T*
+(- ventana de mantenimiento;) Tj
+T*
+(- pruebas verdes;) Tj
+T*
+(- credenciales fuera del repo.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(14. MANTENIMIENTO RECURRENTE) Tj
+T*
+() Tj
+T*
+ET
+endstream
+endobj
+17 0 obj
+<< /Type /Page /Parent 22 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 1 0 R >> >> /Contents 16 0 R >>
+endobj
+18 0 obj
+<< /Length 1848 >>
+stream
+BT
+/F1 10 Tf
+48 790 Td
+14 TL
+() Tj
+T*
+(Rutina recomendada:) Tj
+T*
+() Tj
+T*
+(- Diario: revisar acceso, errores visibles y ultimo backup.) Tj
+T*
+(- Semanal: ejecutar `check_sqlite_operational_health`.) Tj
+T*
+(- Mensual: validar restauracion de un backup.) Tj
+T*
+(- Antes de cambios grandes: backup manual y pruebas.) Tj
+T*
+(- Despues de cargas ETL: revisar conteos, reportes y auditoria.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(15. ARCHIVOS CLAVE) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(- `Celestial_ERP/Applet/services.py`: version y servicios centrales.) Tj
+T*
+(- `run_etl.py`: orquestador ETL.) Tj
+T*
+(- `dataload.py`: transformacion historica.) Tj
+T*
+(- `build_liquidaciones_csvs.py`: CSV equivalentes.) Tj
+T*
+(- `tools/load_item_to_liquidaciones_workbook.py`: carga SEGCEI/COSESO a Excel.) Tj
+T*
+(- `ROADMAP.md`: roadmap vigente.) Tj
+T*
+(- `version_log.md`: bitacora de versiones.) Tj
+T*
+(- `docs/INDICE_DOCUMENTACION.md`: indice maestro.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(16. RIESGOS Y PENDIENTES) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Riesgos actuales:) Tj
+T*
+() Tj
+T*
+(- SQLite no es ideal para multiusuario sostenido.) Tj
+T*
+(- Excel puede bloquear archivos si estan abiertos.) Tj
+T*
+(- Backups deben copiarse fuera del equipo periodicamente.) Tj
+T*
+(- Artefactos temporales pueden quedar bloqueados por Windows.) Tj
+T*
+() Tj
+T*
+(Pendientes:) Tj
+T*
+() Tj
+T*
+(- `v1.0.9`: ensayo SQLite a PostgreSQL.) Tj
+T*
+(- `v1.0.10`: migracion real a PostgreSQL.) Tj
+T*
+(- Validacion LAN recurrente.) Tj
+T*
+(- Politica externa de respaldo fuera del equipo.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(17. ANEXOS) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Documentos relacionados:) Tj
+T*
+() Tj
+T*
+(- `docs/00_DOCUMENTACION_GENERAL.md`) Tj
+T*
+(- `docs/01_APPLET_PORTAL.md`) Tj
+T*
+(- `docs/03_ETL_PIPELINE.md`) Tj
+T*
+(- `docs/05_ADMIN_MULTIUSUARIO.md`) Tj
+T*
+(- `docs/06_OPERACION_LOCAL_BACKUPS.md`) Tj
+T*
+(- `docs/18_DEPLOY_LAN.md`) Tj
+T*
+ET
+endstream
+endobj
+19 0 obj
+<< /Type /Page /Parent 22 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 1 0 R >> >> /Contents 18 0 R >>
+endobj
+20 0 obj
+<< /Length 134 >>
+stream
+BT
+/F1 10 Tf
+48 790 Td
+14 TL
+(- `docs/19_V10_PRE_POSTGRESQL_IA_BACKUPS.md`) Tj
+T*
+(- `ROADMAP.md`) Tj
+T*
+(- `version_log.md`) Tj
+T*
+ET
+endstream
+endobj
+21 0 obj
+<< /Type /Page /Parent 22 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 1 0 R >> >> /Contents 20 0 R >>
+endobj
+22 0 obj
+<< /Type /Pages /Kids [3 0 R 5 0 R 7 0 R 9 0 R 11 0 R 13 0 R 15 0 R 17 0 R 19 0 R 21 0 R] /Count 10 >>
+endobj
+23 0 obj
+<< /Type /Catalog /Pages 22 0 R >>
+endobj
+xref
+0 24
+0000000000 65535 f 
+0000000009 00000 n 
+0000000106 00000 n 
+0000002199 00000 n 
+0000002326 00000 n 
+0000004406 00000 n 
+0000004533 00000 n 
+0000005951 00000 n 
+0000006078 00000 n 
+0000007659 00000 n 
+0000007786 00000 n 
+0000009496 00000 n 
+0000009625 00000 n 
+0000011575 00000 n 
+0000011704 00000 n 
+0000013212 00000 n 
+0000013341 00000 n 
+0000014877 00000 n 
+0000015006 00000 n 
+0000016907 00000 n 
+0000017036 00000 n 
+0000017222 00000 n 
+0000017351 00000 n 
+0000017470 00000 n 
+trailer
+<< /Size 24 /Root 23 0 R >>
+startxref
+17521
+%%EOF

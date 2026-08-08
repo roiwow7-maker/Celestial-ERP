@@ -1,0 +1,72 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Inicio | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Portal principal</h1>
+        <p class="lead">Applet centraliza la navegacion del ERP y mantiene los modulos de datos separados de la operacion general.</p>
+    </div>
+    <a class="button" href="{% url 'applet:modules' %}">Ver modulos</a>
+</section>
+
+<section class="grid">
+    <a class="card" href="{% url 'data_scope:payroll_dashboard' %}">
+        <span class="badge">Activo</span>
+        <h2>Remuneraciones</h2>
+        <p>Acceso al dashboard operativo de DATA_scope, KPIs y resumen de liquidaciones.</p>
+        <span class="card-footer button secondary">Abrir modulo</span>
+    </a>
+    {% if perms.Accounting.access_accounting_module %}
+    <a class="card" href="{% url 'accounting:dashboard' %}">
+        <span class="badge">v0.7</span>
+        <h2>Contabilidad</h2>
+        <p>Plan de cuentas, centros de costo, mapeos y asientos desde remuneraciones.</p>
+        <span class="card-footer button secondary">Abrir modulo</span>
+    </a>
+    {% endif %}
+    {% if perms.Attendance.access_attendance_module %}
+    <a class="card" href="{% url 'attendance:dashboard' %}">
+        <span class="badge">v0.9</span>
+        <h2>Asistencia</h2>
+        <p>Registros historicos por trabajador, dia, mes, entrada, salida y horas.</p>
+        <span class="card-footer button secondary">Abrir modulo</span>
+    </a>
+    {% endif %}
+    {% if perms.Inventory.access_inventory_module %}
+    <a class="card" href="{% url 'inventory:dashboard' %}">
+        <span class="badge">v0.8</span>
+        <h2>Inventario</h2>
+        <p>Productos, bodegas, movimientos, stock actual y valorizacion operativa.</p>
+        <span class="card-footer button secondary">Abrir modulo</span>
+    </a>
+    {% endif %}
+    {% if perms.Commerce.access_commerce_module %}
+    <a class="card" href="{% url 'commerce:dashboard' %}">
+        <span class="badge">v0.9</span>
+        <h2>Compras y ventas</h2>
+        <p>Proveedores, clientes, compras, ventas y reportes comerciales base.</p>
+        <span class="card-footer button secondary">Abrir modulo</span>
+    </a>
+    {% endif %}
+    <a class="card" href="{% url 'applet:kanban' %}">
+        <span class="badge">Gestion</span>
+        <h2>Kanban ERP</h2>
+        <p>Tablero base para ordenar tareas de evolucion y estabilizacion del sistema.</p>
+        <span class="card-footer button secondary">Abrir tablero</span>
+    </a>
+    <a class="card" href="{% url 'applet:system_status' %}">
+        <span class="badge">Operativo</span>
+        <h2>Estado del sistema</h2>
+        <p>Vista rapida del estado general de Django, base de datos, ETL y modulos.</p>
+        <span class="card-footer button secondary">Revisar estado</span>
+    </a>
+    <a class="card" href="/api/">
+        <span class="badge">API</span>
+        <h2>Servicios JSON</h2>
+        <p>Endpoints separados para estado, modulos y resumen inicial de remuneraciones.</p>
+        <span class="card-footer button secondary">Ver endpoints</span>
+    </a>
+</section>
+{% endblock %}

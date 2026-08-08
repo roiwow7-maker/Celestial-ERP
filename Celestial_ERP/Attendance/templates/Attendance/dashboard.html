@@ -1,0 +1,66 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Asistencia | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Asistencia</h1>
+        <p class="lead">Control historico diario, mensual y por trabajador con entrada, salida y horas trabajadas.</p>
+    </div>
+    <div class="actions">
+        {% if perms.Attendance.manage_attendance_records %}<a class="button" href="{% url 'attendance:record_create' %}">Nuevo registro</a>{% endif %}
+        <button class="button secondary" type="button" onclick="window.print()">Imprimir / PDF</button>
+    </div>
+</section>
+
+<section class="metrics">
+    <div class="metric"><span>Registros mes</span><strong>{{ summary.records }}</strong></div>
+    <div class="metric"><span>Trabajadores</span><strong>{{ summary.employees }}</strong></div>
+    <div class="metric"><span>Horas</span><strong>{{ summary.worked_hours }}</strong></div>
+    <div class="metric"><span>Atrasos</span><strong>{{ summary.late }}</strong></div>
+    <div class="metric"><span>Ausencias</span><strong>{{ summary.absent }}</strong></div>
+</section>
+
+<section class="grid two">
+    <article class="panel">
+        <h2>Operacion</h2>
+        <div class="action-row">
+            <a class="button secondary" href="{% url 'attendance:records' %}">Registros diarios</a>
+            <a class="button secondary" href="{% url 'attendance:monthly_report' %}">Reporte mensual</a>
+            {% if perms.Attendance.export_attendance_reports %}<a class="button secondary" href="{% url 'attendance:export_csv' %}">Exportar CSV</a>{% endif %}
+        </div>
+    </article>
+    <article class="panel">
+        <h2>Estados del mes</h2>
+        <div class="table-scroll">
+            <table>
+                <thead><tr><th>Estado</th><th>Total</th></tr></thead>
+                <tbody>
+                    {% for row in status_rows %}
+                        <tr><td>{{ row.status }}</td><td>{{ row.total }}</td></tr>
+                    {% empty %}
+                        <tr><td colspan="2">Sin asistencia registrada este mes.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </article>
+</section>
+
+<section class="panel">
+    <h2>Registros recientes</h2>
+    <div class="table-scroll">
+        <table>
+            <thead><tr><th>Fecha</th><th>Trabajador</th><th>Entrada</th><th>Salida</th><th>Horas</th><th>Estado</th></tr></thead>
+            <tbody>
+                {% for record in recent_records %}
+                    <tr><td>{{ record.date }}</td><td>{{ record.employee.nombre }}</td><td>{{ record.check_in|default:"-" }}</td><td>{{ record.check_out|default:"-" }}</td><td>{{ record.worked_hours }}</td><td>{{ record.get_status_display }}</td></tr>
+                {% empty %}
+                    <tr><td colspan="6">Sin registros.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

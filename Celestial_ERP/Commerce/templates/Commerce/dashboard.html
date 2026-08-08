@@ -1,0 +1,41 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Compras y ventas | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Compras y ventas</h1>
+        <p class="lead">Base v0.9: proveedores, clientes, compras y ventas conectadas al catalogo de productos.</p>
+    </div>
+</section>
+
+<section class="metrics">
+    <div class="metric"><span>Proveedores</span><strong>{{ summary.suppliers }}</strong></div>
+    <div class="metric"><span>Clientes</span><strong>{{ summary.customers }}</strong></div>
+    <div class="metric"><span>Compras</span><strong>{{ summary.purchase_orders }}</strong></div>
+    <div class="metric"><span>Ventas</span><strong>{{ summary.sales_orders }}</strong></div>
+    <div class="metric"><span>Total ventas</span><strong>{{ summary.sales_total }}</strong></div>
+</section>
+
+<section class="grid two">
+    <article class="panel">
+        <h2>Compras</h2>
+        <div class="action-row">
+            <a class="button secondary" href="{% url 'commerce:suppliers' %}">Proveedores</a>
+            <a class="button secondary" href="{% url 'commerce:purchase_orders' %}">Compras</a>
+            {% if perms.Commerce.manage_purchases %}<a class="button" href="{% url 'commerce:purchase_order_create' %}">Nueva compra</a>{% endif %}
+        </div>
+        <p class="muted">Total compras: {{ summary.purchase_total }}</p>
+    </article>
+    <article class="panel">
+        <h2>Ventas</h2>
+        <div class="action-row">
+            <a class="button secondary" href="{% url 'commerce:customers' %}">Clientes</a>
+            <a class="button secondary" href="{% url 'commerce:sales_orders' %}">Ventas</a>
+            {% if perms.Commerce.manage_sales %}<a class="button" href="{% url 'commerce:sales_order_create' %}">Nueva venta</a>{% endif %}
+        </div>
+        <a class="button secondary" href="{% url 'commerce:reports' %}">Ver reportes</a>
+    </article>
+</section>
+{% endblock %}

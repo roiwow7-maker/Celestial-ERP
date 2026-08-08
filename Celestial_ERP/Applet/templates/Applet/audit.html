@@ -1,0 +1,73 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Auditoria | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Auditoria del sistema</h1>
+        <p class="lead">Ultimos eventos relevantes registrados por el portal, reportes, cargas, backups y modulos operativos.</p>
+    </div>
+    <a class="button secondary" href="{% url 'admin:Applet_auditlog_changelist' %}">Ver en Admin</a>
+</section>
+
+<section class="panel">
+    <form class="filters" method="get">
+        <div>
+            <label for="module">Modulo</label>
+            <input id="module" name="module" value="{{ module }}" placeholder="DATA_scope">
+        </div>
+        <div>
+            <label for="action">Accion</label>
+            <input id="action" name="action" value="{{ action }}" placeholder="employee_updated">
+        </div>
+        <div>
+            <label for="object_type">Objeto</label>
+            <input id="object_type" name="object_type" value="{{ object_type }}" placeholder="DATA_scope.employee">
+        </div>
+        <div>
+            <label for="object_id">ID objeto</label>
+            <input id="object_id" name="object_id" value="{{ object_id }}" placeholder="123">
+        </div>
+        <div>
+            <label for="q">Texto</label>
+            <input id="q" name="q" value="{{ search }}" placeholder="descripcion">
+        </div>
+        <div class="actions">
+            <button class="button" type="submit">Filtrar</button>
+            <a class="button secondary" href="{% url 'applet:audit' %}">Limpiar</a>
+        </div>
+    </form>
+</section>
+
+<section class="panel">
+    <div class="table-scroll">
+    <table>
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Usuario</th>
+                <th>Modulo</th>
+                <th>Accion</th>
+                <th>Objeto</th>
+                <th>Descripcion</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+                <tr>
+                    <td>{{ log.created_at|date:"Y-m-d H:i" }}</td>
+                    <td>{% if log.user %}{{ log.user.username }}{% else %}Sistema/anonimo{% endif %}</td>
+                    <td>{{ log.module }}</td>
+                    <td>{{ log.action }}</td>
+                    <td>{% if log.object_type %}{{ log.object_type }} #{{ log.object_id }}{% else %}-{% endif %}</td>
+                    <td>{{ log.description }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="6">Aun no hay eventos registrados.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</section>
+{% endblock %}

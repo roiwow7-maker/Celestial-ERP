@@ -1,0 +1,11 @@
+{% extends "Applet/base.html" %}
+{% block title %}Clientes | Celestial ERP{% endblock %}
+{% block content %}
+<section class="page-head"><div><h1>Clientes</h1><p class="lead">Catalogo base de clientes.</p></div>{% if perms.Commerce.manage_commerce_partners %}<a class="button" href="{% url 'commerce:customer_create' %}">Nuevo cliente</a>{% endif %}</section>
+<section class="panel">
+    <form class="filters compact" method="get"><input class="form-control" name="q" value="{{ query }}" placeholder="Buscar cliente"><button class="button secondary" type="submit">Buscar</button></form>
+    <div class="table-scroll"><table><thead><tr><th>Codigo</th><th>Nombre</th><th>RUT</th><th>Email</th><th>Telefono</th><th>Activo</th><th></th></tr></thead><tbody>
+    {% for customer in customers %}<tr><td>{{ customer.code }}</td><td>{{ customer.name }}</td><td>{{ customer.tax_id|default:"-" }}</td><td>{{ customer.email|default:"-" }}</td><td>{{ customer.phone|default:"-" }}</td><td>{{ customer.is_active|yesno:"Si,No" }}</td><td>{% if perms.Commerce.manage_commerce_partners %}<a class="button secondary" href="{% url 'commerce:customer_update' customer.id %}">Editar</a>{% endif %}</td></tr>{% empty %}<tr><td colspan="7">Sin clientes.</td></tr>{% endfor %}
+    </tbody></table></div>
+</section>
+{% endblock %}

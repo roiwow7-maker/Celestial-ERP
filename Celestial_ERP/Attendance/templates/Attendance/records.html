@@ -1,0 +1,61 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Registros de asistencia | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Registros de asistencia</h1>
+        <p class="lead">Historial diario filtrable por trabajador, fechas y estado.</p>
+    </div>
+    <div class="actions">
+        {% if perms.Attendance.manage_attendance_records %}<a class="button" href="{% url 'attendance:record_create' %}">Nuevo registro</a>{% endif %}
+        {% if perms.Attendance.export_attendance_reports %}<a class="button secondary" href="{% url 'attendance:export_csv' %}?{{ request.GET.urlencode }}">Exportar CSV</a>{% endif %}
+        <button class="button secondary" type="button" onclick="window.print()">Imprimir / PDF</button>
+    </div>
+</section>
+
+<section class="panel no-print">
+    <form class="row g-3" method="get">
+        <div class="col-lg-3"><label class="form-label">Buscar</label><input class="form-control" name="q" value="{{ search }}" placeholder="Nombre, RUT, codigo"></div>
+        <div class="col-lg-2"><label class="form-label">Estado</label><select class="form-select" name="status"><option value="">Todos</option>{% for value, label in status_choices %}<option value="{{ value }}" {% if value == status %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+        <div class="col-lg-2"><label class="form-label">Desde</label><input class="form-control" type="date" name="desde" value="{{ date_from }}"></div>
+        <div class="col-lg-2"><label class="form-label">Hasta</label><input class="form-control" type="date" name="hasta" value="{{ date_to }}"></div>
+        <div class="col-lg-3 d-flex align-items-end gap-2"><button class="button" type="submit">Filtrar</button><a class="button secondary" href="{% url 'attendance:records' %}">Limpiar</a></div>
+    </form>
+</section>
+
+<section class="metrics">
+    <div class="metric"><span>Registros</span><strong>{{ summary.records }}</strong></div>
+    <div class="metric"><span>Trabajadores</span><strong>{{ summary.employees }}</strong></div>
+    <div class="metric"><span>Horas</span><strong>{{ summary.worked_hours }}</strong></div>
+    <div class="metric"><span>Atrasos</span><strong>{{ summary.late }}</strong></div>
+    <div class="metric"><span>Ausencias</span><strong>{{ summary.absent }}</strong></div>
+</section>
+
+<section class="panel">
+    <div class="table-scroll">
+        <table>
+            <thead><tr><th>Fecha</th><th>Codigo</th><th>Trabajador</th><th>Depto</th><th>Entrada</th><th>Salida</th><th>Descanso</th><th>Horas</th><th>Estado</th><th></th></tr></thead>
+            <tbody>
+                {% for record in records %}
+                    <tr>
+                        <td>{{ record.date }}</td>
+                        <td>{{ record.employee.codigo_ficha }}</td>
+                        <td><a href="{% url 'attendance:employee_attendance' record.employee.id %}">{{ record.employee.nombre }}</a></td>
+                        <td>{{ record.employee.division|default:"-" }}</td>
+                        <td>{{ record.check_in|default:"-" }}</td>
+                        <td>{{ record.check_out|default:"-" }}</td>
+                        <td>{{ record.break_minutes }}</td>
+                        <td>{{ record.worked_hours }}</td>
+                        <td>{{ record.get_status_display }}</td>
+                        <td>{% if perms.Attendance.manage_attendance_records %}<a class="button secondary" href="{% url 'attendance:record_update' record.id %}">Editar</a>{% endif %}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="10">Sin registros para el filtro seleccionado.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

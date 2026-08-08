@@ -1,0 +1,75 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | Celestial ERP{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script>
+    (() => {
+        const storedTheme = localStorage.getItem("celestial-erp-theme");
+        const preferredTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        const theme = storedTheme || preferredTheme;
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.dataset.erpTheme = theme;
+        document.documentElement.dataset.bsTheme = theme;
+    })();
+</script>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+<link href="{% static 'Applet/css/admin.css' %}" rel="stylesheet">
+<link href="{% static 'Applet/css/admin_clean.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">{{ site_header|default:"Celestial ERP Administracion" }}</a>
+    <span class="erp-admin-brand-subtitle">Datos, usuarios, permisos y auditoria</span>
+</h1>
+{% endblock %}
+
+{% block nav-global %}
+<nav class="erp-admin-floating-nav" aria-label="Accesos rapidos del ERP">
+    <ul class="erp-admin-nav-list">
+        <li><a href="{% url 'admin:index' %}">Inicio Admin</a></li>
+        <li><a href="{% url 'applet:home' %}">Portal</a></li>
+        <li><a href="{% url 'data_scope:payroll_dashboard' %}">Remuneraciones</a></li>
+        <li><a href="{% url 'applet:security' %}">Seguridad</a></li>
+        <li><a href="{% url 'applet:audit' %}">Auditoria</a></li>
+        <li><a href="{% url 'applet:backups' %}">Backups</a></li>
+        <li><a href="/api/">API</a></li>
+        <li><button class="erp-admin-theme-toggle" type="button" data-theme-toggle aria-label="Cambiar tema">Claro</button></li>
+    </ul>
+</nav>
+<script>
+    const adminThemeButtons = document.querySelectorAll("[data-theme-toggle]");
+
+    const applyAdminThemeLabel = () => {
+        const activeTheme = document.documentElement.dataset.erpTheme || "light";
+        adminThemeButtons.forEach((button) => {
+            button.textContent = activeTheme === "dark" ? "Modo oscuro" : "Modo claro";
+            button.setAttribute(
+                "aria-label",
+                activeTheme === "dark" ? "Cambiar a modo claro" : "Cambiar a modo oscuro",
+            );
+        });
+    };
+
+    adminThemeButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            const activeTheme = document.documentElement.dataset.erpTheme || "light";
+            const nextTheme = activeTheme === "dark" ? "light" : "dark";
+            document.documentElement.dataset.theme = nextTheme;
+            document.documentElement.dataset.erpTheme = nextTheme;
+            document.documentElement.dataset.bsTheme = nextTheme;
+            localStorage.setItem("celestial-erp-theme", nextTheme);
+            applyAdminThemeLabel();
+        });
+    });
+
+    applyAdminThemeLabel();
+</script>
+{% endblock %}

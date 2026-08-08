@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="520" viewBox="0 0 980 520">
+  <rect width="980" height="520" fill="#f5f7fb"/>
+  <style>
+    .box{fill:#fff;stroke:#176b87;stroke-width:2;rx:10}
+    .soft{fill:#eef4f7;stroke:#d8dee9;stroke-width:2;rx:10}
+    .title{font:700 18px Arial;fill:#172033}
+    .text{font:14px Arial;fill:#667085}
+    .arrow{stroke:#176b87;stroke-width:2;marker-end:url(#arrow)}
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#176b87"/>
+    </marker>
+  </defs>
+  <rect class="box" x="380" y="35" width="220" height="80"/>
+  <text class="title" x="425" y="70">Applet</text>
+  <text class="text" x="405" y="94">Portal y orquestador</text>
+  <rect class="box" x="70" y="190" width="230" height="105"/>
+  <text class="title" x="110" y="228">DATA_scope</text>
+  <text class="text" x="96" y="254">Remuneraciones, reportes</text>
+  <text class="text" x="116" y="276">y cargas ETL</text>
+  <rect class="box" x="375" y="190" width="230" height="105"/>
+  <text class="title" x="430" y="228">ERP_api</text>
+  <text class="text" x="410" y="254">Endpoints JSON</text>
+  <text class="text" x="405" y="276">para integracion local</text>
+  <rect class="box" x="680" y="190" width="230" height="105"/>
+  <text class="title" x="730" y="228">Django Admin</text>
+  <text class="text" x="713" y="254">Administracion interna</text>
+  <text class="text" x="738" y="276">y usuarios</text>
+  <rect class="soft" x="230" y="380" width="230" height="80"/>
+  <text class="title" x="285" y="416">SQLite</text>
+  <text class="text" x="265" y="440">Base local actual</text>
+  <rect class="soft" x="525" y="380" width="230" height="80"/>
+  <text class="title" x="592" y="416">Backups</text>
+  <text class="text" x="560" y="440">Automaticos cada 90 min</text>
+  <line class="arrow" x1="490" y1="115" x2="190" y2="190"/>
+  <line class="arrow" x1="490" y1="115" x2="490" y2="190"/>
+  <line class="arrow" x1="490" y1="115" x2="795" y2="190"/>
+  <line class="arrow" x1="185" y1="295" x2="320" y2="380"/>
+  <line class="arrow" x1="490" y1="295" x2="430" y2="380"/>
+  <line class="arrow" x1="795" y1="295" x2="700" y2="380"/>
+  <line class="arrow" x1="460" y1="420" x2="525" y2="420"/>
+</svg>

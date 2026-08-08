@@ -1,0 +1,45 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Productos | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Productos</h1>
+        <p class="lead">Catalogo base para controlar stock y valorizacion.</p>
+    </div>
+    {% if perms.Inventory.manage_inventory_config %}
+        <a class="button" href="{% url 'inventory:product_create' %}">Nuevo producto</a>
+    {% endif %}
+</section>
+
+<section class="panel">
+    <form class="filters compact" method="get">
+        <input class="form-control" name="q" type="search" value="{{ query }}" placeholder="Buscar por SKU, nombre o categoria">
+        <button class="button secondary" type="submit">Buscar</button>
+    </form>
+    <div class="table-scroll">
+        <table>
+            <thead>
+                <tr><th>SKU</th><th>Nombre</th><th>Categoria</th><th>Unidad</th><th>Stock minimo</th><th>Costo</th><th>Activo</th><th></th></tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                    <tr>
+                        <td>{{ product.sku }}</td>
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.category|default:"-" }}</td>
+                        <td>{{ product.get_unit_display }}</td>
+                        <td>{{ product.minimum_stock }}</td>
+                        <td>{{ product.standard_cost }}</td>
+                        <td>{{ product.is_active|yesno:"Si,No" }}</td>
+                        <td>{% if perms.Inventory.manage_inventory_config %}<a class="button secondary" href="{% url 'inventory:product_update' product.id %}">Editar</a>{% endif %}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="8">Sin productos registrados.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

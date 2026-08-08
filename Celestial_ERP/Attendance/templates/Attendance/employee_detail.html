@@ -1,0 +1,47 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Asistencia trabajador | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>{{ employee.nombre }}</h1>
+        <p class="lead">Asistencia historica del trabajador {{ employee.codigo_ficha }}.</p>
+    </div>
+    <div class="actions">
+        <a class="button secondary" href="{% url 'attendance:records' %}">Registros</a>
+        <button class="button secondary" type="button" onclick="window.print()">Imprimir / PDF</button>
+    </div>
+</section>
+
+<section class="panel no-print">
+    <form class="row g-3" method="get">
+        <div class="col-sm-4"><label class="form-label">Desde</label><input class="form-control" type="date" name="desde" value="{{ date_from }}"></div>
+        <div class="col-sm-4"><label class="form-label">Hasta</label><input class="form-control" type="date" name="hasta" value="{{ date_to }}"></div>
+        <div class="col-sm-4 d-flex align-items-end gap-2"><button class="button" type="submit">Filtrar</button><a class="button secondary" href="{% url 'attendance:employee_attendance' employee.id %}">Limpiar</a></div>
+    </form>
+</section>
+
+<section class="metrics">
+    <div class="metric"><span>Registros</span><strong>{{ summary.records }}</strong></div>
+    <div class="metric"><span>Horas</span><strong>{{ summary.worked_hours }}</strong></div>
+    <div class="metric"><span>Presentes</span><strong>{{ summary.present }}</strong></div>
+    <div class="metric"><span>Atrasos</span><strong>{{ summary.late }}</strong></div>
+    <div class="metric"><span>Ausencias</span><strong>{{ summary.absent }}</strong></div>
+</section>
+
+<section class="panel">
+    <div class="table-scroll">
+        <table>
+            <thead><tr><th>Fecha</th><th>Entrada</th><th>Salida</th><th>Descanso</th><th>Horas</th><th>Estado</th><th>Notas</th></tr></thead>
+            <tbody>
+                {% for record in records %}
+                    <tr><td>{{ record.date }}</td><td>{{ record.check_in|default:"-" }}</td><td>{{ record.check_out|default:"-" }}</td><td>{{ record.break_minutes }}</td><td>{{ record.worked_hours }}</td><td>{{ record.get_status_display }}</td><td>{{ record.notes|default:"-" }}</td></tr>
+                {% empty %}
+                    <tr><td colspan="7">Sin registros.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Trabajadores | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Trabajadores</h1>
+        <p class="lead">Listado operativo con estados de remuneraciones y acceso a ficha individual.</p>
+    </div>
+    {% if perms.DATA_scope.add_employee %}
+        <a class="button" href="{% url 'data_scope:employee_create' %}">Nuevo trabajador</a>
+    {% endif %}
+</section>
+
+<section class="grid two">
+    <div class="panel">
+        <h2>Estados</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Estado</th>
+                    <th>Trabajadores</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in status_rows %}
+                    <tr>
+                        <td>{{ row.label }}</td>
+                        <td>{{ row.total }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="2">Sin trabajadores cargados.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="panel">
+        <h2>Filtros</h2>
+        <form method="get" class="mt-3">
+            <label class="form-label" for="q">Buscar</label>
+            <input class="form-control mb-3" id="q" name="q" type="search" value="{{ search }}">
+            <label class="form-label" for="estado">Estado</label>
+            <select class="form-select mb-3" id="estado" name="estado">
+                <option value="">Todos</option>
+                {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if value == selected_status %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            <button class="button" type="submit">Aplicar</button>
+            <a class="button secondary" href="{% url 'data_scope:employees' %}">Limpiar</a>
+        </form>
+    </div>
+</section>
+
+<section class="panel">
+    <h2>Listado</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Ficha</th>
+                <th>RUT</th>
+                <th>Nombre</th>
+                <th>Estado</th>
+                <th>Division</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for employee in employees %}
+                <tr>
+                    <td><a href="{% url 'data_scope:employee_detail' employee.id %}">{{ employee.codigo_ficha }}</a></td>
+                    <td>{{ employee.rut }}</td>
+                    <td>{{ employee.nombre }}</td>
+                    <td>{{ employee.get_estado_display }}</td>
+                    <td>{{ employee.division }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="5">Sin trabajadores para mostrar.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

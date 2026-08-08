@@ -1,0 +1,53 @@
+# Python y entornos locales
+__pycache__/
+*.py[cod]
+venv/
+venv_*/
+.venv/
+.pytest_cache/
+.coverage
+
+# Secretos y configuracion privada
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pgpass
+Celestial_ERP/.django_secret_key
+Celestial_ERP/.postgres_password
+
+# Bases de datos y respaldos: nunca deben publicarse
+*.sqlite
+*.sqlite3
+*.sqlite3-journal
+*.sqlite3-wal
+*.sqlite3-shm
+*.db
+*.dump
+*.backup
+*.bak
+*.sql
+backups/
+Celestial_ERP/.test_artifacts/
+
+# Datos privados y planillas: nunca deben publicarse
+*.csv
+*.xls
+*.xlsx
+*.xlsm
+*.ods
+uploads/
+reports/
+media/
+
+# Archivos generados en operacion
+logs/*.log
+logs/*.log.*
+staticfiles/
+
+# Editores y sistema operativo
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

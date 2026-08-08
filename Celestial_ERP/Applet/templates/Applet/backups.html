@@ -1,0 +1,50 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Backups | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Backups</h1>
+        <p class="lead">Control manual de respaldos verificados de la base de datos activa.</p>
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        <button class="button" type="submit">Ejecutar backup</button>
+    </form>
+</section>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="panel">
+            <strong>{{ message }}</strong>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<section class="grid two">
+    <div class="panel">
+        <h2>Ultimo backup</h2>
+        {% if latest_backup %}
+            <p class="lead">Estado: Disponible</p>
+            <table>
+                <tr><th>Archivo</th><td>{{ latest_backup.name }}</td></tr>
+                <tr><th>Motor</th><td>{{ latest_backup.engine }}</td></tr>
+                <tr><th>Ruta</th><td>{{ latest_backup.path }}</td></tr>
+                <tr><th>Tamano</th><td>{{ latest_backup.size_mb }} MB</td></tr>
+            </table>
+        {% else %}
+            <p class="lead">No hay backups registrados todavia.</p>
+        {% endif %}
+    </div>
+
+    <div class="panel">
+        <h2>Configuracion</h2>
+        <table>
+            <tr><th>Carpeta</th><td>{{ backup_dir }}</td></tr>
+            <tr><th>Backup automatico</th><td>{% if auto_backup_enabled %}Activo cada {{ auto_backup_interval }} minutos{% else %}Desactivado{% endif %}</td></tr>
+            <tr><th>Estado</th><td>{% if latest_backup %}Operativo{% else %}Pendiente de primer backup{% endif %}</td></tr>
+        </table>
+    </div>
+</section>
+{% endblock %}

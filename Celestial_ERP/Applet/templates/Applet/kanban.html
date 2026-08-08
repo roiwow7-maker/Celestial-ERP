@@ -1,0 +1,61 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Kanban | Celestial ERP{% endblock %}
+
+{% block extra_head %}
+<style>
+    .kanban {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+    }
+    .kanban-column {
+        min-height: 360px;
+        background: var(--erp-soft-blue);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 12px;
+    }
+    .kanban-column h2 {
+        margin-bottom: 12px;
+        font-size: 15px;
+    }
+    .task-card {
+        margin-bottom: 10px;
+        padding: 12px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+    @media (max-width: 980px) {
+        .kanban {
+            grid-template-columns: 1fr;
+        }
+        .kanban-column {
+            min-height: auto;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Kanban ERP</h1>
+        <p class="lead">Tablero estatico de seguimiento del ERP: muestra lo cerrado, lo que esta en validacion y el foco operativo siguiente.</p>
+    </div>
+</section>
+
+<section class="kanban">
+    {% for column in columns %}
+        <div class="kanban-column">
+            <h2>{{ column.title }}</h2>
+            {% for card in column.cards %}
+                <div class="task-card">{{ card }}</div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+</section>
+{% endblock %}

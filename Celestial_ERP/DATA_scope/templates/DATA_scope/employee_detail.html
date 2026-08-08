@@ -1,0 +1,85 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Trabajador | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>{{ employee.nombre }}</h1>
+        <p class="lead">{{ employee.codigo_ficha }} &middot; {{ employee.rut }} &middot; {{ employee.division|default:"Sin division" }}</p>
+    </div>
+    <div>
+        {% if perms.DATA_scope.change_employee %}
+            <a class="button" href="{% url 'data_scope:employee_update' employee.id %}">Editar</a>
+        {% endif %}
+        {% if perms.DATA_scope.download_upload_output %}
+            <a class="button secondary" href="{% url 'data_scope:export_employee_csv' employee.id %}">Exportar CSV</a>
+        {% endif %}
+        <a class="button secondary" href="{% url 'data_scope:employees' %}">Volver</a>
+    </div>
+</section>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="panel" style="margin-bottom: 12px; padding: 12px;">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+<section class="grid two">
+    <div class="panel">
+        <h2>Estado laboral</h2>
+        <form method="post" class="mt-3">
+            {% csrf_token %}
+            <label class="form-label" for="estado">Estado</label>
+            <select class="form-select mb-3" id="estado" name="estado" {% if not can_manage_status %}disabled{% endif %}>
+                {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if value == employee.estado %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            {% if can_manage_status %}
+                <button class="button" type="submit">Guardar estado</button>
+            {% else %}
+                <span class="button disabled">Solo lectura</span>
+            {% endif %}
+        </form>
+    </div>
+
+    <div class="panel">
+        <h2>Datos base</h2>
+        <table>
+            <tbody>
+                <tr><th>AFP</th><td>{{ employee.afp }}</td></tr>
+                <tr><th>Isapre</th><td>{{ employee.isapre }}</td></tr>
+                <tr><th>Ingreso</th><td>{{ employee.fecha_ingreso|date:"Y-m-d" }}</td></tr>
+                <tr><th>Retiro</th><td>{{ employee.fecha_retiro|date:"Y-m-d" }}</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="panel">
+    <h2>Liquidaciones recientes</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Periodo</th>
+                <th>Documento</th>
+                <th>Liquido</th>
+                <th>Costo empresa</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for summary in summaries %}
+                <tr>
+                    <td>{{ summary.period.periodo }}</td>
+                    <td>{{ summary.document_number }}</td>
+                    <td>{{ summary.sueldo_liquido|floatformat:0 }}</td>
+                    <td>{{ summary.costo_empresa|floatformat:0 }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="4">Sin liquidaciones para este trabajador.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

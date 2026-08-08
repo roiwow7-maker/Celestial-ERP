@@ -1,0 +1,10 @@
+{% extends "Applet/base.html" %}
+{% block title %}Reportes comerciales | Celestial ERP{% endblock %}
+{% block content %}
+<section class="page-head"><div><h1>Reportes comerciales</h1><p class="lead">Resumen inicial de compras, ventas y actividad por contraparte.</p></div><a class="button secondary" href="{% url 'commerce:dashboard' %}">Dashboard</a></section>
+<section class="metrics"><div class="metric"><span>Total compras</span><strong>{{ summary.purchase_total }}</strong></div><div class="metric"><span>Total ventas</span><strong>{{ summary.sales_total }}</strong></div><div class="metric"><span>Proveedores</span><strong>{{ summary.suppliers }}</strong></div><div class="metric"><span>Clientes</span><strong>{{ summary.customers }}</strong></div></section>
+<section class="grid two">
+<article class="panel"><h2>Proveedores</h2><div class="table-scroll"><table><thead><tr><th>Proveedor</th><th>Documentos</th></tr></thead><tbody>{% for supplier in suppliers %}<tr><td>{{ supplier.name }}</td><td>{{ supplier.document_count }}</td></tr>{% empty %}<tr><td colspan="2">Sin proveedores.</td></tr>{% endfor %}</tbody></table></div></article>
+<article class="panel"><h2>Clientes</h2><div class="table-scroll"><table><thead><tr><th>Cliente</th><th>Documentos</th></tr></thead><tbody>{% for customer in customers %}<tr><td>{{ customer.name }}</td><td>{{ customer.document_count }}</td></tr>{% empty %}<tr><td colspan="2">Sin clientes.</td></tr>{% endfor %}</tbody></table></div></article>
+</section>
+{% endblock %}

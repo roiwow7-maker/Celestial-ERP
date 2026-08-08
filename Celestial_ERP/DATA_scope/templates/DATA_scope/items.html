@@ -1,0 +1,44 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Items | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Items de remuneracion</h1>
+        <p class="lead">Codigos, categorias y marcas de confirmacion.</p>
+    </div>
+    {% if can_add %}<a class="button" href="{% url 'data_scope:item_create' %}">Nuevo item</a>{% endif %}
+</section>
+
+<section class="panel">
+    <form method="get" class="actions">
+        <input class="form-control" name="q" type="search" value="{{ search }}" placeholder="Codigo o descripcion" style="max-width: 280px;">
+        <select class="form-select" name="categoria" style="max-width: 280px;">
+            <option value="">Todas las categorias</option>
+            {% for value, label in category_choices %}
+                <option value="{{ value }}" {% if value == selected_category %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+        <button class="button" type="submit">Filtrar</button>
+    </form>
+    <div class="table-scroll">
+    <table>
+        <thead><tr><th>Codigo</th><th>Descripcion</th><th>Categoria</th><th>Confirmacion</th><th></th></tr></thead>
+        <tbody>
+            {% for item in items %}
+                <tr>
+                    <td>{{ item.codigo }}</td>
+                    <td>{{ item.descripcion }}</td>
+                    <td>{{ item.get_categoria_display }}</td>
+                    <td>{% if item.requiere_confirmacion %}Si{% else %}No{% endif %}</td>
+                    <td>{% if perms.DATA_scope.change_payrollitem %}<a href="{% url 'data_scope:item_update' item.id %}">Editar</a>{% endif %}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="5">Sin items.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</section>
+{% endblock %}

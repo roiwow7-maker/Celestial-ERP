@@ -1,0 +1,467 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Reportes | Celestial ERP{% endblock %}
+
+{% block extra_head %}
+<style>
+    .report-shell {
+        display: grid;
+        grid-template-columns: minmax(240px, 280px) minmax(0, 1fr);
+        gap: 16px;
+        align-items: start;
+        max-width: 100%;
+    }
+    .sidebar {
+        position: sticky;
+        top: 104px;
+        max-height: calc(100vh - 124px);
+        overflow: auto;
+        padding: 16px;
+        scrollbar-gutter: stable;
+    }
+    .report-content {
+        min-width: 0;
+    }
+    .report-content > .panel,
+    .report-grid > .panel {
+        min-width: 0;
+        max-width: 100%;
+        overflow: hidden;
+    }
+    .report-metrics {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 14px;
+        margin-bottom: 16px;
+    }
+    .report-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+        align-items: start;
+    }
+    .chart {
+        width: 100%;
+        height: 300px;
+        max-height: 300px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        scrollbar-gutter: stable;
+    }
+    .bar-chart {
+        max-width: 100%;
+        overflow-x: auto;
+        overflow-y: auto;
+    }
+    .bar-chart-inner {
+        width: 100%;
+        min-width: 0;
+        padding-right: 0;
+    }
+    .bar-row {
+        display: grid;
+        grid-template-columns: minmax(120px, 190px) minmax(120px, 1fr) minmax(78px, max-content);
+        align-items: center;
+        gap: 10px;
+        min-height: 34px;
+        margin-bottom: 9px;
+    }
+    .bar-label {
+        min-width: 0;
+        color: var(--erp-ink);
+        font-size: 0.84rem;
+        overflow-wrap: anywhere;
+    }
+    .bar-track {
+        height: 14px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: var(--erp-soft-blue);
+    }
+    .bar-fill {
+        height: 100%;
+        min-width: 2px;
+        border-radius: 999px;
+        background: var(--erp-accent);
+    }
+    .bar-fill.green {
+        background: var(--erp-green);
+    }
+    .bar-value {
+        color: var(--erp-muted);
+        font-size: 0.78rem;
+        text-align: right;
+        white-space: nowrap;
+        max-width: 110px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .trend {
+        height: 180px;
+        max-height: 180px;
+        max-width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-gutter: stable;
+        padding: 4px 2px 0;
+    }
+    .trend-inner {
+        display: flex;
+        align-items: end;
+        gap: 7px;
+        min-width: max-content;
+        height: 150px;
+    }
+    .trend-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: end;
+        gap: 6px;
+        min-width: 34px;
+        height: 100%;
+    }
+    .trend-bar {
+        width: 22px;
+        min-height: 2px;
+        border-radius: 5px 5px 0 0;
+        background: var(--erp-green);
+    }
+    .trend-label {
+        color: var(--erp-muted);
+        font-size: 0.66rem;
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+    }
+    .number {
+        text-align: right;
+        white-space: nowrap;
+    }
+    .report-list-scroll {
+        max-height: 460px;
+        overflow-x: auto;
+        overflow-y: auto;
+        scrollbar-gutter: stable;
+    }
+    @media (max-width: 992px) {
+        .report-shell,
+        .report-metrics,
+        .report-grid {
+            grid-template-columns: 1fr;
+        }
+        .sidebar {
+            position: static;
+            max-height: none;
+        }
+        .bar-chart-inner {
+            min-width: 620px;
+        }
+        .bar-row {
+            grid-template-columns: minmax(150px, 220px) minmax(280px, 1fr) minmax(92px, max-content);
+            gap: 8px;
+        }
+        .bar-value {
+            text-align: right;
+        }
+    }
+    @media print {
+        @page {
+            size: A4 landscape;
+            margin: 12mm;
+        }
+        .report-shell {
+            display: block;
+        }
+        .sidebar {
+            display: none !important;
+        }
+        .report-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+        .chart,
+        .trend {
+            max-height: none;
+            height: auto;
+            overflow: visible;
+        }
+        .trend-inner {
+            min-width: 0;
+            height: auto;
+        }
+        .bar-chart-inner {
+            min-width: 0;
+        }
+        .report-list-scroll {
+            max-height: none;
+            overflow: visible;
+        }
+        [data-collapse-body] {
+            display: block !important;
+        }
+        [data-collapse-toggle] {
+            display: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="page-head no-print">
+    <div>
+        <h1>Reportes</h1>
+        <p class="lead">Indicadores de remuneraciones con filtros por trabajador, departamento, periodo, categoria y rango liquido.</p>
+    </div>
+    <div class="actions">
+        <button class="button secondary" type="button" onclick="window.print()">Imprimir / PDF</button>
+        <a class="button" href="{% url 'data_scope:export_reports_csv' %}?{{ query_string }}">Exportar CSV</a>
+    </div>
+</section>
+
+<div class="report-shell">
+    <aside class="sidebar no-print">
+        <form method="get">
+            <h2>Filtros</h2>
+            <div class="mb-3">
+                <label class="form-label" for="q">Buscar trabajador</label>
+                <input class="form-control" id="q" name="q" type="search" value="{{ search }}" placeholder="Nombre, RUT, codigo">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="division">Departamento</label>
+                <select class="form-select" id="division" name="division">
+                    <option value="">Todos</option>
+                    {% for division in divisions %}
+                        <option value="{{ division }}" {% if division == selected_division %}selected{% endif %}>{{ division }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="desde">Periodo desde</label>
+                <select class="form-select" id="desde" name="desde">
+                    <option value="">Todos</option>
+                    {% for period in all_periods %}
+                        <option value="{{ period.periodo }}" {% if period.periodo == period_from %}selected{% endif %}>{{ period.periodo }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="hasta">Periodo hasta</label>
+                <select class="form-select" id="hasta" name="hasta">
+                    <option value="">Todos</option>
+                    {% for period in all_periods %}
+                        <option value="{{ period.periodo }}" {% if period.periodo == period_to %}selected{% endif %}>{{ period.periodo }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="categoria">Categoria de item</label>
+                <select class="form-select" id="categoria" name="categoria">
+                    <option value="">Todas</option>
+                    {% for value, label in category_choices %}
+                        <option value="{{ value }}" {% if value == selected_category %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="liquido_min">Sueldo liquido desde</label>
+                <input class="form-control" id="liquido_min" name="liquido_min" type="text" value="{{ liquid_min }}" placeholder="Ej: 500000">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="liquido_max">Sueldo liquido hasta</label>
+                <input class="form-control" id="liquido_max" name="liquido_max" type="text" value="{{ liquid_max }}" placeholder="Ej: 1500000">
+            </div>
+            <div class="d-grid gap-2">
+                <button class="button" type="submit">Aplicar filtros</button>
+                <a class="button secondary" href="{% url 'data_scope:reports' %}">Limpiar filtros</a>
+            </div>
+        </form>
+    </aside>
+
+    <div class="report-content">
+        <p class="report-note mb-3">
+            Periodos incluidos: {{ period_count }}{% if period_from or period_to or selected_division or search or selected_category %} · filtros activos{% endif %}
+        </p>
+
+        <section class="report-metrics" aria-label="Indicadores principales">
+            <div class="metric"><strong>{{ totals.liquidaciones|default:0 }}</strong><span>Liquidaciones</span></div>
+            <div class="metric"><strong>{{ totals.trabajadores|default:0 }}</strong><span>Trabajadores</span></div>
+            <div class="metric"><strong>{{ display_liquido }}</strong><span>Sueldo liquido total</span></div>
+            <div class="metric"><strong>{{ display_costo_empresa }}</strong><span>Costo empresa</span></div>
+            <div class="metric"><strong>{{ display_haberes }}</strong><span>Haberes imponibles</span></div>
+            <div class="metric"><strong>{{ display_haberes_no_imponibles }}</strong><span>Haberes no imponibles</span></div>
+            <div class="metric"><strong>{{ display_descuentos_legales }}</strong><span>Descuentos legales</span></div>
+            <div class="metric"><strong>{{ display_otros_descuentos }}</strong><span>Otros descuentos</span></div>
+        </section>
+
+        <section class="report-grid">
+            <div class="panel">
+                <h2>Totales por categoria</h2>
+                <div class="chart bar-chart">
+                    <div class="bar-chart-inner">
+                        {% for row in category_rows %}
+                            <div class="bar-row">
+                                <div class="bar-label">{{ row.label }}</div>
+                                <div class="bar-track"><div class="bar-fill" style="width: {{ row.bar_width }}%"></div></div>
+                                <div class="bar-value">{{ row.display_total }}</div>
+                            </div>
+                        {% empty %}
+                            <p class="report-note">Sin movimientos para el filtro seleccionado.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>Sueldo liquido por periodo</h2>
+                <div class="trend">
+                    <div class="trend-inner">
+                        {% for row in period_rows %}
+                            <div class="trend-item" title="{{ row.period__periodo }}: {{ row.display_liquido }}">
+                                <div class="trend-bar" style="height: {{ row.bar_height }}px"></div>
+                                <div class="trend-label">{{ row.period__periodo }}</div>
+                            </div>
+                        {% empty %}
+                            <p class="report-note">Sin periodos para el filtro seleccionado.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel" data-collapse-panel>
+            <div class="d-flex align-items-center justify-content-between gap-2">
+                <h2 class="mb-0">Resultados por departamento</h2>
+                <button class="button secondary no-print" type="button" data-collapse-toggle aria-expanded="true">Cerrar</button>
+            </div>
+            <div class="mt-3" data-collapse-body>
+                <div class="chart bar-chart">
+                    <div class="bar-chart-inner">
+                        {% for row in department_rows %}
+                            <div class="bar-row">
+                                <div class="bar-label">{{ row.department }}</div>
+                                <div class="bar-track"><div class="bar-fill green" style="width: {{ row.bar_width }}%"></div></div>
+                                <div class="bar-value">{{ row.display_liquido }}</div>
+                            </div>
+                        {% empty %}
+                            <p class="report-note">Sin departamentos para el filtro seleccionado.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="table-scroll report-list-scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Departamento</th>
+                                <th class="number">Liquidaciones</th>
+                                <th class="number">Trabajadores</th>
+                                <th class="number">Dias trabajados</th>
+                                <th class="number">Licencias</th>
+                                <th class="number">Ausencias</th>
+                                <th class="number">Horas extra</th>
+                                <th class="number">Horas no trabajadas</th>
+                                <th class="number">Liquido</th>
+                                <th class="number">Costo empresa</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in department_rows %}
+                                <tr>
+                                    <td>{{ row.department }}</td>
+                                    <td class="number">{{ row.liquidaciones }}</td>
+                                    <td class="number">{{ row.trabajadores }}</td>
+                                    <td class="number">{{ row.display_dias_trabajados }}</td>
+                                    <td class="number">{{ row.display_dias_licencias }}</td>
+                                    <td class="number">{{ row.display_dias_ausencias }}</td>
+                                    <td class="number">{{ row.display_horas_extras }}</td>
+                                    <td class="number">{{ row.display_horas_no_trabajadas }}</td>
+                                    <td class="number">{{ row.display_liquido }}</td>
+                                    <td class="number">{{ row.display_costo_empresa }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr><td colspan="10">Sin datos para mostrar.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel" data-collapse-panel>
+            <div class="d-flex align-items-center justify-content-between gap-2">
+                <h2 class="mb-0">Resultados por trabajador</h2>
+                <button class="button secondary no-print" type="button" data-collapse-toggle aria-expanded="true">Cerrar</button>
+            </div>
+            <div class="table-scroll report-list-scroll" data-collapse-body>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Codigo</th>
+                            <th>RUT</th>
+                            <th>Nombre</th>
+                            <th>Departamento</th>
+                            <th class="number">Liquidaciones</th>
+                            <th class="number">Dias trabajados</th>
+                            <th class="number">Horas extra</th>
+                            <th class="number">Liquido</th>
+                            <th class="number">Costo empresa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in employee_rows %}
+                            <tr>
+                                <td>{{ row.employee__codigo_ficha }}</td>
+                                <td>{{ row.employee__rut }}</td>
+                                <td>{{ row.employee__nombre }}</td>
+                                <td>{{ row.employee__division }}</td>
+                                <td class="number">{{ row.liquidaciones }}</td>
+                                <td class="number">{{ row.display_dias_trabajados }}</td>
+                                <td class="number">{{ row.display_horas_extras }}</td>
+                                <td class="number">{{ row.display_liquido }}</td>
+                                <td class="number">{{ row.display_costo_empresa }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr><td colspan="9">Sin trabajadores para mostrar.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="panel" data-collapse-panel>
+            <div class="d-flex align-items-center justify-content-between gap-2">
+                <h2 class="mb-0">Detalle por periodo</h2>
+                <button class="button secondary no-print" type="button" data-collapse-toggle aria-expanded="true">Cerrar</button>
+            </div>
+            <div class="table-scroll report-list-scroll" data-collapse-body>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Periodo</th>
+                            <th class="number">Liquidaciones</th>
+                            <th class="number">Trabajadores</th>
+                            <th class="number">Haberes imponibles</th>
+                            <th class="number">Descuentos legales</th>
+                            <th class="number">Liquido</th>
+                            <th class="number">Costo empresa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in period_rows %}
+                            <tr>
+                                <td>{{ row.period__periodo }}</td>
+                                <td class="number">{{ row.liquidaciones }}</td>
+                                <td class="number">{{ row.trabajadores }}</td>
+                                <td class="number">{{ row.display_haberes }}</td>
+                                <td class="number">{{ row.display_descuentos }}</td>
+                                <td class="number">{{ row.display_liquido }}</td>
+                                <td class="number">{{ row.display_costo_empresa }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr><td colspan="7">Sin datos para mostrar.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}

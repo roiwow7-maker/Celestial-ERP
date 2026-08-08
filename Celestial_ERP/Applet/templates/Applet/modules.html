@@ -1,0 +1,111 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Modulos | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Launcher de modulos</h1>
+        <p class="lead">Accesos principales del ERP. Los modulos futuros quedan visibles como proximamente sin mezclar responsabilidades con DATA_scope.</p>
+    </div>
+</section>
+
+<section class="grid">
+    {% if perms.DATA_scope.access_payroll_module %}
+    <a class="card" href="{% url 'data_scope:payroll_dashboard' %}">
+        <span class="badge">Activo</span>
+        <h2>RRHH / Remuneraciones</h2>
+        <p>Dashboard de remuneraciones, liquidaciones, periodos, trabajadores e importaciones.</p>
+        <span class="card-footer button secondary">Abrir</span>
+    </a>
+    <a class="card" href="{% url 'data_scope:reports' %}">
+        <span class="badge">Activo</span>
+        <h2>Reportes</h2>
+        <p>Filtros, KPIs, visualizaciones, exportacion CSV e impresion/PDF desde navegador.</p>
+        <span class="card-footer button secondary">Abrir</span>
+    </a>
+    {% endif %}
+    {% if perms.DATA_scope.upload_payroll_data %}
+    <a class="card" href="{% url 'data_scope:upload_data' %}">
+        <span class="badge">Activo</span>
+        <h2>Cargas ETL</h2>
+        <p>Carga de archivos historicos, ejecucion del ETL y descarga de salidas generadas.</p>
+        <span class="card-footer button secondary">Abrir</span>
+    </a>
+    {% endif %}
+    {% if perms.Accounting.access_accounting_module %}
+    <a class="card" href="{% url 'accounting:dashboard' %}">
+        <span class="badge">Activo</span>
+        <h2>Contabilidad</h2>
+        <p>Plan de cuentas, centros de costo, mapeos item-cuenta, asientos y reportes iniciales.</p>
+        <span class="card-footer button secondary">Abrir</span>
+    </a>
+    {% else %}
+    <div class="card">
+        <span class="badge pending">Sin acceso</span>
+        <h2>Contabilidad</h2>
+        <p>Modulo activo para usuarios con permisos contables.</p>
+        <span class="card-footer button disabled">Deshabilitado</span>
+    </div>
+    {% endif %}
+    {% if perms.Attendance.access_attendance_module %}
+    <a class="card" href="{% url 'attendance:dashboard' %}">
+        <span class="badge">Activo</span>
+        <h2>Asistencia</h2>
+        <p>Historial diario y mensual por trabajador, exportable e imprimible.</p>
+        <span class="card-footer button secondary">Abrir</span>
+    </a>
+    {% else %}
+    <div class="card">
+        <span class="badge pending">Sin acceso</span>
+        <h2>Asistencia</h2>
+        <p>Modulo activo para usuarios con permisos de asistencia.</p>
+        <span class="card-footer button disabled">Deshabilitado</span>
+    </div>
+    {% endif %}
+    {% if perms.Inventory.access_inventory_module %}
+    <a class="card" href="{% url 'inventory:dashboard' %}">
+        <span class="badge">Activo</span>
+        <h2>Inventario</h2>
+        <p>Productos, bodegas, stock, movimientos y valorizacion base v0.8.</p>
+        <span class="card-footer button secondary">Abrir</span>
+    </a>
+    {% else %}
+    <div class="card">
+        <span class="badge pending">Sin acceso</span>
+        <h2>Inventario</h2>
+        <p>Modulo activo para usuarios con permisos de inventario.</p>
+        <span class="card-footer button disabled">Deshabilitado</span>
+    </div>
+    {% endif %}
+    {% if perms.Commerce.access_commerce_module %}
+    <a class="card" href="{% url 'commerce:dashboard' %}">
+        <span class="badge">Activo</span>
+        <h2>Compras y ventas</h2>
+        <p>Proveedores, clientes, compras, ventas y reportes comerciales base v0.9.</p>
+        <span class="card-footer button secondary">Abrir</span>
+    </a>
+    {% else %}
+    <div class="card">
+        <span class="badge pending">Sin acceso</span>
+        <h2>Compras y ventas</h2>
+        <p>Modulo activo para usuarios con permisos comerciales.</p>
+        <span class="card-footer button disabled">Deshabilitado</span>
+    </div>
+    {% endif %}
+    {% if perms.Applet.access_admin_module %}
+    <a class="card" href="{% url 'applet:admin_panel' %}">
+        <span class="badge">Base</span>
+        <h2>Configuracion</h2>
+        <p>Panel general para preparar usuarios, rutas, backups, logs y parametros.</p>
+        <span class="card-footer button secondary">Abrir</span>
+    </a>
+    {% endif %}
+    <a class="card" href="/api/">
+        <span class="badge">API</span>
+        <h2>Integraciones</h2>
+        <p>Servicios JSON separados para consultar estado y datos resumidos del ERP.</p>
+        <span class="card-footer button secondary">Abrir</span>
+    </a>
+</section>
+{% endblock %}

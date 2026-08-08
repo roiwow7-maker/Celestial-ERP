@@ -1,0 +1,417 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Kanban operativo | Celestial ERP{% endblock %}
+
+{% block extra_head %}
+<style>
+    .kanban-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+    .board {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(240px, 1fr));
+        gap: 12px;
+        align-items: start;
+        overflow-x: auto;
+        padding-bottom: 8px;
+        scrollbar-gutter: stable;
+    }
+    .column {
+        min-height: 520px;
+        border: 1px solid var(--erp-line);
+        border-radius: 10px;
+        background: color-mix(in srgb, var(--erp-panel-bg) 74%, transparent);
+        box-shadow: 0 8px 20px rgba(23, 32, 51, 0.06);
+    }
+    .column-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 12px;
+        border-bottom: 1px solid var(--erp-line);
+    }
+    .column-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+    }
+    .count,
+    .tag {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        background: var(--erp-soft-blue);
+        color: var(--erp-muted);
+        font-size: 0.75rem;
+        font-weight: 800;
+    }
+    .count {
+        min-width: 26px;
+        justify-content: center;
+        padding: 3px 8px;
+    }
+    .tag {
+        min-height: 24px;
+        padding: 0 8px;
+        white-space: nowrap;
+    }
+    .tag.alta {
+        background: var(--erp-soft-rose);
+        color: var(--erp-danger);
+    }
+    .tag.media {
+        background: var(--erp-soft-sand);
+        color: var(--erp-warn);
+    }
+    .tag.baja {
+        background: color-mix(in srgb, var(--erp-green) 16%, transparent);
+        color: var(--erp-green);
+    }
+    .add-small {
+        width: 34px;
+        min-height: 32px;
+        padding: 0;
+    }
+    .cards {
+        display: grid;
+        gap: 10px;
+        min-height: 440px;
+        padding: 12px;
+    }
+    .cards.drag-over {
+        outline: 2px dashed var(--erp-accent);
+        outline-offset: -8px;
+        background: var(--erp-soft-blue);
+    }
+    .task-card {
+        border: 1px solid var(--erp-line);
+        border-radius: 10px;
+        background: var(--erp-input-bg);
+        padding: 12px;
+        box-shadow: 0 8px 18px rgba(23, 32, 51, 0.07);
+        cursor: grab;
+    }
+    .task-card:active {
+        cursor: grabbing;
+    }
+    .task-card.dragging {
+        opacity: 0.55;
+    }
+    .task-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+    .task-title {
+        font-weight: 800;
+        line-height: 1.25;
+        overflow-wrap: anywhere;
+    }
+    .task-text {
+        margin: 0;
+        color: var(--erp-muted);
+        font-size: 0.84rem;
+        line-height: 1.4;
+        overflow-wrap: anywhere;
+    }
+    .task-meta {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+    }
+    dialog {
+        width: min(560px, calc(100% - 32px));
+        border: 1px solid var(--erp-line);
+        border-radius: 10px;
+        padding: 0;
+        color: var(--erp-ink);
+    }
+    dialog::backdrop {
+        background: rgba(23, 32, 51, 0.35);
+    }
+    @media (max-width: 992px) {
+        .kanban-toolbar {
+            align-items: stretch;
+            flex-direction: column;
+        }
+        .board {
+            grid-template-columns: repeat(5, minmax(260px, 86vw));
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Kanban operativo</h1>
+        <p class="lead">Tablero de remuneraciones guardado en este navegador. Arrastra tarjetas entre columnas.</p>
+    </div>
+</section>
+
+<section class="panel kanban-toolbar" aria-label="Acciones del tablero">
+    <div class="actions">
+        <button class="button" type="button" id="new-task">Nueva tarea</button>
+        <button class="button secondary" type="button" id="reset-board">Restaurar inicial</button>
+    </div>
+        <p class="lead mb-0">Foco operativo post v1.0.10 y seguimiento interno.</p>
+</section>
+
+<section class="board" id="board" aria-label="Tablero Kanban"></section>
+
+<dialog id="task-dialog">
+    <form method="dialog" id="task-form">
+        <div class="p-3 border-bottom">
+            <h2 class="mb-0" id="dialog-title">Nueva tarea</h2>
+        </div>
+        <div class="p-3">
+            <input type="hidden" id="task-id">
+            <div class="mb-3">
+                <label class="form-label" for="task-title">Titulo</label>
+                <input class="form-control" id="task-title" required maxlength="120">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="task-description">Descripcion</label>
+                <textarea class="form-control" id="task-description" maxlength="500" rows="4"></textarea>
+            </div>
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <label class="form-label" for="task-priority">Prioridad</label>
+                    <select class="form-select" id="task-priority">
+                        <option value="alta">Alta</option>
+                        <option value="media" selected>Media</option>
+                        <option value="baja">Baja</option>
+                    </select>
+                </div>
+                <div class="col-sm-6">
+                    <label class="form-label" for="task-column">Estado</label>
+                    <select class="form-select" id="task-column"></select>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end gap-2 p-3 pt-0">
+            <button type="button" class="button secondary" id="cancel-task">Cancelar</button>
+            <button type="submit" class="button">Guardar</button>
+        </div>
+    </form>
+</dialog>
+{% endblock %}
+
+{% block extra_body %}
+<script>
+    const storageKey = "celestial-kanban-operativo-v11";
+    const columns = [
+        { id: "inbox", title: "Inbox" },
+        { id: "next", title: "Proximo" },
+        { id: "doing", title: "En progreso" },
+        { id: "review", title: "Validar" },
+        { id: "done", title: "Hecho" },
+    ];
+    const seedTasks = [
+        { id: "task-postgresql-restore-v112", column: "next", priority: "alta", title: "v1.1.2 - Restauracion PostgreSQL", description: "Restaurar el backup en una base aislada y validar tablas, conteos y acceso." },
+        { id: "task-postgresql-secrets-v114", column: "next", priority: "alta", title: "v1.1.4 - Credenciales por ambiente", description: "Retirar credenciales PostgreSQL del codigo y exigir variables de entorno." },
+        { id: "task-frontend-real", column: "next", priority: "alta", title: "Frontend real por fases", description: "Iniciar Next.js/TypeScript con login, layout y primer flujo vertical de Remuneraciones." },
+        { id: "task-recalculo-liquidaciones", column: "next", priority: "media", title: "Recalculo automatico de liquidaciones", description: "Actualizar totales cuando se crean o editan movimientos manuales." },
+        { id: "task-segcei-planilla", column: "doing", priority: "media", title: "Carga SEGCEI a Excel externo", description: "Copia local corregida lista; falta reemplazar archivo externo cuando deje de estar bloqueado." },
+        { id: "task-lan-validation", column: "review", priority: "media", title: "Validacion LAN post v1.0.8", description: "Probar acceso desde otro equipo con ALLOWED_HOSTS, firewall, usuarios nominales y restauracion validada." },
+        { id: "task-validacion-contabilidad", column: "review", priority: "media", title: "Validacion funcional Contabilidad", description: "Revisar plan de cuentas, mapeos y reportes antes de exportar a otro sistema." },
+        { id: "task-postgresql-final", column: "done", priority: "baja", title: "Preparacion PostgreSQL v1.0.8", description: "PostgreSQL queda documentado y listo para ensayo en servidor autorizado, sin instalarlo en este equipo." },
+        { id: "task-postgresql-dry-run-v109", column: "done", priority: "alta", title: "v1.0.9 - Ensayo SQLite a PostgreSQL", description: "Ensayo completado con migraciones y carga integral." },
+        { id: "task-postgresql-real-v1010", column: "done", priority: "alta", title: "v1.0.10 - Migracion real PostgreSQL", description: "PostgreSQL activo con 297.084 objetos validados." },
+        { id: "task-postgresql-backup-v111", column: "done", priority: "alta", title: "v1.1.1 - Backup PostgreSQL", description: "pg_dump custom, verificacion pg_restore, retencion, auditoria y pantalla administrativa." },
+        { id: "task-ia-local", column: "done", priority: "baja", title: "IA local planificada v1.0.7", description: "Planificada como servicio LAN separado, no dentro del proceso Django." },
+        { id: "task-contabilidad-v075", column: "done", priority: "alta", title: "Contabilidad base v0.7.5a", description: "Plan de cuentas, centros de costo, mapeos, asientos, reportes, metricas pulidas y pruebas automaticas." },
+        { id: "task-inventario-v084", column: "done", priority: "alta", title: "Inventario base v0.8.4", description: "Productos, bodegas, stock, movimientos, valorizacion, permisos, API, docs y pruebas automaticas." },
+        { id: "task-commerce-v094", column: "done", priority: "alta", title: "Compras y ventas base v0.9.4", description: "Proveedores, clientes, compras, ventas, lineas, reportes, permisos, API, docs y pruebas automaticas." },
+        { id: "task-attendance-v096c", column: "done", priority: "alta", title: "Asistencia historica v0.9.6C", description: "Registros diarios, historico por trabajador, reporte mensual, exportacion CSV, impresion/PDF, permisos, API, docs y pruebas automaticas." },
+        { id: "task-sqlite-v097", column: "done", priority: "alta", title: "Operacion SQLite reforzada v0.9.7", description: "Diagnostico de salud SQLite, integridad, WAL, backups, uploads, conteos base y documentacion sin PostgreSQL." },
+        { id: "task-auditoria-v098", column: "done", priority: "alta", title: "Auditoria granular v0.9.8", description: "Objeto, ID, representacion, cambios JSON, filtros en vista web, admin y pruebas automaticas." },
+        { id: "task-asistencia-rem-v099", column: "done", priority: "alta", title: "Asistencia a remuneraciones v0.9.9", description: "Comando sync_attendance_payroll para dias trabajados, ausencias, permisos y horas no trabajadas." },
+        { id: "task-testing-v101", column: "done", priority: "alta", title: "Testing amplio v1.0.1", description: "Suite ampliada a 41 pruebas con auditoria granular, SQLite y sincronizacion asistencia-remuneraciones." },
+        { id: "task-docs-v102", column: "done", priority: "alta", title: "Documentacion operativa v1.0.2", description: "Docs de operacion, testing, SQLite sin PostgreSQL y comandos criticos actualizados." },
+        { id: "task-lan-v103", column: "done", priority: "alta", title: "Deploy LAN v1.0.3", description: "Guia de despliegue local/red interna sin exposicion publica y con variables minimas." },
+        { id: "task-backup-restore-v104", column: "done", priority: "alta", title: "Restauracion validada v1.0.4", description: "Comando validate_backup_restore y prueba automatica de restauracion en copia temporal." },
+        { id: "task-audit-users-v105", column: "done", priority: "alta", title: "Auditoria por usuario/rol v1.0.5", description: "Prueba automatica de trazabilidad a usuario nominal y grupo funcional." },
+        { id: "task-data-migration-v106", column: "done", priority: "alta", title: "Plan de migracion v1.0.6", description: "Fases, prevalidaciones, inventario de datos y criterios de corte documentados." },
+        { id: "task-base-v068", column: "done", priority: "alta", title: "Base operativa robusta v0.6.8", description: "Settings separados, seguridad, Bootstrap offline, logs, cargas background, backups y exportaciones." },
+        { id: "task-exportacion", column: "done", priority: "media", title: "Exportacion CSV y PDF", description: "CSV descargable operativo y PDF disponible desde impresion/guardar como PDF del navegador." },
+        { id: "task-etl-base", column: "done", priority: "baja", title: "Flujo ETL base v0.3", description: "Transformacion, CSV por categoria, liquidaciones, Excel final e importacion a Django documentadas." },
+        { id: "task-backups-auto", column: "done", priority: "baja", title: "Backup automatico operativo", description: "Backup automatico cada 90 minutos probado y registrado en auditoria." },
+        { id: "task-rrhh-v058", column: "done", priority: "alta", title: "Operacion RRHH controlada v0.5.8c", description: "Formularios, vistas dedicadas, movimientos, liquidaciones, calidad ETL, auditoria, tests por rol y pulido UI." },
+        { id: "task-permisos", column: "done", priority: "alta", title: "Control de acceso v0.4.14", description: "Login, roles, permisos, validacion funcional y politica formal de backups." },
+        { id: "task-doc-v058", column: "done", priority: "media", title: "Documentacion y roadmap v0.5.8c", description: "Documentacion general, roadmap, faltantes, UI Bootstrap e ideas de modulos futuros actualizados." },
+    ];
+
+    let tasks = loadTasks();
+    let activeColumn = "inbox";
+    const board = document.getElementById("board");
+    const dialog = document.getElementById("task-dialog");
+    const form = document.getElementById("task-form");
+    const idField = document.getElementById("task-id");
+    const titleField = document.getElementById("task-title");
+    const descriptionField = document.getElementById("task-description");
+    const priorityField = document.getElementById("task-priority");
+    const columnField = document.getElementById("task-column");
+
+    columns.forEach((column) => {
+        const option = document.createElement("option");
+        option.value = column.id;
+        option.textContent = column.title;
+        columnField.appendChild(option);
+    });
+
+    document.getElementById("new-task").addEventListener("click", () => openTaskDialog());
+    document.getElementById("cancel-task").addEventListener("click", () => dialog.close());
+    document.getElementById("reset-board").addEventListener("click", () => {
+        if (!confirm("Restaurar el tablero inicial reemplazara las tareas guardadas en este navegador.")) {
+            return;
+        }
+        tasks = structuredClone(seedTasks);
+        saveTasks();
+        renderBoard();
+    });
+
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const existingId = idField.value;
+        const task = {
+            id: existingId || `task-${Date.now()}`,
+            column: columnField.value,
+            priority: priorityField.value,
+            title: titleField.value.trim(),
+            description: descriptionField.value.trim(),
+        };
+        if (!task.title) {
+            return;
+        }
+        tasks = existingId ? tasks.map((item) => item.id === existingId ? task : item) : [...tasks, task];
+        saveTasks();
+        renderBoard();
+        dialog.close();
+    });
+
+    function loadTasks() {
+        const stored = localStorage.getItem(storageKey);
+        if (!stored) {
+            return structuredClone(seedTasks);
+        }
+        try {
+            const parsed = JSON.parse(stored);
+            return Array.isArray(parsed) ? parsed : structuredClone(seedTasks);
+        } catch {
+            return structuredClone(seedTasks);
+        }
+    }
+
+    function saveTasks() {
+        localStorage.setItem(storageKey, JSON.stringify(tasks));
+    }
+
+    function openTaskDialog(task = null, columnId = activeColumn) {
+        document.getElementById("dialog-title").textContent = task ? "Editar tarea" : "Nueva tarea";
+        idField.value = task?.id || "";
+        titleField.value = task?.title || "";
+        descriptionField.value = task?.description || "";
+        priorityField.value = task?.priority || "media";
+        columnField.value = task?.column || columnId;
+        dialog.showModal();
+        titleField.focus();
+    }
+
+    function renderBoard() {
+        board.innerHTML = "";
+        columns.forEach((column) => {
+            const columnTasks = tasks.filter((task) => task.column === column.id);
+            const section = document.createElement("section");
+            section.className = "column";
+            section.innerHTML = `
+                <div class="column-header">
+                    <div class="column-title">
+                        <h2 class="h6 mb-0">${column.title}</h2>
+                        <span class="count">${columnTasks.length}</span>
+                    </div>
+                    <button class="button add-small" type="button" title="Nueva tarea">+</button>
+                </div>
+                <div class="cards" data-column="${column.id}"></div>
+            `;
+            section.querySelector(".add-small").addEventListener("click", () => {
+                activeColumn = column.id;
+                openTaskDialog(null, column.id);
+            });
+
+            const cards = section.querySelector(".cards");
+            cards.addEventListener("dragover", (event) => {
+                event.preventDefault();
+                cards.classList.add("drag-over");
+            });
+            cards.addEventListener("dragleave", () => cards.classList.remove("drag-over"));
+            cards.addEventListener("drop", (event) => {
+                event.preventDefault();
+                cards.classList.remove("drag-over");
+                const taskId = event.dataTransfer.getData("text/plain");
+                tasks = tasks.map((task) => task.id === taskId ? { ...task, column: column.id } : task);
+                saveTasks();
+                renderBoard();
+            });
+
+            columnTasks.forEach((task) => cards.appendChild(renderTask(task)));
+            board.appendChild(section);
+        });
+    }
+
+    function renderTask(task) {
+        const card = document.createElement("article");
+        card.className = "task-card";
+        card.draggable = true;
+        card.innerHTML = `
+            <div class="task-top">
+                <div class="task-title"></div>
+                <span class="tag ${task.priority}">${labelPriority(task.priority)}</span>
+            </div>
+            <p class="task-text"></p>
+            <div class="task-meta">
+                <button class="button secondary edit" type="button">Editar</button>
+                <button class="button secondary delete" type="button">Eliminar</button>
+            </div>
+        `;
+        card.querySelector(".task-title").textContent = task.title;
+        card.querySelector(".task-text").textContent = task.description || "Sin descripcion.";
+        card.addEventListener("dragstart", (event) => {
+            card.classList.add("dragging");
+            event.dataTransfer.setData("text/plain", task.id);
+        });
+        card.addEventListener("dragend", () => card.classList.remove("dragging"));
+        card.querySelector(".edit").addEventListener("click", () => openTaskDialog(task));
+        card.querySelector(".delete").addEventListener("click", () => {
+            if (!confirm("Eliminar esta tarea?")) {
+                return;
+            }
+            tasks = tasks.filter((item) => item.id !== task.id);
+            saveTasks();
+            renderBoard();
+        });
+        return card;
+    }
+
+    function labelPriority(priority) {
+        if (priority === "alta") {
+            return "Alta";
+        }
+        if (priority === "baja") {
+            return "Baja";
+        }
+        return "Media";
+    }
+
+    renderBoard();
+</script>
+{% endblock %}

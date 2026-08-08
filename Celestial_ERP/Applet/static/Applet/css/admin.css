@@ -1,0 +1,1068 @@
+:root {
+    color-scheme: light;
+    --primary: #5f8794;
+    --secondary: #476f7c;
+    --accent: #668f78;
+    --primary-fg: #ffffff;
+    --body-bg: #f4f1ec;
+    --body-fg: #24303f;
+    --body-quiet-color: #5d6878;
+    --body-medium-color: #4b5565;
+    --border-color: #d6d0c8;
+    --hairline-color: #e4ded6;
+    --darkened-bg: #ede8df;
+    --selected-bg: #e2eeeb;
+    --selected-row: #eef6f3;
+    --link-fg: #476f7c;
+    --link-hover-color: #345966;
+    --header-bg: rgba(255, 255, 255, 0.94);
+    --header-color: #24303f;
+    --breadcrumbs-bg: #e2eeeb;
+    --breadcrumbs-fg: #425466;
+    --button-bg: #5f8794;
+    --button-hover-bg: #476f7c;
+    --default-button-bg: #5f8794;
+    --default-button-hover-bg: #476f7c;
+    --close-button-bg: #6d7886;
+    --close-button-hover-bg: #4b5565;
+    --delete-button-bg: #a86d6d;
+    --delete-button-hover-bg: #8d5555;
+    --erp-admin-surface: rgba(255, 255, 255, 0.96);
+    --erp-admin-soft: #e2eeeb;
+    --erp-admin-blue: #5f8794;
+    --erp-admin-blue-strong: #476f7c;
+    --erp-admin-green: #668f78;
+    --erp-admin-rose: #c39b92;
+    --erp-admin-sand: #dfcfb4;
+    --erp-admin-ink: #24303f;
+    --erp-admin-muted: #5d6878;
+    --erp-admin-panel-alt: #fbf8f4;
+    --erp-admin-input-bg: #ffffff;
+    --erp-admin-heading-bg: linear-gradient(90deg, #e2eeeb, #eee4d4);
+    --erp-admin-shadow-nav: 0 20px 48px rgba(36, 48, 63, 0.16);
+    --erp-admin-shadow-panel: 0 12px 28px rgba(36, 48, 63, 0.08);
+}
+
+html[data-theme="light"],
+html[data-erp-theme="light"] {
+    color-scheme: light;
+    --primary: #5f8794;
+    --secondary: #476f7c;
+    --accent: #668f78;
+    --primary-fg: #ffffff;
+    --body-bg: #f4f1ec;
+    --body-fg: #24303f;
+    --body-quiet-color: #5d6878;
+    --body-medium-color: #4b5565;
+    --border-color: #d6d0c8;
+    --hairline-color: #e4ded6;
+    --darkened-bg: #ede8df;
+    --selected-bg: #e2eeeb;
+    --selected-row: #eef6f3;
+    --link-fg: #476f7c;
+    --link-hover-color: #345966;
+    --header-bg: rgba(255, 255, 255, 0.94);
+    --header-color: #24303f;
+    --breadcrumbs-bg: #e2eeeb;
+    --breadcrumbs-fg: #425466;
+    --button-bg: #5f8794;
+    --button-hover-bg: #476f7c;
+    --default-button-bg: #5f8794;
+    --default-button-hover-bg: #476f7c;
+    --close-button-bg: #6d7886;
+    --close-button-hover-bg: #4b5565;
+    --delete-button-bg: #a86d6d;
+    --delete-button-hover-bg: #8d5555;
+    --erp-admin-surface: rgba(255, 255, 255, 0.96);
+    --erp-admin-soft: #e2eeeb;
+    --erp-admin-blue: #5f8794;
+    --erp-admin-blue-strong: #476f7c;
+    --erp-admin-green: #668f78;
+    --erp-admin-rose: #c39b92;
+    --erp-admin-sand: #dfcfb4;
+    --erp-admin-ink: #24303f;
+    --erp-admin-muted: #5d6878;
+    --erp-admin-panel-alt: #fbf8f4;
+    --erp-admin-input-bg: #ffffff;
+    --erp-admin-heading-bg: #e2eeeb;
+    --erp-admin-shadow-nav: 0 20px 48px rgba(36, 48, 63, 0.16);
+    --erp-admin-shadow-panel: 0 12px 28px rgba(36, 48, 63, 0.08);
+}
+
+html[data-theme="dark"],
+html[data-erp-theme="dark"] {
+    color-scheme: dark;
+    --primary: #8db7c1;
+    --secondary: #acd0d6;
+    --accent: #98bda5;
+    --primary-fg: #17212b;
+    --body-bg: #1f2933;
+    --body-fg: #eef2f4;
+    --body-quiet-color: #b8c3ca;
+    --body-medium-color: #d6dee2;
+    --border-color: #40505b;
+    --hairline-color: #33434f;
+    --darkened-bg: #1a242d;
+    --selected-bg: #314652;
+    --selected-row: #2d3f49;
+    --link-fg: #acd0d6;
+    --link-hover-color: #c7e3e6;
+    --header-bg: rgba(41, 53, 65, 0.94);
+    --header-color: #eef2f4;
+    --breadcrumbs-bg: #324752;
+    --breadcrumbs-fg: #d6dee2;
+    --button-bg: #8db7c1;
+    --button-hover-bg: #acd0d6;
+    --default-button-bg: #8db7c1;
+    --default-button-hover-bg: #acd0d6;
+    --close-button-bg: #51616d;
+    --close-button-hover-bg: #6f828e;
+    --delete-button-bg: #d09a9a;
+    --delete-button-hover-bg: #e2b5b5;
+    --erp-admin-surface: rgba(41, 53, 65, 0.96);
+    --erp-admin-soft: #324752;
+    --erp-admin-blue: #8db7c1;
+    --erp-admin-blue-strong: #acd0d6;
+    --erp-admin-green: #98bda5;
+    --erp-admin-rose: #554143;
+    --erp-admin-sand: #4a4438;
+    --erp-admin-ink: #eef2f4;
+    --erp-admin-muted: #b8c3ca;
+    --erp-admin-panel-alt: #26333e;
+    --erp-admin-input-bg: #24303b;
+    --erp-admin-heading-bg: linear-gradient(90deg, #324752, #4a4438);
+    --erp-admin-shadow-nav: 0 22px 54px rgba(0, 0, 0, 0.34);
+    --erp-admin-shadow-panel: 0 12px 28px rgba(0, 0, 0, 0.18);
+}
+
+body {
+    min-height: 100vh;
+    background:
+        linear-gradient(180deg, color-mix(in srgb, var(--erp-admin-surface) 72%, transparent), color-mix(in srgb, var(--body-bg) 96%, transparent)),
+        var(--body-bg);
+    color: var(--body-fg);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#container {
+    padding: 14px 0 44px;
+}
+
+#header {
+    position: sticky;
+    top: 14px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px 18px;
+    width: min(1320px, calc(100% - 24px));
+    min-height: auto;
+    margin: 0 auto;
+    padding: 12px 16px;
+    border: 1px solid rgba(222, 219, 213, 0.88);
+    border-radius: 12px;
+    background: var(--header-bg);
+    box-shadow: var(--erp-admin-shadow-nav);
+    backdrop-filter: blur(14px);
+}
+
+#branding {
+    min-width: 230px;
+}
+
+#branding h1,
+#branding h1 a:link,
+#branding h1 a:visited {
+    color: var(--erp-admin-ink);
+    font-size: 1.18rem;
+    font-weight: 800;
+    letter-spacing: 0;
+}
+
+.erp-admin-brand-subtitle {
+    display: block;
+    color: var(--erp-admin-muted);
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.15;
+}
+
+#user-tools {
+    margin-left: auto;
+    color: var(--erp-admin-muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+#user-tools a,
+#logout-form button {
+    border-bottom: 0;
+    color: var(--erp-admin-blue-strong);
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.theme-toggle {
+    display: none !important;
+}
+
+.erp-admin-floating-nav {
+    flex: 1 1 100%;
+    order: 3;
+    padding-top: 4px;
+}
+
+.erp-admin-nav-list {
+    display: flex;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    overflow-x: auto;
+    list-style: none;
+    scrollbar-gutter: stable;
+}
+
+.erp-admin-nav-list a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    padding: 0 11px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: var(--erp-admin-blue-strong);
+    font-size: 0.84rem;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.erp-admin-nav-list a:hover,
+.erp-admin-nav-list a:focus {
+    border-color: rgba(127, 169, 182, 0.42);
+    background: var(--erp-admin-soft);
+    color: #3f6f7f;
+}
+
+div.breadcrumbs {
+    width: min(1320px, calc(100% - 24px));
+    margin: 16px auto 0;
+    padding: 10px 14px;
+    border: 1px solid rgba(222, 219, 213, 0.88);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--breadcrumbs-bg) 94%, transparent);
+    color: var(--erp-admin-muted);
+    box-shadow: 0 8px 18px rgba(36, 48, 63, 0.05);
+}
+
+div.breadcrumbs a {
+    color: var(--erp-admin-blue-strong);
+}
+
+#content {
+    width: min(1320px, calc(100% - 24px));
+    margin: 22px auto 0;
+    padding: 0;
+}
+
+#content h1 {
+    margin: 0 0 18px;
+    color: var(--erp-admin-ink);
+    font-size: clamp(1.45rem, 2vw, 1.9rem);
+    font-weight: 800;
+    letter-spacing: 0;
+}
+
+#content-related {
+    border: 1px solid rgba(222, 219, 213, 0.9);
+    border-radius: 10px;
+    background: var(--erp-admin-surface);
+    box-shadow: var(--erp-admin-shadow-panel);
+}
+
+.module,
+.inline-group,
+#changelist,
+.submit-row,
+#toolbar,
+.paginator,
+.messagelist li {
+    border: 1px solid rgba(222, 219, 213, 0.9);
+    border-radius: 10px;
+    background: var(--erp-admin-surface);
+    box-shadow: var(--erp-admin-shadow-panel);
+    overflow: hidden;
+}
+
+.module h2,
+.module caption,
+.inline-group h2,
+#changelist-filter h2 {
+    background: var(--erp-admin-heading-bg);
+    color: var(--erp-admin-ink);
+    font-size: 0.9rem;
+    font-weight: 800;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table thead th,
+.results thead th {
+    background: var(--erp-admin-panel-alt);
+    color: var(--erp-admin-muted);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+td,
+th {
+    border-bottom-color: var(--border-color);
+}
+
+tr:nth-child(odd),
+.row-form-errors {
+    background: color-mix(in srgb, var(--erp-admin-surface) 66%, transparent);
+}
+
+tr:nth-child(even) {
+    background: var(--erp-admin-panel-alt);
+}
+
+#changelist-filter {
+    border-left: 1px solid var(--border-color);
+    background: var(--erp-admin-surface);
+}
+
+#changelist-filter li.selected {
+    border-left-color: var(--erp-admin-blue);
+}
+
+#changelist-filter a {
+    color: var(--erp-admin-blue-strong);
+}
+
+#toolbar {
+    padding: 12px;
+}
+
+input,
+select,
+textarea,
+.vTextField,
+.select2-container--admin-autocomplete .select2-selection--single {
+    border-color: var(--border-color);
+    border-radius: 8px;
+    background-color: var(--erp-admin-input-bg);
+    color: var(--erp-admin-ink);
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+.vTextField:focus {
+    border-color: var(--erp-admin-blue);
+    box-shadow: 0 0 0 0.2rem rgba(127, 169, 182, 0.2);
+}
+
+.button,
+input[type=submit],
+input[type=button],
+.submit-row input,
+a.button,
+#changelist-search input[type=submit] {
+    border-radius: 8px;
+    background: var(--erp-admin-blue);
+    color: #fff;
+    font-weight: 800;
+}
+
+.button:hover,
+input[type=submit]:hover,
+input[type=button]:hover,
+.submit-row input:hover,
+a.button:hover,
+#changelist-search input[type=submit]:hover {
+    background: var(--erp-admin-blue-strong);
+    color: var(--primary-fg);
+}
+
+.submit-row a.deletelink,
+a.deletelink {
+    border-radius: 8px;
+    background: var(--delete-button-bg);
+    color: #fff;
+    font-weight: 800;
+}
+
+.object-tools a,
+.object-tools a:link,
+.object-tools a:visited {
+    border-radius: 8px;
+    background: var(--erp-admin-blue);
+    font-weight: 800;
+}
+
+.object-tools a:hover {
+    background: var(--erp-admin-blue-strong);
+}
+
+.erp-admin-home {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+    gap: 18px;
+    align-items: start;
+}
+
+.erp-admin-card {
+    border: 1px solid rgba(222, 219, 213, 0.9);
+    border-radius: 10px;
+    background: var(--erp-admin-surface);
+    box-shadow: var(--erp-admin-shadow-panel);
+    overflow: hidden;
+}
+
+.erp-admin-card h2 {
+    margin: 0;
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--erp-admin-heading-bg);
+    color: var(--erp-admin-ink);
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+.erp-admin-card-body {
+    padding: 16px 18px;
+}
+
+.erp-admin-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.erp-model-tile {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 132px;
+    padding: 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--erp-admin-panel-alt);
+}
+
+.erp-model-title {
+    color: var(--erp-admin-ink);
+    font-size: 1rem;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.erp-model-title:hover {
+    color: var(--erp-admin-blue-strong);
+}
+
+.erp-model-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: auto;
+}
+
+.erp-mini-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 0 11px;
+    border: 1px solid var(--erp-admin-blue);
+    border-radius: 8px;
+    color: var(--erp-admin-blue-strong);
+    font-size: 0.82rem;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.erp-mini-button.primary {
+    background: var(--erp-admin-blue);
+    color: #ffffff;
+}
+
+.erp-mini-button:hover {
+    background: var(--erp-admin-soft);
+    color: #3f6f7f;
+}
+
+.erp-mini-button.primary:hover {
+    background: var(--erp-admin-blue-strong);
+    color: #fff;
+}
+
+.erp-admin-theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 0 11px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--erp-admin-input-bg);
+    color: var(--erp-admin-blue-strong);
+    font-size: 0.82rem;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.erp-admin-theme-toggle:hover,
+.erp-admin-theme-toggle:focus {
+    background: var(--erp-admin-soft);
+}
+
+.erp-help-list,
+.erp-recent-list {
+    margin: 0;
+    padding-left: 18px;
+    line-height: 1.55;
+}
+
+.erp-help-list {
+    color: var(--erp-admin-muted);
+}
+
+.erp-help-list li,
+.erp-recent-list li {
+    margin: 8px 0;
+}
+
+/* Refinamiento de legibilidad para operacion diaria del Django Admin. */
+body {
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+a:link,
+a:visited {
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+}
+
+#header {
+    border-radius: 10px;
+    box-shadow: 0 14px 34px rgba(36, 48, 63, 0.14);
+}
+
+html[data-erp-theme="dark"] #header {
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.32);
+}
+
+#branding h1,
+#branding h1 a:link,
+#branding h1 a:visited {
+    font-size: 1.1rem;
+    line-height: 1.15;
+}
+
+.erp-admin-brand-subtitle {
+    margin-top: 3px;
+    font-size: 0.8rem;
+}
+
+#user-tools {
+    max-width: 100%;
+    line-height: 1.5;
+}
+
+.erp-admin-floating-nav {
+    padding-top: 2px;
+}
+
+.erp-admin-nav-list {
+    gap: 6px;
+    padding-bottom: 2px;
+}
+
+.erp-admin-nav-list a,
+.erp-admin-theme-toggle {
+    min-height: 36px;
+    border-color: var(--border-color);
+    background: var(--erp-admin-input-bg);
+    color: var(--erp-admin-blue-strong);
+    font-size: 0.86rem;
+}
+
+.erp-admin-nav-list a:hover,
+.erp-admin-nav-list a:focus,
+.erp-admin-theme-toggle:hover,
+.erp-admin-theme-toggle:focus {
+    background: var(--erp-admin-soft);
+    color: var(--erp-admin-ink);
+}
+
+#content {
+    margin-top: 20px;
+}
+
+#content h1 {
+    margin-bottom: 14px;
+    font-size: clamp(1.35rem, 1.8vw, 1.75rem);
+}
+
+.module,
+.inline-group,
+#changelist,
+.submit-row,
+#toolbar,
+.paginator,
+.messagelist li,
+.erp-admin-card,
+#content-related {
+    border-color: var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(36, 48, 63, 0.07);
+}
+
+html[data-erp-theme="dark"] .module,
+html[data-erp-theme="dark"] .inline-group,
+html[data-erp-theme="dark"] #changelist,
+html[data-erp-theme="dark"] .submit-row,
+html[data-erp-theme="dark"] #toolbar,
+html[data-erp-theme="dark"] .paginator,
+html[data-erp-theme="dark"] .messagelist li,
+html[data-erp-theme="dark"] .erp-admin-card,
+html[data-erp-theme="dark"] #content-related {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+}
+
+.module h2,
+.module caption,
+.inline-group h2,
+#changelist-filter h2,
+.erp-admin-card h2 {
+    background: var(--erp-admin-soft);
+    color: var(--erp-admin-ink);
+    font-size: 0.95rem;
+    line-height: 1.3;
+}
+
+.erp-admin-home {
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+}
+
+.erp-admin-card-body {
+    padding: 16px;
+}
+
+.erp-admin-intro {
+    margin: 0 0 14px;
+    color: var(--erp-admin-muted);
+    font-size: 0.95rem;
+}
+
+.erp-admin-app-list {
+    display: grid;
+    gap: 12px;
+}
+
+.erp-admin-app-group {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--erp-admin-panel-alt);
+    overflow: hidden;
+}
+
+.erp-admin-app-group h3 {
+    margin: 0;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--erp-admin-ink);
+    font-size: 0.98rem;
+    font-weight: 800;
+}
+
+.erp-admin-model-list {
+    display: grid;
+}
+
+.erp-model-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border-color);
+    background: color-mix(in srgb, var(--erp-admin-surface) 72%, transparent);
+}
+
+.erp-model-row:last-child {
+    border-bottom: 0;
+}
+
+.erp-model-copy {
+    min-width: 0;
+}
+
+.erp-model-copy span {
+    display: block;
+    margin-top: 2px;
+    color: var(--erp-admin-muted);
+    font-size: 0.84rem;
+}
+
+.erp-model-title {
+    display: inline-block;
+    overflow-wrap: anywhere;
+}
+
+.erp-model-actions {
+    margin-top: 0;
+}
+
+.erp-mini-button {
+    min-width: 70px;
+    min-height: 36px;
+}
+
+.erp-help-list,
+.erp-recent-list {
+    color: var(--erp-admin-muted);
+    font-size: 0.95rem;
+}
+
+.erp-recent-list small {
+    color: var(--erp-admin-muted);
+}
+
+#changelist-form .results {
+    overflow-x: auto;
+}
+
+.results table,
+#result_list {
+    min-width: 760px;
+}
+
+table thead th,
+.results thead th {
+    color: var(--erp-admin-ink);
+    font-size: 0.78rem;
+    line-height: 1.3;
+}
+
+td,
+th {
+    padding-top: 11px;
+    padding-bottom: 11px;
+    color: var(--erp-admin-ink);
+    vertical-align: middle;
+}
+
+tbody th a,
+td a {
+    font-weight: 700;
+}
+
+tr:hover {
+    background: color-mix(in srgb, var(--erp-admin-soft) 62%, var(--erp-admin-surface));
+}
+
+#changelist-filter {
+    color: var(--erp-admin-ink);
+}
+
+#changelist-filter h3 {
+    color: var(--erp-admin-muted);
+    font-size: 0.78rem;
+    font-weight: 800;
+}
+
+#changelist-filter li.selected a {
+    color: var(--erp-admin-ink);
+    font-weight: 800;
+}
+
+.form-row,
+.aligned .form-row {
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+.aligned label {
+    color: var(--erp-admin-ink);
+    font-weight: 800;
+}
+
+.help,
+p.help,
+form .aligned p.help,
+div.help {
+    color: var(--erp-admin-muted);
+    font-size: 0.88rem;
+    line-height: 1.45;
+}
+
+input,
+select,
+textarea,
+.vTextField,
+.select2-container--admin-autocomplete .select2-selection--single {
+    min-height: 36px;
+    font-size: 0.95rem;
+}
+
+textarea {
+    min-height: 110px;
+}
+
+.button,
+input[type=submit],
+input[type=button],
+.submit-row input,
+a.button,
+#changelist-search input[type=submit],
+.object-tools a,
+.object-tools a:link,
+.object-tools a:visited {
+    min-height: 36px;
+    padding: 8px 13px;
+    border-radius: 7px;
+}
+
+.submit-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.errornote,
+ul.errorlist {
+    border-radius: 8px;
+}
+
+/* Correcciones especificas de contraste por tema dentro del admin Django. */
+html[data-erp-theme="light"] body,
+html[data-theme="light"] body {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.64), rgba(244, 241, 236, 0.98)),
+        var(--body-bg);
+}
+
+html[data-erp-theme="dark"] body,
+html[data-theme="dark"] body {
+    background:
+        linear-gradient(180deg, rgba(41, 53, 65, 0.74), rgba(31, 41, 51, 0.98)),
+        var(--body-bg);
+}
+
+html[data-erp-theme="dark"] *,
+html[data-theme="dark"] * {
+    scrollbar-color: #6e8791 #1b252e;
+}
+
+html[data-erp-theme="light"] .module,
+html[data-theme="light"] .module,
+html[data-erp-theme="light"] .inline-group,
+html[data-theme="light"] .inline-group,
+html[data-erp-theme="light"] #changelist,
+html[data-theme="light"] #changelist,
+html[data-erp-theme="light"] .submit-row,
+html[data-theme="light"] .submit-row,
+html[data-erp-theme="light"] #toolbar,
+html[data-theme="light"] #toolbar,
+html[data-erp-theme="light"] .paginator,
+html[data-theme="light"] .paginator,
+html[data-erp-theme="light"] .erp-admin-card,
+html[data-theme="light"] .erp-admin-card {
+    background: #ffffff;
+}
+
+html[data-erp-theme="dark"] .module,
+html[data-theme="dark"] .module,
+html[data-erp-theme="dark"] .inline-group,
+html[data-theme="dark"] .inline-group,
+html[data-erp-theme="dark"] #changelist,
+html[data-theme="dark"] #changelist,
+html[data-erp-theme="dark"] .submit-row,
+html[data-theme="dark"] .submit-row,
+html[data-erp-theme="dark"] #toolbar,
+html[data-theme="dark"] #toolbar,
+html[data-erp-theme="dark"] .paginator,
+html[data-theme="dark"] .paginator,
+html[data-erp-theme="dark"] .erp-admin-card,
+html[data-theme="dark"] .erp-admin-card {
+    background: #293541;
+}
+
+html[data-erp-theme="dark"] .module h2,
+html[data-theme="dark"] .module h2,
+html[data-erp-theme="dark"] .module caption,
+html[data-theme="dark"] .module caption,
+html[data-erp-theme="dark"] .inline-group h2,
+html[data-theme="dark"] .inline-group h2,
+html[data-erp-theme="dark"] #changelist-filter h2,
+html[data-theme="dark"] #changelist-filter h2,
+html[data-erp-theme="dark"] .erp-admin-card h2,
+html[data-theme="dark"] .erp-admin-card h2 {
+    background: #324752;
+    color: #f3f6f7;
+}
+
+html[data-erp-theme="light"] table thead th,
+html[data-theme="light"] table thead th,
+html[data-erp-theme="light"] .results thead th,
+html[data-theme="light"] .results thead th {
+    background: #edf4f2;
+    color: #24303f;
+}
+
+html[data-erp-theme="dark"] table thead th,
+html[data-theme="dark"] table thead th,
+html[data-erp-theme="dark"] .results thead th,
+html[data-theme="dark"] .results thead th {
+    background: #22303a;
+    color: #f3f6f7;
+}
+
+html[data-erp-theme="dark"] tr:nth-child(odd),
+html[data-theme="dark"] tr:nth-child(odd) {
+    background: #293541;
+}
+
+html[data-erp-theme="dark"] tr:nth-child(even),
+html[data-theme="dark"] tr:nth-child(even),
+html[data-erp-theme="dark"] .erp-admin-app-group,
+html[data-theme="dark"] .erp-admin-app-group {
+    background: #24303b;
+}
+
+html[data-erp-theme="light"] input,
+html[data-theme="light"] input,
+html[data-erp-theme="light"] select,
+html[data-theme="light"] select,
+html[data-erp-theme="light"] textarea,
+html[data-theme="light"] textarea {
+    background-color: #ffffff;
+    color: #24303f;
+}
+
+html[data-erp-theme="dark"] input,
+html[data-theme="dark"] input,
+html[data-erp-theme="dark"] select,
+html[data-theme="dark"] select,
+html[data-erp-theme="dark"] textarea,
+html[data-theme="dark"] textarea {
+    background-color: #1f2a34;
+    color: #f3f6f7;
+    border-color: #51636f;
+}
+
+html[data-erp-theme="dark"] input::placeholder,
+html[data-theme="dark"] input::placeholder,
+html[data-erp-theme="dark"] textarea::placeholder,
+html[data-theme="dark"] textarea::placeholder {
+    color: #aebbc3;
+}
+
+html[data-erp-theme="dark"] .quiet,
+html[data-theme="dark"] .quiet,
+html[data-erp-theme="dark"] .help,
+html[data-theme="dark"] .help,
+html[data-erp-theme="dark"] p.help,
+html[data-theme="dark"] p.help,
+html[data-erp-theme="dark"] .erp-admin-intro,
+html[data-theme="dark"] .erp-admin-intro,
+html[data-erp-theme="dark"] .erp-model-copy span,
+html[data-theme="dark"] .erp-model-copy span {
+    color: #c5d0d6;
+}
+
+html[data-erp-theme="dark"] a:link,
+html[data-theme="dark"] a:link,
+html[data-erp-theme="dark"] a:visited,
+html[data-theme="dark"] a:visited {
+    color: #c5e1e6;
+}
+
+html[data-erp-theme="dark"] .button,
+html[data-theme="dark"] .button,
+html[data-erp-theme="dark"] input[type=submit],
+html[data-theme="dark"] input[type=submit],
+html[data-erp-theme="dark"] input[type=button],
+html[data-theme="dark"] input[type=button],
+html[data-erp-theme="dark"] .submit-row input,
+html[data-theme="dark"] .submit-row input,
+html[data-erp-theme="dark"] a.button,
+html[data-theme="dark"] a.button {
+    background: #8db7c1;
+    color: #17212b;
+}
+
+html[data-erp-theme="dark"] .button:hover,
+html[data-theme="dark"] .button:hover,
+html[data-erp-theme="dark"] input[type=submit]:hover,
+html[data-theme="dark"] input[type=submit]:hover,
+html[data-erp-theme="dark"] input[type=button]:hover,
+html[data-theme="dark"] input[type=button]:hover,
+html[data-erp-theme="dark"] .submit-row input:hover,
+html[data-theme="dark"] .submit-row input:hover,
+html[data-erp-theme="dark"] a.button:hover,
+html[data-theme="dark"] a.button:hover {
+    background: #acd0d6;
+    color: #17212b;
+}
+
+@media (max-width: 1024px) {
+    #header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    #user-tools {
+        margin-left: 0;
+    }
+
+    .erp-admin-floating-nav {
+        width: 100%;
+    }
+}
+
+@media (max-width: 767px) {
+    #container {
+        padding-top: 10px;
+    }
+
+    #header,
+    #content,
+    div.breadcrumbs {
+        width: min(100% - 16px, 1320px);
+    }
+
+    .erp-admin-home,
+    .erp-admin-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .erp-model-row {
+        grid-template-columns: 1fr;
+    }
+
+    .erp-model-actions {
+        width: 100%;
+    }
+
+    .erp-mini-button {
+        flex: 1 1 110px;
+    }
+
+    .module,
+    .inline-group,
+    #changelist,
+    .submit-row {
+        border-radius: 8px;
+    }
+}

@@ -1,0 +1,9 @@
+{% extends "Applet/base.html" %}
+{% block title %}Venta {{ order.number }} | Celestial ERP{% endblock %}
+{% block content %}
+<section class="page-head"><div><h1>Venta {{ order.number }}</h1><p class="lead">{{ order.customer.name }} - {{ order.date }} - {{ order.get_status_display }}</p></div>{% if perms.Commerce.manage_sales %}<a class="button" href="{% url 'commerce:sales_line_create' order.id %}">Agregar linea</a>{% endif %}</section>
+<section class="metrics compact"><div class="metric"><span>Lineas</span><strong>{{ order.lines.count }}</strong></div><div class="metric"><span>Total</span><strong>{{ order.total_amount }}</strong></div></section>
+<section class="panel"><h2>Lineas</h2><div class="table-scroll"><table><thead><tr><th>Producto</th><th>Descripcion</th><th>Cantidad</th><th>Precio</th><th>Total</th></tr></thead><tbody>
+{% for line in order.lines.all %}<tr><td>{{ line.product.sku }} - {{ line.product.name }}</td><td>{{ line.description|default:"-" }}</td><td>{{ line.quantity }}</td><td>{{ line.unit_price }}</td><td>{{ line.total_amount }}</td></tr>{% empty %}<tr><td colspan="5">Sin lineas.</td></tr>{% endfor %}
+</tbody></table></div></section>
+{% endblock %}

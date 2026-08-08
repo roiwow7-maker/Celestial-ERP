@@ -1,0 +1,42 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Bodegas | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Bodegas</h1>
+        <p class="lead">Ubicaciones operativas para separar saldos de inventario.</p>
+    </div>
+    {% if perms.Inventory.manage_inventory_config %}
+        <a class="button" href="{% url 'inventory:warehouse_create' %}">Nueva bodega</a>
+    {% endif %}
+</section>
+
+<section class="panel">
+    <form class="filters compact" method="get">
+        <input class="form-control" name="q" type="search" value="{{ query }}" placeholder="Buscar por codigo, nombre o ubicacion">
+        <button class="button secondary" type="submit">Buscar</button>
+    </form>
+    <div class="table-scroll">
+        <table>
+            <thead>
+                <tr><th>Codigo</th><th>Nombre</th><th>Ubicacion</th><th>Activo</th><th></th></tr>
+            </thead>
+            <tbody>
+                {% for warehouse in warehouses %}
+                    <tr>
+                        <td>{{ warehouse.code }}</td>
+                        <td>{{ warehouse.name }}</td>
+                        <td>{{ warehouse.location|default:"-" }}</td>
+                        <td>{{ warehouse.is_active|yesno:"Si,No" }}</td>
+                        <td>{% if perms.Inventory.manage_inventory_config %}<a class="button secondary" href="{% url 'inventory:warehouse_update' warehouse.id %}">Editar</a>{% endif %}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="5">Sin bodegas registradas.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Periodos | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Periodos</h1>
+        <p class="lead">Periodos de remuneracion y conteo de liquidaciones asociadas.</p>
+    </div>
+    {% if can_add %}<a class="button" href="{% url 'data_scope:period_create' %}">Nuevo periodo</a>{% endif %}
+</section>
+
+<section class="panel">
+    <form method="get" class="actions">
+        <input class="form-control" name="q" type="search" value="{{ search }}" placeholder="Buscar periodo AAAAMM" style="max-width: 360px;">
+        <button class="button" type="submit">Buscar</button>
+    </form>
+    <div class="table-scroll">
+    <table>
+        <thead><tr><th>Periodo</th><th>Ano</th><th>Mes</th><th>Liquidaciones</th><th></th></tr></thead>
+        <tbody>
+            {% for period in periods %}
+                <tr>
+                    <td>{{ period.periodo }}</td>
+                    <td>{{ period.year }}</td>
+                    <td>{{ period.month }}</td>
+                    <td>{{ period.summary_count }}</td>
+                    <td>
+                        {% if perms.DATA_scope.download_upload_output %}<a href="{% url 'data_scope:export_period_csv' period.id %}">Exportar</a>{% endif %}
+                        {% if perms.DATA_scope.change_payrollperiod %}<a href="{% url 'data_scope:period_update' period.id %}">Editar</a>{% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="5">Sin periodos.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</section>
+{% endblock %}

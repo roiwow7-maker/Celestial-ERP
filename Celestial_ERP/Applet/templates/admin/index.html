@@ -1,0 +1,75 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block content %}
+<h1>Panel de administracion</h1>
+
+<div class="erp-admin-home">
+    <section class="erp-admin-card">
+        <h2>Modulos administrables</h2>
+        <div class="erp-admin-card-body">
+            <p class="erp-admin-intro">Elige un modulo y luego entra al listado o crea un registro nuevo. Las opciones visibles dependen de tus permisos.</p>
+            <div class="erp-admin-app-list">
+                {% for app in app_list %}
+                    <section class="erp-admin-app-group">
+                        <h3>{{ app.name }}</h3>
+                        <div class="erp-admin-model-list">
+                    {% for model in app.models %}
+                            <div class="erp-model-row">
+                                <div class="erp-model-copy">
+                            {% if model.admin_url %}
+                                <a class="erp-model-title" href="{{ model.admin_url }}">{{ model.name }}</a>
+                            {% else %}
+                                <strong class="erp-model-title">{{ model.name }}</strong>
+                            {% endif %}
+                                    <span>Gestionar {{ model.name|lower }}</span>
+                                </div>
+                            <div class="erp-model-actions">
+                                {% if model.admin_url %}
+                                            <a class="erp-mini-button primary" href="{{ model.admin_url }}">Ver</a>
+                                {% endif %}
+                                {% if model.add_url %}
+                                            <a class="erp-mini-button" href="{{ model.add_url }}">Crear</a>
+                                {% endif %}
+                            </div>
+                            </div>
+                    {% endfor %}
+                        </div>
+                    </section>
+                {% empty %}
+                    <p>No tienes permisos para administrar datos.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <aside class="erp-admin-card">
+        <h2>Guia rapida</h2>
+        <div class="erp-admin-card-body">
+            <ul class="erp-help-list">
+                <li>Usa <strong>Trabajadores</strong> para buscar personas por nombre, RUT o codigo de ficha.</li>
+                <li>Usa <strong>Liquidaciones</strong> para revisar totales por trabajador y periodo.</li>
+                <li>Usa <strong>Items de remuneracion</strong> para revisar conceptos y categorias.</li>
+                <li>Usa <strong>Cargas ETL</strong> para auditar importaciones historicas.</li>
+            </ul>
+        </div>
+    </aside>
+
+    <aside class="erp-admin-card">
+        <h2>Acciones recientes</h2>
+        <div class="erp-admin-card-body">
+            {% load log %}
+            {% get_admin_log 8 as admin_log for_user user %}
+            {% if admin_log %}
+                <ul class="erp-recent-list">
+                    {% for entry in admin_log %}
+                        <li>{{ entry.object_repr }}<br><small>{{ entry.action_time|date:"Y-m-d H:i" }}</small></li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No hay acciones recientes.</p>
+            {% endif %}
+        </div>
+    </aside>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Reporte mensual de asistencia | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Reporte mensual</h1>
+        <p class="lead">Periodo {{ start }} a {{ end }}.</p>
+    </div>
+    <div class="actions">
+        {% if perms.Attendance.export_attendance_reports %}<a class="button secondary" href="{% url 'attendance:export_csv' %}?desde={{ start }}&hasta={{ end }}">Exportar CSV</a>{% endif %}
+        <button class="button secondary" type="button" onclick="window.print()">Imprimir / PDF</button>
+    </div>
+</section>
+
+<section class="panel no-print">
+    <form class="row g-3" method="get">
+        <div class="col-sm-3"><label class="form-label">Año</label><input class="form-control" type="number" name="year" value="{{ year }}"></div>
+        <div class="col-sm-3"><label class="form-label">Mes</label><input class="form-control" type="number" min="1" max="12" name="month" value="{{ month }}"></div>
+        <div class="col-sm-3 d-flex align-items-end"><button class="button" type="submit">Ver mes</button></div>
+    </form>
+</section>
+
+<section class="metrics">
+    <div class="metric"><span>Registros</span><strong>{{ summary.records }}</strong></div>
+    <div class="metric"><span>Trabajadores</span><strong>{{ summary.employees }}</strong></div>
+    <div class="metric"><span>Horas</span><strong>{{ summary.worked_hours }}</strong></div>
+    <div class="metric"><span>Atrasos</span><strong>{{ summary.late }}</strong></div>
+    <div class="metric"><span>Ausencias</span><strong>{{ summary.absent }}</strong></div>
+</section>
+
+<section class="panel">
+    <h2>Resumen por trabajador</h2>
+    <div class="table-scroll">
+        <table>
+            <thead><tr><th>Codigo</th><th>Trabajador</th><th>Dias con registro</th><th>Horas</th><th>Presentes</th><th>Atrasos</th><th>Ausencias</th><th>Permisos</th></tr></thead>
+            <tbody>
+                {% for row in rows %}
+                    <tr><td>{{ row.employee.codigo_ficha }}</td><td>{{ row.employee.nombre }}</td><td>{{ row.days }}</td><td>{{ row.worked_hours }}</td><td>{{ row.present }}</td><td>{{ row.late }}</td><td>{{ row.absent }}</td><td>{{ row.leave }}</td></tr>
+                {% empty %}
+                    <tr><td colspan="8">Sin registros para el mes.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

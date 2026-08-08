@@ -1,0 +1,36 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Prueba de rutas | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Prueba de rutas</h1>
+        <p class="lead">Rutas principales disponibles en el ERP local.</p>
+    </div>
+    <a class="button secondary" href="/cargas/">Volver a cargas</a>
+</section>
+
+<section class="panel">
+    <div class="table-scroll">
+        <table>
+            <thead>
+                <tr>
+                    <th>Modulo</th>
+                    <th>Ruta</th>
+                    <th>URL completa</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for route in routes %}
+                    <tr>
+                        <td>{{ route.name }}</td>
+                        <td><a href="{{ route.path }}">{{ route.path }}</a></td>
+                        <td>{{ route.absolute }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

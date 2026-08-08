@@ -1,0 +1,43 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}{{ journal.number }} | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>{{ journal.number }}</h1>
+        <p class="lead">{{ journal.description }}</p>
+    </div>
+    <a class="button secondary" href="{% url 'accounting:journal_entries' %}">Volver</a>
+</section>
+
+<section class="metrics">
+    <div class="metric"><span>Periodo</span><strong>{{ journal.period.periodo }}</strong></div>
+    <div class="metric"><span>Debe</span><strong>{{ journal.total_debit }}</strong></div>
+    <div class="metric"><span>Haber</span><strong>{{ journal.total_credit }}</strong></div>
+    <div class="metric"><span>Diferencia</span><strong>{{ journal.difference }}</strong></div>
+</section>
+
+<section class="panel">
+    <div class="table-scroll">
+        <table>
+            <thead>
+                <tr><th>Cuenta</th><th>Centro</th><th>Descripcion</th><th>Debe</th><th>Haber</th></tr>
+            </thead>
+            <tbody>
+                {% for line in lines %}
+                    <tr>
+                        <td>{{ line.account.code }} - {{ line.account.name }}</td>
+                        <td>{{ line.cost_center|default:"-" }}</td>
+                        <td>{{ line.description }}</td>
+                        <td>{{ line.debit }}</td>
+                        <td>{{ line.credit }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="5">Sin lineas.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

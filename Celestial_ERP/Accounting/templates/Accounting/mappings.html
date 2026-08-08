@@ -1,0 +1,61 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Mapeos item-cuenta | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Mapeos item-cuenta</h1>
+        <p class="lead">Relacion entre items de remuneracion y cuentas contables.</p>
+    </div>
+    {% if perms.Accounting.manage_accounting_config %}
+        <a class="button" href="{% url 'accounting:mapping_create' %}">Nuevo mapeo</a>
+    {% endif %}
+</section>
+
+{% if gap_count %}
+<section class="panel">
+    <h2>Items sin mapeo: {{ gap_count }}</h2>
+    <p class="muted">Ejecuta `python manage.py seed_accounting_catalog` o crea mapeos manuales.</p>
+    <div class="table-scroll">
+        <table>
+            <thead><tr><th>Codigo</th><th>Descripcion</th><th>Categoria</th></tr></thead>
+            <tbody>
+                {% for item in gaps %}
+                    <tr><td>{{ item.codigo }}</td><td>{{ item.descripcion|default:"-" }}</td><td>{{ item.categoria }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endif %}
+
+<section class="panel">
+    <form method="get" class="filters">
+        <input class="form-control" type="search" name="q" value="{{ query }}" placeholder="Buscar item o cuenta">
+        <button class="button secondary" type="submit">Filtrar</button>
+    </form>
+    <div class="table-scroll">
+        <table>
+            <thead>
+                <tr><th>Item</th><th>Categoria</th><th>Cuenta</th><th>Movimiento</th><th>Centro</th><th>Estado</th><th></th></tr>
+            </thead>
+            <tbody>
+                {% for mapping in mappings %}
+                    <tr>
+                        <td>{{ mapping.payroll_item.codigo }} - {{ mapping.payroll_item.descripcion|default:"Sin descripcion" }}</td>
+                        <td>{{ mapping.payroll_item.categoria }}</td>
+                        <td>{{ mapping.account.code }} - {{ mapping.account.name }}</td>
+                        <td>{{ mapping.get_movement_type_display }}</td>
+                        <td>{{ mapping.cost_center|default:"-" }}</td>
+                        <td>{% if mapping.is_active %}Activo{% else %}Inactivo{% endif %}</td>
+                        <td>{% if perms.Accounting.manage_accounting_config %}<a class="button secondary" href="{% url 'accounting:mapping_update' mapping.id %}">Editar</a>{% endif %}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="7">Sin mapeos registrados.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

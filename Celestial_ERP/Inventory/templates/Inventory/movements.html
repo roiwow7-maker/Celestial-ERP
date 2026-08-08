@@ -1,0 +1,42 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Movimientos de stock | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Movimientos</h1>
+        <p class="lead">Entradas, salidas y ajustes aplicados al stock.</p>
+    </div>
+    {% if perms.Inventory.manage_inventory_stock %}
+        <a class="button" href="{% url 'inventory:movement_create' %}">Nuevo movimiento</a>
+    {% endif %}
+</section>
+
+<section class="panel">
+    <div class="table-scroll">
+        <table>
+            <thead>
+                <tr><th>Fecha</th><th>Tipo</th><th>Producto</th><th>Bodega</th><th>Cantidad</th><th>Costo unitario</th><th>Total</th><th>Referencia</th><th>Aplicado</th></tr>
+            </thead>
+            <tbody>
+                {% for movement in movements %}
+                    <tr>
+                        <td>{{ movement.date }}</td>
+                        <td>{{ movement.get_movement_type_display }}</td>
+                        <td>{{ movement.product.sku }} - {{ movement.product.name }}</td>
+                        <td>{{ movement.warehouse.code }}</td>
+                        <td>{{ movement.quantity }}</td>
+                        <td>{{ movement.unit_cost }}</td>
+                        <td>{{ movement.total_cost }}</td>
+                        <td>{{ movement.reference|default:"-" }}</td>
+                        <td>{{ movement.applied|yesno:"Si,No" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="9">Sin movimientos registrados.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

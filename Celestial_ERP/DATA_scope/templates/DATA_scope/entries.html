@@ -1,0 +1,45 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Movimientos | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Movimientos</h1>
+        <p class="lead">Edicion controlada de movimientos por trabajador, periodo e item.</p>
+    </div>
+    {% if can_add %}<a class="button" href="{% url 'data_scope:entry_create' %}">Nuevo movimiento</a>{% endif %}
+</section>
+
+<section class="panel">
+    <form method="get" class="actions">
+        <input class="form-control" name="q" type="search" value="{{ search }}" placeholder="Trabajador o item" style="max-width: 320px;">
+        <select class="form-select" name="periodo" style="max-width: 180px;">
+            <option value="">Todos</option>
+            {% for period in periods %}
+                <option value="{{ period.periodo }}" {% if period.periodo == selected_period %}selected{% endif %}>{{ period.periodo }}</option>
+            {% endfor %}
+        </select>
+        <button class="button" type="submit">Filtrar</button>
+    </form>
+    <div class="table-scroll">
+    <table>
+        <thead><tr><th>Periodo</th><th>Ficha</th><th>Trabajador</th><th>Item</th><th>Monto</th><th></th></tr></thead>
+        <tbody>
+            {% for entry in entries %}
+                <tr>
+                    <td>{{ entry.period.periodo }}</td>
+                    <td>{{ entry.employee.codigo_ficha }}</td>
+                    <td>{{ entry.employee.nombre }}</td>
+                    <td>{{ entry.item.codigo }}</td>
+                    <td>{{ entry.monto|floatformat:0 }}</td>
+                    <td>{% if perms.DATA_scope.change_payrollentry %}<a href="{% url 'data_scope:entry_update' entry.id %}">Editar</a>{% endif %}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="6">Sin movimientos.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</section>
+{% endblock %}

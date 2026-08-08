@@ -1,0 +1,132 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Remuneraciones | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Remuneraciones</h1>
+        <p class="lead">Vista operativa de trabajadores, periodos, items, movimientos y liquidaciones historicas.</p>
+    </div>
+    <div class="quick-actions">
+        <a class="button secondary" href="{% url 'data_scope:reports' %}">Reportes</a>
+        {% if perms.DATA_scope.upload_payroll_data %}
+            <a class="button" href="{% url 'data_scope:upload_data' %}">Nueva carga</a>
+        {% endif %}
+    </div>
+</section>
+
+<section class="quick-actions mb-3" aria-label="Navegacion de remuneraciones">
+    <a class="button secondary" href="{% url 'data_scope:employees' %}">Trabajadores</a>
+    <a class="button secondary" href="{% url 'data_scope:periods' %}">Periodos</a>
+    <a class="button secondary" href="{% url 'data_scope:summaries' %}">Liquidaciones</a>
+    <a class="button secondary" href="{% url 'data_scope:items' %}">Items</a>
+    <a class="button secondary" href="{% url 'data_scope:entries' %}">Movimientos</a>
+</section>
+
+<section class="metrics mb-3" aria-label="Resumen de datos">
+    <div class="metric"><strong>{{ employee_count }}</strong><span>Trabajadores</span></div>
+    <div class="metric"><strong>{{ period_count }}</strong><span>Periodos</span></div>
+    <div class="metric"><strong>{{ item_count }}</strong><span>Items</span></div>
+    <div class="metric"><strong>{{ entry_count }}</strong><span>Movimientos</span></div>
+    <div class="metric"><strong>{{ summary_count }}</strong><span>Liquidaciones</span></div>
+</section>
+
+<section class="grid two">
+    <div class="panel">
+        <h2>Periodos recientes</h2>
+        <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Periodo</th>
+                        <th>Liquidaciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for period in latest_periods %}
+                        <tr>
+                            <td>{{ period.periodo }}</td>
+                            <td>{{ period.summary_count }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="2">Sin periodos cargados.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h2>Totales por categoria</h2>
+        <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Categoria</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in totals_by_category %}
+                        <tr>
+                            <td>{{ row.item__categoria }}</td>
+                            <td>{{ row.total|floatformat:0 }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="2">Sin movimientos cargados.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h2>Ultimas importaciones</h2>
+        <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for import_run in latest_imports %}
+                        <tr>
+                            <td>{{ import_run.created_at|date:"Y-m-d H:i" }}</td>
+                            <td>{{ import_run.get_status_display }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="2">Sin importaciones auditadas.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h2>Estados de trabajadores</h2>
+        <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Estado</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in employee_status_rows %}
+                        <tr>
+                            <td>{{ row.label }}</td>
+                            <td>{{ row.total }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="2">Sin trabajadores cargados.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}

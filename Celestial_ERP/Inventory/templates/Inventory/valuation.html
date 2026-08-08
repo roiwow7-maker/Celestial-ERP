@@ -1,0 +1,64 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Valorizacion de inventario | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Valorizacion</h1>
+        <p class="lead">Valor de stock segun cantidad disponible y costo promedio.</p>
+    </div>
+    <a class="button secondary" href="{% url 'inventory:dashboard' %}">Dashboard</a>
+</section>
+
+<section class="metrics">
+    <div class="metric"><span>Productos</span><strong>{{ summary.products }}</strong></div>
+    <div class="metric"><span>Cantidad total</span><strong>{{ summary.stock_quantity }}</strong></div>
+    <div class="metric"><span>Valor total</span><strong>{{ summary.stock_value }}</strong></div>
+    <div class="metric"><span>Stock bajo</span><strong>{{ summary.low_stock }}</strong></div>
+</section>
+
+<section class="grid two">
+    <article class="panel">
+        <h2>Valor por categoria</h2>
+        <div class="table-scroll">
+            <table>
+                <thead><tr><th>Categoria</th><th>Productos</th><th>Cantidad</th><th>Valor</th></tr></thead>
+                <tbody>
+                    {% for category in categories %}
+                        <tr>
+                            <td>{{ category.product__category|default:"Sin categoria" }}</td>
+                            <td>{{ category.products }}</td>
+                            <td>{{ category.quantity|default:"0" }}</td>
+                            <td>{{ category.value|default:"0" }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="4">Sin categorias para valorizar.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </article>
+    <article class="panel">
+        <h2>Detalle valorizado</h2>
+        <div class="table-scroll">
+            <table>
+                <thead><tr><th>Producto</th><th>Bodega</th><th>Cantidad</th><th>Costo promedio</th><th>Valor</th></tr></thead>
+                <tbody>
+                    {% for balance in balances %}
+                        <tr>
+                            <td>{{ balance.product.sku }} - {{ balance.product.name }}</td>
+                            <td>{{ balance.warehouse.code }}</td>
+                            <td>{{ balance.quantity }}</td>
+                            <td>{{ balance.average_cost }}</td>
+                            <td>{{ balance.total_value }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="5">Sin saldos para valorizar.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </article>
+</section>
+{% endblock %}

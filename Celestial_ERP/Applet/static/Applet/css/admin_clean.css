@@ -1,0 +1,577 @@
+/*
+   Celestial ERP - Django Admin clean theme
+   Capa final del admin. Se carga despues del CSS nativo y del admin.css anterior.
+*/
+
+html,
+html[data-theme="light"],
+html[data-erp-theme="light"] {
+    color-scheme: light;
+    --primary: #5f8794;
+    --secondary: #476f7c;
+    --accent: #668f78;
+    --primary-fg: #ffffff;
+    --body-bg: #f4f1ec;
+    --body-fg: #24303f;
+    --body-quiet-color: #5b6673;
+    --body-medium-color: #44515e;
+    --border-color: #d4ccc1;
+    --hairline-color: #e4ded5;
+    --link-fg: #406d7a;
+    --link-hover-color: #294d58;
+    --header-bg: #fffdf9;
+    --header-color: #24303f;
+    --breadcrumbs-bg: #e2eeeb;
+    --breadcrumbs-fg: #42515d;
+    --button-bg: #5f8794;
+    --button-hover-bg: #476f7c;
+    --default-button-bg: #5f8794;
+    --default-button-hover-bg: #476f7c;
+    --delete-button-bg: #a76666;
+    --delete-button-hover-bg: #8c4f4f;
+    --close-button-bg: #687585;
+    --close-button-hover-bg: #4e5b68;
+    --admin-page: #f4f1ec;
+    --admin-panel: #fffdf9;
+    --admin-panel-2: #f8f4ee;
+    --admin-soft: #e2eeeb;
+    --admin-soft-2: #efe5d5;
+    --admin-ink: #24303f;
+    --admin-muted: #5b6673;
+    --admin-line: #d4ccc1;
+    --admin-input: #ffffff;
+    --admin-focus: rgba(95, 135, 148, 0.28);
+    --admin-shadow: 0 10px 26px rgba(36, 48, 63, 0.09);
+}
+
+html[data-theme="dark"],
+html[data-erp-theme="dark"] {
+    color-scheme: dark;
+    --primary: #9fc6cf;
+    --secondary: #b7d7dc;
+    --accent: #a9c9b3;
+    --primary-fg: #17212b;
+    --body-bg: #1f2933;
+    --body-fg: #f1f5f6;
+    --body-quiet-color: #c0cbd1;
+    --body-medium-color: #dbe4e7;
+    --border-color: #50616d;
+    --hairline-color: #384854;
+    --link-fg: #c5e1e6;
+    --link-hover-color: #e0f2f4;
+    --header-bg: #293541;
+    --header-color: #f1f5f6;
+    --breadcrumbs-bg: #324752;
+    --breadcrumbs-fg: #dbe4e7;
+    --button-bg: #9fc6cf;
+    --button-hover-bg: #b7d7dc;
+    --default-button-bg: #9fc6cf;
+    --default-button-hover-bg: #b7d7dc;
+    --delete-button-bg: #d89b9b;
+    --delete-button-hover-bg: #efb7b7;
+    --close-button-bg: #61727e;
+    --close-button-hover-bg: #7f919c;
+    --admin-page: #1f2933;
+    --admin-panel: #293541;
+    --admin-panel-2: #24303b;
+    --admin-soft: #324752;
+    --admin-soft-2: #4b4539;
+    --admin-ink: #f1f5f6;
+    --admin-muted: #c0cbd1;
+    --admin-line: #50616d;
+    --admin-input: #1f2a34;
+    --admin-focus: rgba(159, 198, 207, 0.28);
+    --admin-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+}
+
+html body {
+    background: var(--admin-page) !important;
+    color: var(--admin-ink) !important;
+    font-family: Arial, Helvetica, sans-serif !important;
+    font-size: 15px !important;
+    line-height: 1.5 !important;
+}
+
+html a:link,
+html a:visited {
+    color: var(--link-fg) !important;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+}
+
+html a:hover,
+html a:focus {
+    color: var(--link-hover-color) !important;
+}
+
+#container {
+    background: transparent !important;
+    min-width: 0 !important;
+    padding: 14px 0 42px !important;
+}
+
+#header {
+    position: sticky !important;
+    top: 12px !important;
+    z-index: 1000 !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 10px 16px !important;
+    width: min(1320px, calc(100% - 24px)) !important;
+    min-height: auto !important;
+    margin: 0 auto !important;
+    padding: 12px 16px !important;
+    border: 1px solid var(--admin-line) !important;
+    border-radius: 10px !important;
+    background: color-mix(in srgb, var(--header-bg) 96%, transparent) !important;
+    color: var(--admin-ink) !important;
+    box-shadow: var(--admin-shadow) !important;
+    backdrop-filter: blur(12px);
+}
+
+#branding,
+#branding h1 {
+    min-width: 220px !important;
+    margin: 0 !important;
+}
+
+#branding h1,
+#branding h1 a:link,
+#branding h1 a:visited {
+    color: var(--admin-ink) !important;
+    font-size: 1.08rem !important;
+    font-weight: 800 !important;
+    line-height: 1.15 !important;
+}
+
+.erp-admin-brand-subtitle {
+    display: block !important;
+    margin-top: 3px !important;
+    color: var(--admin-muted) !important;
+    font-size: 0.78rem !important;
+    font-weight: 700 !important;
+}
+
+#user-tools {
+    margin-left: auto !important;
+    color: var(--admin-muted) !important;
+    font-size: 0.82rem !important;
+    line-height: 1.45 !important;
+}
+
+#user-tools a,
+#logout-form button {
+    color: var(--link-fg) !important;
+    font-weight: 800 !important;
+}
+
+.theme-toggle {
+    display: none !important;
+}
+
+.erp-admin-floating-nav {
+    flex: 1 1 100% !important;
+    order: 3 !important;
+    width: 100% !important;
+}
+
+.erp-admin-nav-list {
+    display: flex !important;
+    gap: 6px !important;
+    margin: 0 !important;
+    padding: 2px 0 !important;
+    overflow-x: auto !important;
+    list-style: none !important;
+}
+
+.erp-admin-nav-list a,
+.erp-admin-theme-toggle {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 36px !important;
+    padding: 0 11px !important;
+    border: 1px solid var(--admin-line) !important;
+    border-radius: 7px !important;
+    background: var(--admin-input) !important;
+    color: var(--link-fg) !important;
+    font-size: 0.86rem !important;
+    font-weight: 800 !important;
+    text-decoration: none !important;
+    white-space: nowrap !important;
+}
+
+.erp-admin-nav-list a:hover,
+.erp-admin-nav-list a:focus,
+.erp-admin-theme-toggle:hover,
+.erp-admin-theme-toggle:focus {
+    background: var(--admin-soft) !important;
+    color: var(--admin-ink) !important;
+}
+
+div.breadcrumbs {
+    width: min(1320px, calc(100% - 24px)) !important;
+    margin: 16px auto 0 !important;
+    padding: 10px 14px !important;
+    border: 1px solid var(--admin-line) !important;
+    border-radius: 8px !important;
+    background: var(--admin-soft) !important;
+    color: var(--admin-muted) !important;
+}
+
+div.breadcrumbs a {
+    color: var(--link-fg) !important;
+    font-weight: 800 !important;
+}
+
+#content {
+    width: min(1320px, calc(100% - 24px)) !important;
+    margin: 20px auto 0 !important;
+    padding: 0 !important;
+    color: var(--admin-ink) !important;
+}
+
+#content h1 {
+    margin: 0 0 14px !important;
+    color: var(--admin-ink) !important;
+    font-size: clamp(1.35rem, 1.8vw, 1.75rem) !important;
+    font-weight: 800 !important;
+}
+
+.module,
+.inline-group,
+#changelist,
+.submit-row,
+#toolbar,
+.paginator,
+.messagelist li,
+#content-related,
+.erp-admin-card {
+    border: 1px solid var(--admin-line) !important;
+    border-radius: 8px !important;
+    background: var(--admin-panel) !important;
+    color: var(--admin-ink) !important;
+    box-shadow: var(--admin-shadow) !important;
+    overflow: hidden !important;
+}
+
+.module h2,
+.module caption,
+.inline-group h2,
+#changelist-filter h2,
+.erp-admin-card h2 {
+    margin: 0 !important;
+    padding: 12px 14px !important;
+    border-bottom: 1px solid var(--admin-line) !important;
+    background: var(--admin-soft) !important;
+    color: var(--admin-ink) !important;
+    font-size: 0.96rem !important;
+    font-weight: 800 !important;
+    line-height: 1.35 !important;
+}
+
+.erp-admin-card-body {
+    padding: 16px !important;
+}
+
+.erp-admin-home {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 360px) !important;
+    gap: 16px !important;
+    align-items: start !important;
+}
+
+.erp-admin-intro,
+.help,
+p.help,
+form .aligned p.help,
+div.help,
+.quiet,
+.erp-help-list,
+.erp-recent-list,
+.erp-model-copy span {
+    color: var(--admin-muted) !important;
+}
+
+.erp-admin-app-list {
+    display: grid !important;
+    gap: 12px !important;
+}
+
+.erp-admin-app-group {
+    border: 1px solid var(--admin-line) !important;
+    border-radius: 8px !important;
+    background: var(--admin-panel-2) !important;
+    overflow: hidden !important;
+}
+
+.erp-admin-app-group h3 {
+    margin: 0 !important;
+    padding: 11px 14px !important;
+    border-bottom: 1px solid var(--admin-line) !important;
+    color: var(--admin-ink) !important;
+    font-size: 0.98rem !important;
+    font-weight: 800 !important;
+}
+
+.erp-admin-model-list {
+    display: grid !important;
+}
+
+.erp-model-row {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    gap: 12px !important;
+    align-items: center !important;
+    padding: 12px 14px !important;
+    border-bottom: 1px solid var(--admin-line) !important;
+    background: transparent !important;
+}
+
+.erp-model-row:last-child {
+    border-bottom: 0 !important;
+}
+
+.erp-model-title {
+    color: var(--admin-ink) !important;
+    font-size: 1rem !important;
+    font-weight: 800 !important;
+    overflow-wrap: anywhere !important;
+}
+
+.erp-model-actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+}
+
+.erp-mini-button,
+.button,
+input[type="submit"],
+input[type="button"],
+.submit-row input,
+a.button,
+#changelist-search input[type="submit"],
+.object-tools a,
+.object-tools a:link,
+.object-tools a:visited {
+    min-height: 36px !important;
+    padding: 8px 12px !important;
+    border: 1px solid var(--primary) !important;
+    border-radius: 7px !important;
+    background: var(--button-bg) !important;
+    color: var(--primary-fg) !important;
+    font-weight: 800 !important;
+    text-decoration: none !important;
+}
+
+html[data-theme="dark"] .erp-mini-button,
+html[data-theme="dark"] .button,
+html[data-theme="dark"] input[type="submit"],
+html[data-theme="dark"] input[type="button"],
+html[data-theme="dark"] .submit-row input,
+html[data-theme="dark"] a.button,
+html[data-theme="dark"] #changelist-search input[type="submit"],
+html[data-theme="dark"] .object-tools a,
+html[data-erp-theme="dark"] .erp-mini-button,
+html[data-erp-theme="dark"] .button,
+html[data-erp-theme="dark"] input[type="submit"],
+html[data-erp-theme="dark"] input[type="button"],
+html[data-erp-theme="dark"] .submit-row input,
+html[data-erp-theme="dark"] a.button,
+html[data-erp-theme="dark"] #changelist-search input[type="submit"],
+html[data-erp-theme="dark"] .object-tools a {
+    color: #17212b !important;
+}
+
+.erp-mini-button:hover,
+.button:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover,
+.submit-row input:hover,
+a.button:hover,
+#changelist-search input[type="submit"]:hover,
+.object-tools a:hover {
+    background: var(--button-hover-bg) !important;
+    color: var(--primary-fg) !important;
+}
+
+html[data-theme="dark"] .erp-mini-button:hover,
+html[data-theme="dark"] .button:hover,
+html[data-theme="dark"] input[type="submit"]:hover,
+html[data-theme="dark"] input[type="button"]:hover,
+html[data-theme="dark"] .submit-row input:hover,
+html[data-theme="dark"] a.button:hover,
+html[data-theme="dark"] #changelist-search input[type="submit"]:hover,
+html[data-theme="dark"] .object-tools a:hover,
+html[data-erp-theme="dark"] .erp-mini-button:hover,
+html[data-erp-theme="dark"] .button:hover,
+html[data-erp-theme="dark"] input[type="submit"]:hover,
+html[data-erp-theme="dark"] input[type="button"]:hover,
+html[data-erp-theme="dark"] .submit-row input:hover,
+html[data-erp-theme="dark"] a.button:hover,
+html[data-erp-theme="dark"] #changelist-search input[type="submit"]:hover,
+html[data-erp-theme="dark"] .object-tools a:hover {
+    color: #17212b !important;
+}
+
+.submit-row a.deletelink,
+a.deletelink {
+    background: var(--delete-button-bg) !important;
+    color: #ffffff !important;
+}
+
+.submit-row a.deletelink:hover,
+a.deletelink:hover {
+    background: var(--delete-button-hover-bg) !important;
+}
+
+#changelist-form .results {
+    overflow-x: auto !important;
+}
+
+.results table,
+#result_list {
+    min-width: 760px !important;
+    border-collapse: collapse !important;
+}
+
+table thead th,
+.results thead th {
+    background: var(--admin-soft) !important;
+    color: var(--admin-ink) !important;
+    font-size: 0.78rem !important;
+    font-weight: 800 !important;
+    line-height: 1.35 !important;
+    text-transform: uppercase !important;
+}
+
+td,
+th {
+    border-bottom-color: var(--admin-line) !important;
+    color: var(--admin-ink) !important;
+    padding-top: 11px !important;
+    padding-bottom: 11px !important;
+    vertical-align: middle !important;
+}
+
+tr:nth-child(odd) {
+    background: var(--admin-panel) !important;
+}
+
+tr:nth-child(even),
+.row-form-errors {
+    background: var(--admin-panel-2) !important;
+}
+
+tr:hover {
+    background: color-mix(in srgb, var(--admin-soft) 70%, var(--admin-panel)) !important;
+}
+
+#changelist-filter {
+    background: var(--admin-panel) !important;
+    color: var(--admin-ink) !important;
+    border-left: 1px solid var(--admin-line) !important;
+}
+
+#changelist-filter h3 {
+    color: var(--admin-muted) !important;
+    font-size: 0.78rem !important;
+    font-weight: 800 !important;
+}
+
+#changelist-filter li.selected a {
+    color: var(--admin-ink) !important;
+    font-weight: 800 !important;
+}
+
+.form-row,
+.aligned .form-row {
+    border-bottom-color: var(--admin-line) !important;
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
+}
+
+.aligned label,
+label {
+    color: var(--admin-ink) !important;
+    font-weight: 800 !important;
+}
+
+input,
+select,
+textarea,
+.vTextField,
+.select2-container--admin-autocomplete .select2-selection--single {
+    min-height: 36px !important;
+    border: 1px solid var(--admin-line) !important;
+    border-radius: 7px !important;
+    background-color: var(--admin-input) !important;
+    color: var(--admin-ink) !important;
+    font-size: 0.95rem !important;
+}
+
+textarea {
+    min-height: 110px !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+.vTextField:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 0.2rem var(--admin-focus) !important;
+    outline: none !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: var(--admin-muted) !important;
+    opacity: 1 !important;
+}
+
+.submit-row {
+    display: flex !important;
+    gap: 8px !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+}
+
+.errornote,
+ul.errorlist,
+.messagelist li {
+    border-radius: 8px !important;
+}
+
+@media (max-width: 1024px) {
+    #header {
+        align-items: flex-start !important;
+        flex-direction: column !important;
+    }
+
+    #user-tools {
+        margin-left: 0 !important;
+    }
+}
+
+@media (max-width: 767px) {
+    #header,
+    #content,
+    div.breadcrumbs {
+        width: min(100% - 16px, 1320px) !important;
+    }
+
+    .erp-admin-home,
+    .erp-model-row {
+        grid-template-columns: 1fr !important;
+    }
+
+    .erp-model-actions {
+        width: 100% !important;
+    }
+
+    .erp-mini-button {
+        flex: 1 1 110px !important;
+    }
+}

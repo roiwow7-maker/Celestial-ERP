@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+blocked='\.(csv|xls|xlsx|xlsm|ods|sqlite|sqlite3|db|dump|backup|bak|sql)$'
+staged_files="$(git diff --cached --name-only --diff-filter=ACMR)"
+
+if printf '%s\n' "$staged_files" | grep -Eiq "$blocked"; then
+    printf '%s\n' "ERROR: el commit contiene archivos de datos privados o respaldos:" >&2
+    printf '%s\n' "$staged_files" | grep -Ei "$blocked" >&2
+    exit 1
+fi
+
+secret_files="$(printf '%s\n' "$staged_files" | grep -Ei '(^|/)\.env($|\.)|\.pgpass$' | grep -Ev '(^|/)\.env\.example$' || true)"
+if [[ -n "$secret_files" ]]; then
+    printf '%s\n' "ERROR: el commit contiene un archivo de secretos (.env/.pgpass)." >&2
+    printf '%s\n' "$secret_files" >&2
+    exit 1
+fi

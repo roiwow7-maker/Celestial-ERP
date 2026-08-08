@@ -1,0 +1,33 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Administracion | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Panel de administracion general</h1>
+        <p class="lead">Vista base para agrupar controles administrativos del ERP. Por ahora son accesos visuales sin logica compleja.</p>
+    </div>
+    <a class="button secondary" href="{% url 'admin:index' %}">Abrir Django Admin</a>
+</section>
+
+<section class="grid two">
+    {% for section in sections %}
+        {% if section.url %}
+        <a class="card" href="{% url section.url %}">
+            <span class="badge pending">Preparado</span>
+            <h2>{{ section.name }}</h2>
+            <p>Seccion operativa para controlar seguridad, auditoria y mantenimiento.</p>
+            <span class="card-footer button secondary">Abrir</span>
+        </a>
+        {% else %}
+        <div class="card">
+            <span class="badge pending">Preparado</span>
+            <h2>{{ section.name }}</h2>
+            <p>Seccion reservada para gestion administrativa futura.</p>
+            <span class="card-footer button disabled">Sin configurar</span>
+        </div>
+        {% endif %}
+    {% endfor %}
+</section>
+{% endblock %}

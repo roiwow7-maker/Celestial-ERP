@@ -1,0 +1,41 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Stock | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Stock</h1>
+        <p class="lead">Saldos actuales por producto y bodega.</p>
+    </div>
+    {% if perms.Inventory.manage_inventory_stock %}
+        <a class="button" href="{% url 'inventory:movement_create' %}">Registrar movimiento</a>
+    {% endif %}
+</section>
+
+<section class="panel">
+    <div class="table-scroll">
+        <table>
+            <thead>
+                <tr><th>SKU</th><th>Producto</th><th>Bodega</th><th>Cantidad</th><th>Minimo</th><th>Costo promedio</th><th>Valor</th><th>Estado</th></tr>
+            </thead>
+            <tbody>
+                {% for balance in balances %}
+                    <tr>
+                        <td>{{ balance.product.sku }}</td>
+                        <td>{{ balance.product.name }}</td>
+                        <td>{{ balance.warehouse.code }}</td>
+                        <td>{{ balance.quantity }}</td>
+                        <td>{{ balance.product.minimum_stock }}</td>
+                        <td>{{ balance.average_cost }}</td>
+                        <td>{{ balance.total_value }}</td>
+                        <td>{% if balance.below_minimum %}<span class="badge pending">Bajo</span>{% else %}<span class="badge">OK</span>{% endif %}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="8">Sin saldos de stock.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

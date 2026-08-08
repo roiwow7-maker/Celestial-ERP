@@ -1,0 +1,11 @@
+{% extends "Applet/base.html" %}
+{% block title %}Proveedores | Celestial ERP{% endblock %}
+{% block content %}
+<section class="page-head"><div><h1>Proveedores</h1><p class="lead">Catalogo base de proveedores.</p></div>{% if perms.Commerce.manage_commerce_partners %}<a class="button" href="{% url 'commerce:supplier_create' %}">Nuevo proveedor</a>{% endif %}</section>
+<section class="panel">
+    <form class="filters compact" method="get"><input class="form-control" name="q" value="{{ query }}" placeholder="Buscar proveedor"><button class="button secondary" type="submit">Buscar</button></form>
+    <div class="table-scroll"><table><thead><tr><th>Codigo</th><th>Nombre</th><th>RUT</th><th>Email</th><th>Telefono</th><th>Activo</th><th></th></tr></thead><tbody>
+    {% for supplier in suppliers %}<tr><td>{{ supplier.code }}</td><td>{{ supplier.name }}</td><td>{{ supplier.tax_id|default:"-" }}</td><td>{{ supplier.email|default:"-" }}</td><td>{{ supplier.phone|default:"-" }}</td><td>{{ supplier.is_active|yesno:"Si,No" }}</td><td>{% if perms.Commerce.manage_commerce_partners %}<a class="button secondary" href="{% url 'commerce:supplier_update' supplier.id %}">Editar</a>{% endif %}</td></tr>{% empty %}<tr><td colspan="7">Sin proveedores.</td></tr>{% endfor %}
+    </tbody></table></div>
+</section>
+{% endblock %}

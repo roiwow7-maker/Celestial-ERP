@@ -1,0 +1,219 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Carga de datos | Celestial ERP{% endblock %}
+
+{% block extra_head %}
+<style>
+    .upload-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(280px, 0.55fr);
+        gap: 16px;
+        align-items: start;
+    }
+    .checks {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+    .check {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 48px;
+        padding: 10px;
+        border: 1px solid var(--erp-line);
+        border-radius: 8px;
+        background: var(--erp-input-bg);
+    }
+    .check label {
+        margin: 0;
+        color: var(--erp-ink);
+        font-weight: 600;
+    }
+    @media (max-width: 992px) {
+        .upload-grid,
+        .checks {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Carga ETL</h1>
+        <p class="lead">Procesamiento controlado de archivos historicos y CSV transformados para remuneraciones.</p>
+    </div>
+    <a class="button secondary" href="{% url 'data_scope:route_probe' %}">Probar rutas</a>
+</section>
+
+{% if error %}
+    <div class="message error">{{ error }}</div>
+{% endif %}
+{% if processed %}
+    {% if job_started %}
+        <div class="message ok">
+            Carga enviada a segundo plano. Corrida: {{ run_id }}.
+            <a href="{{ status_url }}">Actualizar estado</a>
+        </div>
+    {% elif job_status %}
+        {% if success %}
+            <div class="message ok">Carga finalizada correctamente. Corrida: {{ run_id }}</div>
+        {% else %}
+            <div class="message error">La carga termino con error. Corrida: {{ run_id }}</div>
+        {% endif %}
+    {% elif success %}
+        <div class="message ok">Archivo procesado correctamente. Corrida: {{ run_id }}</div>
+    {% else %}
+        <div class="message error">El ETL termino con error. Corrida: {{ run_id }}</div>
+    {% endif %}
+    {% if quality_issue_count %}
+        <div class="message error">Reporte de calidad con {{ quality_issue_count }} observaciones. Revisa el archivo generado.</div>
+    {% endif %}
+{% endif %}
+
+<section class="upload-grid">
+    <div class="panel">
+        <h2>Nueva carga</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label class="form-label" for="archivo">Archivo</label>
+                <input class="form-control" id="archivo" name="archivo" type="file" accept=".csv,.xlsx,.xls" required>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label" for="load_scope">Alcance de carga</label>
+                    <select class="form-select" id="load_scope" name="load_scope">
+                        <option value="massive" {% if load_scope != "individual" %}selected{% endif %}>Masiva controlada</option>
+                        <option value="individual" {% if load_scope == "individual" %}selected{% endif %}>Individual por trabajador</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="codigo_ficha">Codigo de ficha</label>
+                    <input class="form-control" id="codigo_ficha" name="codigo_ficha" type="text" value="{{ individual_employee }}" placeholder="Solo carga individual">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="source_format">Tipo de fuente</label>
+                    <select class="form-select" id="source_format" name="source_format">
+                        <option value="auto">Detectar automaticamente</option>
+                        <option value="historic_excel">Excel historico payroll</option>
+                        <option value="transformed_csv">CSV transformado</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="rut_empresa">RUT empresa</label>
+                    <input class="form-control" id="rut_empresa" name="rut_empresa" type="text" placeholder="Opcional">
+                </div>
+            </div>
+
+            <div class="checks my-3">
+                <div class="check">
+                    <input class="form-check-input m-0" id="generar_excel" name="generar_excel" type="checkbox" checked>
+                    <label for="generar_excel">Generar Excel final</label>
+                </div>
+                <div class="check">
+                    <input class="form-check-input m-0" id="importar_erp" name="importar_erp" type="checkbox" {% if not can_import %}disabled{% endif %}>
+                    <label for="importar_erp">Importar al ERP{% if not can_import %} (sin permiso){% endif %}</label>
+                </div>
+                <div class="check">
+                    <input class="form-check-input m-0" id="limpiar_datos" name="limpiar_datos" type="checkbox" {% if not can_clear %}disabled{% endif %}>
+                    <label for="limpiar_datos">Limpiar datos antes de importar{% if not can_clear %} (sin permiso){% endif %}</label>
+                </div>
+                <div class="check">
+                    <input class="form-check-input m-0" id="procesar_async" name="procesar_async" type="checkbox" checked>
+                    <label for="procesar_async">Procesar en segundo plano</label>
+                </div>
+            </div>
+
+            <button class="button" type="submit">Procesar archivo</button>
+        </form>
+    </div>
+
+    <div class="panel">
+        <h2>Formatos aceptados</h2>
+        <ul class="mb-0">
+            <li><strong>XLSX/XLS:</strong> archivo historico con hoja `Sheet1` y columnas base de payroll.</li>
+            <li><strong>CSV:</strong> archivo ya transformado con `periodo`, `codigo`, `codigo_item`, `categoria_item` y `monto`.</li>
+            <li>Los resultados quedan guardados en `uploads/` por corrida.</li>
+        </ul>
+    </div>
+</section>
+
+{% if downloads %}
+    <section class="panel" data-collapse-panel>
+        <div class="d-flex align-items-center justify-content-between gap-2">
+            <h2 class="mb-0">Archivos generados</h2>
+            <button class="button secondary" type="button" data-collapse-toggle aria-expanded="true">Cerrar</button>
+        </div>
+        <div data-collapse-body>
+            <ul class="mt-3 mb-0">
+                {% for item in downloads %}
+                    <li><a href="{{ item.url }}">{{ item.label }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </section>
+{% endif %}
+
+{% if status_url and job_started %}
+    <section class="panel">
+        <h2>Estado de la corrida</h2>
+        <p class="lead">La carga sigue ejecutandose. Puedes volver a esta pantalla o actualizar el estado manualmente.</p>
+        <a class="button" href="{{ status_url }}">Actualizar estado</a>
+    </section>
+{% endif %}
+
+{% if stdout or stderr %}
+    <section class="grid two">
+        <div class="panel" data-collapse-panel>
+            <div class="d-flex align-items-center justify-content-between gap-2">
+                <h2 class="mb-0">Salida ETL</h2>
+                <button class="button secondary" type="button" data-collapse-toggle aria-expanded="true">Cerrar</button>
+            </div>
+            <div class="mt-3" data-collapse-body><pre>{{ stdout }}</pre></div>
+        </div>
+        <div class="panel" data-collapse-panel>
+            <div class="d-flex align-items-center justify-content-between gap-2">
+                <h2 class="mb-0">Errores</h2>
+                <button class="button secondary" type="button" data-collapse-toggle aria-expanded="true">Cerrar</button>
+            </div>
+            <div class="mt-3" data-collapse-body><pre>{{ stderr }}</pre></div>
+        </div>
+    </section>
+{% endif %}
+
+<section class="panel" data-collapse-panel>
+    <div class="d-flex align-items-center justify-content-between gap-2">
+        <h2 class="mb-0">Ultimas importaciones ERP</h2>
+        <button class="button secondary" type="button" data-collapse-toggle aria-expanded="true">Cerrar</button>
+    </div>
+    <div class="table-scroll" data-collapse-body>
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th>Movimientos</th>
+                    <th>Liquidaciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for import_run in latest_imports %}
+                    <tr>
+                        <td>{{ import_run.created_at|date:"Y-m-d H:i" }}</td>
+                        <td>{{ import_run.get_status_display }}</td>
+                        <td>{{ import_run.entry_count }}</td>
+                        <td>{{ import_run.summary_count }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="4">Sin importaciones auditadas.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

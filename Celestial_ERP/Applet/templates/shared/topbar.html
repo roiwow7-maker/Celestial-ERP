@@ -1,0 +1,138 @@
+<div class="erp-navbar-wrap no-print">
+    <nav class="navbar navbar-expand-lg erp-navbar px-3" aria-label="Navegacion principal">
+        <a class="navbar-brand me-lg-4" href="{% url 'applet:home' %}">
+            Celestial ERP
+            <span class="brand-subtitle">Portal de operacion - v{{ ERP_VERSION }}</span>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#erpTopbar" aria-controls="erpTopbar" aria-expanded="false" aria-label="Abrir navegacion">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="erpTopbar">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-lg-1">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {% if request.path == '/applet/' or request.path == '/applet/modules/' or request.path == '/applet/system-status/' %}active{% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">General</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item {% if request.path == '/applet/' %}active{% endif %}" href="{% url 'applet:home' %}">Inicio</a></li>
+                        <li><a class="dropdown-item {% if request.path == '/applet/modules/' %}active{% endif %}" href="{% url 'applet:modules' %}">Modulos</a></li>
+                        <li><a class="dropdown-item {% if request.path == '/applet/system-status/' %}active{% endif %}" href="{% url 'applet:system_status' %}">Estado del sistema</a></li>
+                    </ul>
+                </li>
+
+                {% if perms.DATA_scope.access_payroll_module %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {% if request.path|slice:':16' == '/remuneraciones/' or request.path == '/reportes/' or request.path == '/cargas/' or request.path|slice:':8' == '/cargas/' %}active{% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Remuneraciones</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item {% if request.path == '/remuneraciones/' %}active{% endif %}" href="{% url 'data_scope:payroll_dashboard' %}">Dashboard</a></li>
+                        <li><a class="dropdown-item {% if request.path|slice:':29' == '/remuneraciones/trabajadores/' %}active{% endif %}" href="{% url 'data_scope:employees' %}">Trabajadores</a></li>
+                        <li><a class="dropdown-item {% if request.path|slice:':25' == '/remuneraciones/periodos/' %}active{% endif %}" href="{% url 'data_scope:periods' %}">Periodos</a></li>
+                        <li><a class="dropdown-item {% if request.path|slice:':30' == '/remuneraciones/liquidaciones/' %}active{% endif %}" href="{% url 'data_scope:summaries' %}">Liquidaciones</a></li>
+                        <li><a class="dropdown-item {% if request.path|slice:':27' == '/remuneraciones/movimientos/' %}active{% endif %}" href="{% url 'data_scope:entries' %}">Movimientos</a></li>
+                        <li><a class="dropdown-item {% if request.path|slice:':22' == '/remuneraciones/items/' %}active{% endif %}" href="{% url 'data_scope:items' %}">Items</a></li>
+                        <li><a class="dropdown-item {% if request.path == '/reportes/' %}active{% endif %}" href="{% url 'data_scope:reports' %}">Reportes</a></li>
+                        {% if perms.DATA_scope.upload_payroll_data %}
+                        <li><a class="dropdown-item {% if request.path == '/cargas/' or request.path|slice:':8' == '/cargas/' %}active{% endif %}" href="{% url 'data_scope:upload_data' %}">Cargas ETL</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+                {% endif %}
+
+                {% if perms.Attendance.access_attendance_module %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {% if request.path|slice:':12' == '/asistencia/' %}active{% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Asistencia</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item {% if request.path == '/asistencia/' %}active{% endif %}" href="{% url 'attendance:dashboard' %}">Dashboard</a></li>
+                        <li><a class="dropdown-item {% if request.path|slice:':22' == '/asistencia/registros/' %}active{% endif %}" href="{% url 'attendance:records' %}">Registros diarios</a></li>
+                        <li><a class="dropdown-item {% if request.path == '/asistencia/mensual/' %}active{% endif %}" href="{% url 'attendance:monthly_report' %}">Reporte mensual</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+
+                {% if perms.Accounting.access_accounting_module %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {% if request.path|slice:':14' == '/contabilidad/' %}active{% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Contabilidad</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item {% if request.path == '/contabilidad/' %}active{% endif %}" href="{% url 'accounting:dashboard' %}">Dashboard</a></li>
+                        <li><a class="dropdown-item {% if request.path|slice:':28' == '/contabilidad/plan-cuentas/' %}active{% endif %}" href="{% url 'accounting:chart_accounts' %}">Plan de cuentas</a></li>
+                        <li><a class="dropdown-item {% if request.path|slice:':30' == '/contabilidad/centros-costo/' %}active{% endif %}" href="{% url 'accounting:cost_centers' %}">Centros de costo</a></li>
+                        <li><a class="dropdown-item {% if request.path|slice:':25' == '/contabilidad/mapeos/' %}active{% endif %}" href="{% url 'accounting:mappings' %}">Mapeos item-cuenta</a></li>
+                        <li><a class="dropdown-item {% if request.path|slice:':23' == '/contabilidad/asientos/' %}active{% endif %}" href="{% url 'accounting:journal_entries' %}">Asientos</a></li>
+                        <li><a class="dropdown-item {% if request.path == '/contabilidad/reportes/' %}active{% endif %}" href="{% url 'accounting:reports' %}">Reportes</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+
+                {% if perms.Inventory.access_inventory_module %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {% if request.path|slice:':12' == '/inventario/' %}active{% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Inventario</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item {% if request.path == '/inventario/' %}active{% endif %}" href="{% url 'inventory:dashboard' %}">Dashboard</a></li>
+                        <li><a class="dropdown-item {% if request.path|slice:':22' == '/inventario/productos/' %}active{% endif %}" href="{% url 'inventory:products' %}">Productos</a></li>
+                        <li><a class="dropdown-item {% if request.path|slice:':20' == '/inventario/bodegas/' %}active{% endif %}" href="{% url 'inventory:warehouses' %}">Bodegas</a></li>
+                        <li><a class="dropdown-item {% if request.path|slice:':18' == '/inventario/stock/' %}active{% endif %}" href="{% url 'inventory:stock' %}">Stock</a></li>
+                        <li><a class="dropdown-item {% if request.path|slice:':24' == '/inventario/movimientos/' %}active{% endif %}" href="{% url 'inventory:movements' %}">Movimientos</a></li>
+                        <li><a class="dropdown-item {% if request.path == '/inventario/valorizacion/' %}active{% endif %}" href="{% url 'inventory:valuation' %}">Valorizacion</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+
+                {% if perms.Commerce.access_commerce_module %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {% if request.path|slice:':10' == '/comercio/' %}active{% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Comercio</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item {% if request.path == '/comercio/' %}active{% endif %}" href="{% url 'commerce:dashboard' %}">Dashboard</a></li>
+                        <li><a class="dropdown-item {% if request.path|slice:':21' == '/comercio/proveedores/' %}active{% endif %}" href="{% url 'commerce:suppliers' %}">Proveedores</a></li>
+                        <li><a class="dropdown-item {% if request.path|slice:':18' == '/comercio/clientes/' %}active{% endif %}" href="{% url 'commerce:customers' %}">Clientes</a></li>
+                        <li><a class="dropdown-item {% if request.path|slice:':17' == '/comercio/compras/' %}active{% endif %}" href="{% url 'commerce:purchase_orders' %}">Compras</a></li>
+                        <li><a class="dropdown-item {% if request.path|slice:':16' == '/comercio/ventas/' %}active{% endif %}" href="{% url 'commerce:sales_orders' %}">Ventas</a></li>
+                        <li><a class="dropdown-item {% if request.path == '/comercio/reportes/' %}active{% endif %}" href="{% url 'commerce:reports' %}">Reportes</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+
+                {% if perms.Applet.access_admin_module or perms.Applet.access_security_module or perms.Applet.run_backups %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {% if request.path == '/applet/admin-panel/' or request.path == '/applet/security/' or request.path == '/applet/audit/' or request.path == '/applet/backups/' %}active{% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Control</a>
+                    <ul class="dropdown-menu">
+                        {% if perms.Applet.access_admin_module %}
+                        <li><a class="dropdown-item {% if request.path == '/applet/admin-panel/' %}active{% endif %}" href="{% url 'applet:admin_panel' %}">Administracion</a></li>
+                        {% endif %}
+                        {% if perms.Applet.access_security_module %}
+                        <li><a class="dropdown-item {% if request.path == '/applet/security/' %}active{% endif %}" href="{% url 'applet:security' %}">Seguridad</a></li>
+                        <li><a class="dropdown-item {% if request.path == '/applet/audit/' %}active{% endif %}" href="{% url 'applet:audit' %}">Auditoria</a></li>
+                        {% endif %}
+                        {% if perms.Applet.run_backups %}
+                        <li><a class="dropdown-item {% if request.path == '/applet/backups/' %}active{% endif %}" href="{% url 'applet:backups' %}">Backups</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+                {% endif %}
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {% if request.path == '/applet/kanban/' or request.path == '/kanban/' or request.path|slice:':5' == '/api/' %}active{% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Herramientas</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item {% if request.path == '/applet/kanban/' %}active{% endif %}" href="{% url 'applet:kanban' %}">Kanban Applet</a></li>
+                        {% if perms.DATA_scope.access_payroll_module %}
+                        <li><a class="dropdown-item {% if request.path == '/kanban/' %}active{% endif %}" href="{% url 'data_scope:kanban' %}">Kanban operativo</a></li>
+                        {% endif %}
+                        <li><a class="dropdown-item {% if request.path|slice:':5' == '/api/' %}active{% endif %}" href="/api/">API</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <div class="d-flex align-items-lg-center gap-2 flex-column flex-lg-row">
+                <button class="btn btn-outline-primary btn-sm fw-bold theme-toggle-button" type="button" data-theme-toggle aria-label="Cambiar tema">Claro</button>
+                {% if request.user.is_authenticated %}
+                    <span class="text-secondary small fw-semibold">{{ request.user.username }}</span>
+                    <form action="{% url 'logout' %}" method="post" class="m-0">
+                        {% csrf_token %}
+                        <button class="btn btn-outline-primary btn-sm fw-bold" type="submit">Salir</button>
+                    </form>
+                {% else %}
+                    <span class="text-secondary small fw-semibold">Login obligatorio</span>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+</div>

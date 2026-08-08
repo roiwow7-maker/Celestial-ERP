@@ -1,0 +1,68 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Inventario | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Inventario</h1>
+        <p class="lead">Base v0.8: productos, bodegas, stock, movimientos y valorizacion operativa.</p>
+    </div>
+    {% if perms.Inventory.manage_inventory_stock %}
+        <a class="button" href="{% url 'inventory:movement_create' %}">Registrar movimiento</a>
+    {% endif %}
+</section>
+
+<section class="metrics">
+    <div class="metric"><span>Productos</span><strong>{{ summary.products }}</strong></div>
+    <div class="metric"><span>Bodegas</span><strong>{{ summary.warehouses }}</strong></div>
+    <div class="metric"><span>Movimientos</span><strong>{{ summary.movements }}</strong></div>
+    <div class="metric"><span>Stock bajo</span><strong>{{ summary.low_stock }}</strong></div>
+</section>
+
+<section class="grid two">
+    <article class="panel">
+        <h2>Operacion</h2>
+        <div class="action-row">
+            <a class="button secondary" href="{% url 'inventory:products' %}">Productos</a>
+            <a class="button secondary" href="{% url 'inventory:warehouses' %}">Bodegas</a>
+            <a class="button secondary" href="{% url 'inventory:stock' %}">Stock</a>
+            <a class="button secondary" href="{% url 'inventory:movements' %}">Movimientos</a>
+        </div>
+        <p class="muted">Productos activos: {{ summary.active_products }} · Categorias: {{ summary.categories }}</p>
+    </article>
+    <article class="panel">
+        <h2>Valorizacion</h2>
+        <div class="metrics compact">
+            <div class="metric"><span>Cantidad</span><strong>{{ summary.stock_quantity }}</strong></div>
+            <div class="metric"><span>Valor</span><strong>{{ summary.stock_value }}</strong></div>
+        </div>
+        <a class="button secondary" href="{% url 'inventory:valuation' %}">Ver valorizacion</a>
+    </article>
+</section>
+
+<section class="panel">
+    <h2>Movimientos recientes</h2>
+    <div class="table-scroll">
+        <table>
+            <thead>
+                <tr><th>Fecha</th><th>Tipo</th><th>Producto</th><th>Bodega</th><th>Cantidad</th><th>Costo</th></tr>
+            </thead>
+            <tbody>
+                {% for movement in recent_movements %}
+                    <tr>
+                        <td>{{ movement.date }}</td>
+                        <td>{{ movement.get_movement_type_display }}</td>
+                        <td>{{ movement.product.sku }} - {{ movement.product.name }}</td>
+                        <td>{{ movement.warehouse.code }}</td>
+                        <td>{{ movement.quantity }}</td>
+                        <td>{{ movement.unit_cost }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="6">Sin movimientos registrados.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

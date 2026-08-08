@@ -1,0 +1,32 @@
+{% load static %}
+<!doctype html>
+<html lang="es-CL">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Applet | Celestial ERP{% endblock %}</title>
+    <script>
+        (() => {
+            const storedTheme = localStorage.getItem("celestial-erp-theme");
+            const preferredTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+            const theme = storedTheme || preferredTheme;
+            document.documentElement.dataset.erpTheme = theme;
+            document.documentElement.dataset.bsTheme = theme;
+        })();
+    </script>
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'Applet/css/app.css' %}" rel="stylesheet">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <div class="app-shell">
+        {% include "shared/topbar.html" %}
+        <main class="container-xl app-main">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'Applet/js/app.js' %}"></script>
+    {% block extra_body %}{% endblock %}
+</body>
+</html>

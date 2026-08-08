@@ -1,0 +1,25 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Estado del sistema | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Estado del sistema</h1>
+        <p class="lead">Resumen operativo del portal y los componentes principales del ERP.</p>
+    </div>
+</section>
+
+<section class="grid two">
+    {% for label, value in status_items %}
+        <div class="panel">
+            <h2>{{ label }}</h2>
+            <p class="lead">{{ value }}</p>
+        </div>
+    {% endfor %}
+    <div class="panel">
+        <h2>API</h2>
+        <p class="lead"><a href="/api/system-status/">/api/system-status/</a></p>
+    </div>
+</section>
+{% endblock %}

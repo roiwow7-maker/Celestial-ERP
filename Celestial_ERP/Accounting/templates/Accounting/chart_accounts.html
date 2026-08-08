@@ -1,0 +1,44 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Plan de cuentas | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Plan de cuentas</h1>
+        <p class="lead">Catalogo contable base para asientos de remuneraciones.</p>
+    </div>
+    {% if perms.Accounting.manage_accounting_config %}
+        <a class="button" href="{% url 'accounting:chart_account_create' %}">Nueva cuenta</a>
+    {% endif %}
+</section>
+
+<section class="panel">
+    <form method="get" class="filters">
+        <input class="form-control" type="search" name="q" value="{{ query }}" placeholder="Buscar cuenta">
+        <button class="button secondary" type="submit">Filtrar</button>
+    </form>
+    <div class="table-scroll">
+        <table>
+            <thead>
+                <tr><th>Codigo</th><th>Nombre</th><th>Tipo</th><th>Padre</th><th>Lineas</th><th>Estado</th><th></th></tr>
+            </thead>
+            <tbody>
+                {% for account in accounts %}
+                    <tr>
+                        <td>{{ account.code }}</td>
+                        <td>{{ account.name }}</td>
+                        <td>{{ account.get_account_type_display }}</td>
+                        <td>{{ account.parent|default:"-" }}</td>
+                        <td>{{ account.line_count }}</td>
+                        <td>{% if account.is_active %}Activa{% else %}Inactiva{% endif %}</td>
+                        <td>{% if perms.Accounting.manage_accounting_config %}<a class="button secondary" href="{% url 'accounting:chart_account_update' account.id %}">Editar</a>{% endif %}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="7">Sin cuentas registradas.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

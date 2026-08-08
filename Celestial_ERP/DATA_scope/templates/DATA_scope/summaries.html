@@ -1,0 +1,45 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Liquidaciones | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Liquidaciones</h1>
+        <p class="lead">Busqueda y carga individual de liquidaciones.</p>
+    </div>
+    {% if can_add %}<a class="button" href="{% url 'data_scope:summary_create' %}">Nueva liquidacion</a>{% endif %}
+</section>
+
+<section class="panel">
+    <form method="get" class="actions">
+        <input class="form-control" name="q" type="search" value="{{ search }}" placeholder="Documento, ficha, RUT o nombre" style="max-width: 320px;">
+        <select class="form-select" name="periodo" style="max-width: 180px;">
+            <option value="">Todos</option>
+            {% for period in periods %}
+                <option value="{{ period.periodo }}" {% if period.periodo == selected_period %}selected{% endif %}>{{ period.periodo }}</option>
+            {% endfor %}
+        </select>
+        <button class="button" type="submit">Filtrar</button>
+    </form>
+    <div class="table-scroll">
+    <table>
+        <thead><tr><th>Documento</th><th>Periodo</th><th>Ficha</th><th>Trabajador</th><th>Liquido</th><th>Costo</th></tr></thead>
+        <tbody>
+            {% for summary in summaries %}
+                <tr>
+                    <td><a href="{% url 'data_scope:summary_detail' summary.id %}">{{ summary.document_number }}</a></td>
+                    <td>{{ summary.period.periodo }}</td>
+                    <td>{{ summary.employee.codigo_ficha }}</td>
+                    <td>{{ summary.employee.nombre }}</td>
+                    <td>{{ summary.sueldo_liquido|floatformat:0 }}</td>
+                    <td>{{ summary.costo_empresa|floatformat:0 }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="6">Sin liquidaciones.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</section>
+{% endblock %}

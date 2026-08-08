@@ -1,0 +1,63 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Liquidacion | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>{{ summary.document_number }}</h1>
+        <p class="lead">{{ summary.employee.nombre }} · {{ summary.period.periodo }}</p>
+    </div>
+    <div>
+        {% if can_change %}<a class="button" href="{% url 'data_scope:summary_update' summary.id %}">Editar</a>{% endif %}
+        {% if perms.DATA_scope.download_upload_output %}<a class="button secondary" href="{% url 'data_scope:export_summary_csv' summary.id %}">Exportar CSV</a>{% endif %}
+        <a class="button secondary" href="{% url 'data_scope:summaries' %}">Volver</a>
+    </div>
+</section>
+
+<section class="grid two">
+    <div class="panel">
+        <h2>Totales</h2>
+        <table>
+            <tr><th>Sueldo base</th><td>{{ summary.sueldo_base|floatformat:0 }}</td></tr>
+            <tr><th>Haberes imponibles</th><td>{{ summary.total_haberes_imponibles|floatformat:0 }}</td></tr>
+            <tr><th>Haberes no imponibles</th><td>{{ summary.total_haberes_no_imponibles|floatformat:0 }}</td></tr>
+            <tr><th>Descuentos legales</th><td>{{ summary.total_descuentos_legales|floatformat:0 }}</td></tr>
+            <tr><th>Otros descuentos</th><td>{{ summary.total_otros_descuentos|floatformat:0 }}</td></tr>
+            <tr><th>Liquido</th><td>{{ summary.sueldo_liquido|floatformat:0 }}</td></tr>
+            <tr><th>Costo empresa</th><td>{{ summary.costo_empresa|floatformat:0 }}</td></tr>
+        </table>
+    </div>
+    <div class="panel">
+        <h2>Dias y jornada</h2>
+        <table>
+            <tr><th>Dias laborales</th><td>{{ summary.dias_laborales }}</td></tr>
+            <tr><th>Dias trabajados</th><td>{{ summary.dias_trabajados }}</td></tr>
+            <tr><th>Licencias</th><td>{{ summary.dias_licencias }}</td></tr>
+            <tr><th>Permisos</th><td>{{ summary.dias_permisos }}</td></tr>
+            <tr><th>Ausencias</th><td>{{ summary.dias_ausencias }}</td></tr>
+            <tr><th>Horas extras</th><td>{{ summary.horas_extras }}</td></tr>
+        </table>
+    </div>
+</section>
+
+<section class="panel">
+    <h2>Movimientos asociados</h2>
+    <table>
+        <thead><tr><th>Item</th><th>Categoria</th><th>Descripcion</th><th>Monto</th><th></th></tr></thead>
+        <tbody>
+            {% for entry in entries %}
+                <tr>
+                    <td>{{ entry.item.codigo }}</td>
+                    <td>{{ entry.item.get_categoria_display }}</td>
+                    <td>{{ entry.item.descripcion }}</td>
+                    <td>{{ entry.monto|floatformat:0 }}</td>
+                    <td>{% if perms.DATA_scope.change_payrollentry %}<a href="{% url 'data_scope:entry_update' entry.id %}">Editar</a>{% endif %}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="5">Sin movimientos asociados.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

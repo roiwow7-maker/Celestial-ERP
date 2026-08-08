@@ -1,0 +1,50 @@
+{% load static %}
+<!doctype html>
+<html lang="es-CL">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login | Celestial ERP</title>
+    <script>
+        (() => {
+            const storedTheme = localStorage.getItem("celestial-erp-theme");
+            const preferredTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+            const theme = storedTheme || preferredTheme;
+            document.documentElement.dataset.erpTheme = theme;
+            document.documentElement.dataset.bsTheme = theme;
+        })();
+    </script>
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'Applet/css/app.css' %}" rel="stylesheet">
+</head>
+<body>
+    <main class="min-vh-100 d-grid align-items-center py-4">
+        <section class="panel mx-auto w-100" style="max-width: 430px;">
+            <div class="d-flex align-items-start justify-content-between gap-2">
+                <div>
+                    <h1 class="h4 mb-1">Celestial ERP</h1>
+                    <p class="lead mb-3">Ingresa con tu usuario nominal.</p>
+                </div>
+                <button class="btn btn-outline-primary btn-sm fw-bold theme-toggle-button" type="button" data-theme-toggle aria-label="Cambiar tema">Claro</button>
+            </div>
+            {% if form.errors %}
+                <div class="message error">Usuario o clave incorrectos.</div>
+            {% endif %}
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ next }}">
+                <div class="mb-3">
+                    <label class="form-label" for="{{ form.username.id_for_label }}">Usuario</label>
+                    {{ form.username }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="{{ form.password.id_for_label }}">Clave</label>
+                    {{ form.password }}
+                </div>
+                <button class="button w-100" type="submit">Entrar</button>
+            </form>
+        </section>
+    </main>
+    <script src="{% static 'Applet/js/app.js' %}"></script>
+</body>
+</html>

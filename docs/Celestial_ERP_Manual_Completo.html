@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Manual completo Celestial ERP</title>
+<style>
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #24303f;
+    background: #f4f1ec;
+    line-height: 1.5;
+    margin: 0;
+}
+main {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 42px 32px 72px;
+    background: #fffdf9;
+}
+h1, h2, h3 { color: #2f5260; }
+h1 { border-bottom: 3px solid #8db7c1; padding-bottom: 12px; }
+h2 { margin-top: 32px; border-bottom: 1px solid #d4ccc1; padding-bottom: 6px; }
+code, pre { background: #eef4f2; color: #24303f; }
+pre { padding: 12px; border: 1px solid #d4ccc1; border-radius: 6px; overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+td, th { border: 1px solid #d4ccc1; padding: 8px; vertical-align: top; }
+@media print {
+    body { background: white; }
+    main { padding: 0; }
+    h1, h2 { break-after: avoid; }
+}
+</style>
+</head>
+<body>
+<main>
+<h1>Manual completo Celestial ERP</h1>
+<p>Fecha de referencia: 2026-07-20</p>
+<p>Version documentada: `1.0.8`</p>
+<h2>Proposito del documento</h2>
+<p>Este manual consolida la documentacion operativa de Celestial ERP en un solo documento: manual de uso, implementacion, gestion interna, ETL, seguridad, backups, administracion y roadmap. Esta pensado para operacion local o red interna controlada.</p>
+<h2>1. Vision General</h2>
+<p>Celestial ERP es una plataforma Django para gestionar datos historicos y operativos de remuneraciones. El sistema nacio como un ETL para liquidaciones historicas y evoluciono a una webapp con modulos de remuneraciones, contabilidad, inventario, compras/ventas, asistencia, auditoria, backups, API interna y administracion multiusuario.</p>
+<p>La version actual es `1.0.8`. PostgreSQL esta preparado documentalmente, pero la operacion actual sigue sobre SQLite por limitaciones de permisos e infraestructura. La migracion real queda para `v1.0.9` y `v1.0.10`.</p>
+<h2>2. Alcance Funcional</h2>
+<p>Modulos principales:</p>
+<ul>
+<li>Applet: portal, navegacion, estado del sistema, auditoria, backups, seguridad y kanban.</li>
+<li>DATA_scope: remuneraciones, trabajadores, periodos, items, movimientos, liquidaciones, reportes y cargas ETL.</li>
+<li>ERP_api: API interna protegida por login/permisos.</li>
+<li>Accounting: plan de cuentas, centros de costo, mapeos, asientos y reportes contables.</li>
+<li>Inventory: productos, bodegas, stock, movimientos y valorizacion.</li>
+<li>Commerce: proveedores, clientes, compras, ventas y reportes comerciales.</li>
+<li>Attendance: asistencia historica diaria, mensual y por trabajador.</li>
+</ul>
+<h2>3. Manual de Uso</h2>
+<h3>3.1 Ingreso al sistema</h3>
+<ol>
+<li>Abrir la URL local o LAN del sistema.</li>
+<li>Iniciar sesion con usuario nominal.</li>
+<li>Usar la barra superior para entrar a modulos visibles segun permisos.</li>
+<li>No compartir claves ni operar con usuarios genericos salvo emergencia controlada.</li>
+</ol>
+<h3>3.2 Navegacion</h3>
+<p>La navbar muestra opciones segun rol:</p>
+<ul>
+<li>General: portal, modulos y estado del sistema.</li>
+<li>Remuneraciones: dashboard, trabajadores, periodos, items, movimientos, liquidaciones, reportes y cargas.</li>
+<li>Contabilidad: dashboard, plan de cuentas, centros de costo, mapeos, asientos y reportes.</li>
+<li>Inventario: productos, bodegas, stock, movimientos y valorizacion.</li>
+<li>Comercio: proveedores, clientes, compras, ventas y reportes.</li>
+<li>Control: administracion, seguridad, auditoria y backups.</li>
+<li>Herramientas: kanban y API interna.</li>
+</ul>
+<h3>3.3 Remuneraciones</h3>
+<p>Uso recomendado:</p>
+<ol>
+<li>Revisar dashboard general.</li>
+<li>Buscar trabajador por nombre, RUT o codigo de ficha.</li>
+<li>Revisar periodos y liquidaciones.</li>
+<li>Crear o editar datos manuales solo con permiso adecuado.</li>
+<li>Usar reportes para filtros por departamento, periodo, categoria y rango liquido.</li>
+<li>Exportar CSV cuando se requiera analisis externo.</li>
+</ol>
+<h3>3.4 Cargas ETL</h3>
+<p>La carga web permite subir Excel historico o CSV transformado. La carga genera estado por corrida y permite revisar salidas. Para cargas grandes se recomienda ejecutar desde consola con `run_etl.py`.</p>
+<h3>3.5 Contabilidad</h3>
+<p>Flujo base:</p>
+<ol>
+<li>Revisar plan de cuentas.</li>
+<li>Revisar centros de costo.</li>
+<li>Mantener mapeos item remuneracion a cuenta contable.</li>
+<li>Generar asientos desde liquidaciones.</li>
+<li>Revisar reportes contables iniciales.</li>
+</ol>
+<h3>3.6 Inventario</h3>
+<p>Flujo base:</p>
+<ol>
+<li>Mantener productos y bodegas.</li>
+<li>Revisar saldos de stock.</li>
+<li>Registrar movimientos de entrada, salida o ajuste.</li>
+<li>Revisar valorizacion por costo promedio.</li>
+</ol>
+<h3>3.7 Compras y ventas</h3>
+<p>Flujo base:</p>
+<ol>
+<li>Mantener proveedores y clientes.</li>
+<li>Registrar compras y ventas.</li>
+<li>Revisar documentos y lineas.</li>
+<li>Consultar reportes comerciales.</li>
+</ol>
+<h3>3.8 Asistencia</h3>
+<p>Flujo base:</p>
+<ol>
+<li>Crear registros diarios por trabajador.</li>
+<li>Mantener hora de entrada, salida, estado y fuente.</li>
+<li>Revisar historico por trabajador.</li>
+<li>Revisar reporte mensual.</li>
+<li>Exportar CSV o imprimir/guardar como PDF desde navegador.</li>
+</ol>
+<h2>4. Manual de Implementacion</h2>
+<h3>4.1 Requisitos</h3>
+<ul>
+<li>Windows con Python disponible.</li>
+<li>Dependencias en `requirements.txt`.</li>
+<li>Acceso al workspace `C:\Users\RoyGabrielZaioLopez\Desktop\ETL`.</li>
+<li>SQLite para operacion actual.</li>
+<li>PostgreSQL solo cuando exista servidor autorizado.</li>
+</ul>
+<h3>4.2 Instalacion local</h3>
+<p>Pasos generales:</p>
+<pre><code>
+cd C:\Users\RoyGabrielZaioLopez\Desktop\ETL
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+python Celestial_ERP\manage.py migrate
+python Celestial_ERP\manage.py check
+</code></pre>
+<h3>4.3 Ejecucion local</h3>
+<pre><code>
+python Celestial_ERP\manage.py runserver
+</code></pre>
+<p>Para red interna, usar configuracion LAN documentada en `docs/18_DEPLOY_LAN.md`, ajustar `ALLOWED_HOSTS` y firewall local.</p>
+<h3>4.4 Variables y configuracion</h3>
+<p>La configuracion sensible no debe guardarse en git. Usar `.env` o variables de entorno segun el entorno. Revisar `.env.example`.</p>
+<p>Variables importantes:</p>
+<ul>
+<li>`DJANGO_SECRET_KEY`</li>
+<li>`DJANGO_DEBUG`</li>
+<li>`DJANGO_ALLOWED_HOSTS`</li>
+<li>`DJANGO_SETTINGS_MODULE`</li>
+<li>`ERP_AUTO_BACKUP_ENABLED`</li>
+<li>`ERP_AUTO_BACKUP_INTERVAL_MINUTES`</li>
+</ul>
+<h2>5. Manual de Gestion Interna</h2>
+<h3>5.1 Roles</h3>
+<p>Roles funcionales:</p>
+<ul>
+<li>Administrador: acceso total, seguridad, backups, admin y datos.</li>
+<li>RRHH: operacion de remuneraciones y asistencia segun permisos.</li>
+<li>Contabilidad: lectura/exportacion y modulo contable.</li>
+<li>Solo lectura: consulta controlada sin escritura sensible.</li>
+</ul>
+<h3>5.2 Usuarios</h3>
+<p>Buenas practicas:</p>
+<ul>
+<li>Usar usuarios nominales.</li>
+<li>Evitar usuarios compartidos.</li>
+<li>Desactivar usuarios que ya no operan.</li>
+<li>Revisar permisos antes de entregar acceso.</li>
+<li>Registrar cambios relevantes mediante auditoria.</li>
+</ul>
+<h3>5.3 Auditoria</h3>
+<p>La auditoria registra usuario, modulo, accion, descripcion, objeto, ID, representacion y cambios JSON cuando aplica. La vista permite filtrar por modulo, accion, objeto, ID y texto.</p>
+<h3>5.4 Django Admin</h3>
+<p>El Django Admin queda reservado para administracion interna. Debe usarse con cuidado porque permite cambios directos en datos y configuracion. La UI del admin esta personalizada con colores del sistema y tema claro/oscuro.</p>
+<h2>6. Manual ETL</h2>
+<h3>6.1 Flujo general</h3>
+<ol>
+<li>Entrada: Excel historico o CSV transformado.</li>
+<li>`dataload.py`: transforma Excel a `transformed.csv`.</li>
+<li>`tabcreated.py`: separa CSV por categoria.</li>
+<li>`build_liquidaciones_csvs.py`: genera CSV equivalentes a liquidaciones.</li>
+<li>`transfer_liquidaciones_to_excel.py`: crea Excel final.</li>
+<li>Importacion Django con `import_payroll_data`.</li>
+</ol>
+<h3>6.2 Ejecucion completa</h3>
+<pre><code>
+python run_etl.py --input &quot;ITEMS_ACUMULADOS_Historico Payroll.xlsx&quot;
+</code></pre>
+<p>Opciones utiles:</p>
+<ul>
+<li>`--skip-excel`</li>
+<li>`--skip-import`</li>
+<li>`--clear`</li>
+<li>`--rut-empresa`</li>
+<li>`--source-format historic_excel`</li>
+<li>`--source-format transformed_csv`</li>
+</ul>
+<h3>6.3 Cargas SEGCEI y COSESO</h3>
+<p>Herramienta reusable:</p>
+<pre><code>
+python tools\load_item_to_liquidaciones_workbook.py --source &quot;csv_por_categoria\contribucion_empleador.csv&quot; --workbook &quot;Liquidaciones_Historicas_Cargadas_SEGCEI_COSESO_workcopy.xlsx&quot; --item-code SEGCEI --output &quot;Liquidaciones_Historicas_Cargadas_SEGCEI_COSESO_FINAL.xlsx&quot;
+python tools\load_item_to_liquidaciones_workbook.py --source &quot;ITEMS_ACUMULADOS_Historico Payroll.xlsx&quot; --workbook &quot;Liquidaciones_Historicas_Cargadas_SEGCEI_workcopy.xlsx&quot; --item-code COSESO --output &quot;Liquidaciones_Historicas_Cargadas_SEGCEI_COSESO_workcopy.xlsx&quot;
+</code></pre>
+<p>Mapeos:</p>
+<ul>
+<li>`SEGCEI` hacia `Seguro Cesantia Empleador (Ley proteccion empleo)`.</li>
+<li>`COSESO` hacia `Cotizacion Expectativa de Vida`.</li>
+</ul>
+<p>El generador `build_liquidaciones_csvs.py` tambien calcula `COSESO` para la columna `Cotizacion Expectativa de Vida`.</p>
+<h2>7. Operacion y Backups</h2>
+<h3>7.1 Backup manual</h3>
+<pre><code>
+python Celestial_ERP\manage.py backup_sqlite
+</code></pre>
+<p>Opciones:</p>
+<pre><code>
+python Celestial_ERP\manage.py backup_sqlite --retention-days 30 --keep-last 5
+python Celestial_ERP\manage.py backup_sqlite --no-verify
+</code></pre>
+<h3>7.2 Restauracion validada</h3>
+<p>Desde `v1.0.4`:</p>
+<pre><code>
+python Celestial_ERP\manage.py validate_backup_restore
+python Celestial_ERP\manage.py validate_backup_restore --backup-path backups\db_AAAAMMDD_HHMMSS.sqlite3
+</code></pre>
+<p>El comando valida una restauracion en copia temporal sin tocar la base activa.</p>
+<h3>7.3 Salud SQLite</h3>
+<pre><code>
+python Celestial_ERP\manage.py check_sqlite_operational_health
+</code></pre>
+<p>Valida integridad, WAL, claves foraneas, ultimo backup, uploads y conteos base.</p>
+<h2>8. Seguridad Operativa</h2>
+<p>Principios:</p>
+<ul>
+<li>Login obligatorio.</li>
+<li>Permisos por modulo y accion.</li>
+<li>Usuarios nominales.</li>
+<li>Backups frecuentes.</li>
+<li>Datos sensibles fuera de git.</li>
+<li>Red interna controlada.</li>
+<li>PostgreSQL antes de multiusuario sostenido.</li>
+</ul>
+<p>Comando recomendado:</p>
+<pre><code>
+python Celestial_ERP\manage.py check_operational_security
+</code></pre>
+<h2>9. API Interna</h2>
+<p>Ruta principal:</p>
+<pre><code>
+/api/
+</code></pre>
+<p>La API requiere sesion. Los endpoints de remuneraciones requieren permisos de payroll. El explorador visual muestra endpoints en acordeon y permite consultar el indice JSON con:</p>
+<pre><code>
+/api/?format=json
+</code></pre>
+<h2>10. Testing y Validacion</h2>
+<p>Comandos:</p>
+<pre><code>
+python Celestial_ERP\manage.py check
+python Celestial_ERP\manage.py makemigrations --check --dry-run
+python Celestial_ERP\manage.py test Applet DATA_scope ERP_api Accounting Inventory Commerce Attendance
+</code></pre>
+<p>Estado validado al 2026-07-20:</p>
+<ul>
+<li>`check`: OK.</li>
+<li>migraciones pendientes: ninguna.</li>
+<li>suite completa: 48 tests OK.</li>
+<li>SQLite: `integrity_check` OK.</li>
+</ul>
+<h2>11. Deploy LAN</h2>
+<p>Uso recomendado:</p>
+<ol>
+<li>Definir IP del equipo servidor.</li>
+<li>Ajustar `ALLOWED_HOSTS`.</li>
+<li>Ejecutar migraciones.</li>
+<li>Crear usuarios nominales.</li>
+<li>Probar acceso desde otro equipo.</li>
+<li>Validar firewall.</li>
+<li>Ejecutar backup inicial.</li>
+<li>Probar restauracion del backup.</li>
+</ol>
+<p>No exponer a internet sin hardening adicional.</p>
+<h2>12. IA Local</h2>
+<p>La IA local cuantizada queda planificada como servicio LAN separado. No debe ejecutarse dentro del proceso Django. Debe tener endpoint interno, logs propios, limites de memoria, timeouts y acceso controlado sin conectar directo a la base productiva.</p>
+<h2>13. PostgreSQL</h2>
+<p>Estado actual:</p>
+<ul>
+<li>Preparacion documentada en `v1.0.8`.</li>
+<li>Ensayo pendiente en `v1.0.9`.</li>
+<li>Migracion real pendiente en `v1.0.10`.</li>
+</ul>
+<p>No migrar sin:</p>
+<ul>
+<li>servidor autorizado;</li>
+<li>backup validado;</li>
+<li>plan de reversa;</li>
+<li>ventana de mantenimiento;</li>
+<li>pruebas verdes;</li>
+<li>credenciales fuera del repo.</li>
+</ul>
+<h2>14. Mantenimiento Recurrente</h2>
+<p>Rutina recomendada:</p>
+<ul>
+<li>Diario: revisar acceso, errores visibles y ultimo backup.</li>
+<li>Semanal: ejecutar `check_sqlite_operational_health`.</li>
+<li>Mensual: validar restauracion de un backup.</li>
+<li>Antes de cambios grandes: backup manual y pruebas.</li>
+<li>Despues de cargas ETL: revisar conteos, reportes y auditoria.</li>
+</ul>
+<h2>15. Archivos Clave</h2>
+<ul>
+<li>`Celestial_ERP/Applet/services.py`: version y servicios centrales.</li>
+<li>`run_etl.py`: orquestador ETL.</li>
+<li>`dataload.py`: transformacion historica.</li>
+<li>`build_liquidaciones_csvs.py`: CSV equivalentes.</li>
+<li>`tools/load_item_to_liquidaciones_workbook.py`: carga SEGCEI/COSESO a Excel.</li>
+<li>`ROADMAP.md`: roadmap vigente.</li>
+<li>`version_log.md`: bitacora de versiones.</li>
+<li>`docs/INDICE_DOCUMENTACION.md`: indice maestro.</li>
+</ul>
+<h2>16. Riesgos y Pendientes</h2>
+<p>Riesgos actuales:</p>
+<ul>
+<li>SQLite no es ideal para multiusuario sostenido.</li>
+<li>Excel puede bloquear archivos si estan abiertos.</li>
+<li>Backups deben copiarse fuera del equipo periodicamente.</li>
+<li>Artefactos temporales pueden quedar bloqueados por Windows.</li>
+</ul>
+<p>Pendientes:</p>
+<ul>
+<li>`v1.0.9`: ensayo SQLite a PostgreSQL.</li>
+<li>`v1.0.10`: migracion real a PostgreSQL.</li>
+<li>Validacion LAN recurrente.</li>
+<li>Politica externa de respaldo fuera del equipo.</li>
+</ul>
+<h2>17. Anexos</h2>
+<p>Documentos relacionados:</p>
+<ul>
+<li>`docs/00_DOCUMENTACION_GENERAL.md`</li>
+<li>`docs/01_APPLET_PORTAL.md`</li>
+<li>`docs/03_ETL_PIPELINE.md`</li>
+<li>`docs/05_ADMIN_MULTIUSUARIO.md`</li>
+<li>`docs/06_OPERACION_LOCAL_BACKUPS.md`</li>
+<li>`docs/18_DEPLOY_LAN.md`</li>
+<li>`docs/19_V10_PRE_POSTGRESQL_IA_BACKUPS.md`</li>
+<li>`ROADMAP.md`</li>
+<li>`version_log.md`</li>
+</ul>
+</main>
+</body>
+</html>

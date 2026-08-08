@@ -1,0 +1,45 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Reportes contables | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Reportes contables</h1>
+        <p class="lead">Resumen inicial de saldos por cuenta y cobertura de configuracion.</p>
+    </div>
+    <a class="button secondary" href="{% url 'accounting:dashboard' %}">Dashboard</a>
+</section>
+
+<section class="metrics">
+    <div class="metric"><span>Debe total</span><strong>{{ summary.total_debit }}</strong></div>
+    <div class="metric"><span>Haber total</span><strong>{{ summary.total_credit }}</strong></div>
+    <div class="metric"><span>Asientos</span><strong>{{ summary.journal_entries }}</strong></div>
+    <div class="metric"><span>Items sin mapeo</span><strong>{{ summary.mapping_gaps }}</strong></div>
+</section>
+
+<section class="panel">
+    <h2>Saldos por cuenta</h2>
+    <div class="table-scroll">
+        <table>
+            <thead>
+                <tr><th>Cuenta</th><th>Nombre</th><th>Tipo</th><th>Debe</th><th>Haber</th><th>Saldo</th></tr>
+            </thead>
+            <tbody>
+                {% for balance in balances %}
+                    <tr>
+                        <td>{{ balance.account__code }}</td>
+                        <td>{{ balance.account__name }}</td>
+                        <td>{{ balance.account__account_type }}</td>
+                        <td>{{ balance.total_debit|default:"0" }}</td>
+                        <td>{{ balance.total_credit|default:"0" }}</td>
+                        <td>{{ balance.balance }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="6">Sin lineas contables para reportar.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

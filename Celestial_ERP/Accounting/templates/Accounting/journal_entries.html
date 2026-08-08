@@ -1,0 +1,41 @@
+{% extends "Applet/base.html" %}
+
+{% block title %}Asientos contables | Celestial ERP{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Asientos contables</h1>
+        <p class="lead">Asientos generados desde liquidaciones y movimientos de remuneraciones.</p>
+    </div>
+    {% if perms.Accounting.generate_journal_entries %}
+        <a class="button" href="{% url 'accounting:generate_payroll_journal' %}">Generar asiento</a>
+    {% endif %}
+</section>
+
+<section class="panel">
+    <div class="table-scroll">
+        <table>
+            <thead>
+                <tr><th>Numero</th><th>Periodo</th><th>Fecha</th><th>Estado</th><th>Lineas</th><th>Debe</th><th>Haber</th><th></th></tr>
+            </thead>
+            <tbody>
+                {% for entry in entries %}
+                    <tr>
+                        <td>{{ entry.number }}</td>
+                        <td>{{ entry.period.periodo }}</td>
+                        <td>{{ entry.date }}</td>
+                        <td>{{ entry.get_status_display }}</td>
+                        <td>{{ entry.line_count }}</td>
+                        <td>{{ entry.debit_sum|default:"0" }}</td>
+                        <td>{{ entry.credit_sum|default:"0" }}</td>
+                        <td><a class="button secondary" href="{% url 'accounting:journal_detail' entry.id %}">Ver</a></td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="8">Sin asientos registrados.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

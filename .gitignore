@@ -44,6 +44,7 @@ media/
 # Archivos generados en operacion
 logs/*.log
 logs/*.log.*
+.automatic_backup.lock
 staticfiles/
 
 # Editores y sistema operativo

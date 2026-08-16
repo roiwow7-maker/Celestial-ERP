@@ -1,5 +1,8 @@
+import csv
 import shutil
 import sqlite3
+import tempfile
+from pathlib import Path
 from unittest.mock import patch
 from uuid import uuid4
 
@@ -18,12 +21,13 @@ from DATA_scope.management.commands.check_sqlite_operational_health import Comma
 from DATA_scope.management.commands.cleanup_uploads import Command as CleanupUploadsCommand
 from DATA_scope.management.commands.validate_backup_restore import Command as ValidateBackupRestoreCommand
 from DATA_scope.management.commands.import_payroll_data import (
+    SUMMARY_REQUIRED_COLUMNS,
     TRANSFORMED_REQUIRED_COLUMNS,
     csv_headers,
     validate_columns,
 )
 from DATA_scope.management.commands.validate_business_rules import SUMMARY_FIELD_TO_CATEGORIES
-from DATA_scope.models import Employee, ImportRun, PayrollPeriod
+from DATA_scope.models import Employee, ImportRun, PayrollEntry, PayrollPeriod, PayrollSummary
 from DATA_scope.quality import validate_transformed_csv, write_quality_report
 
 
@@ -75,6 +79,56 @@ class ImportValidationTests(TestCase):
         report_path = self.test_dir / "quality_report.csv"
         write_quality_report(report_path, issues)
         self.assertIn("Movimiento duplicado", report_path.read_text(encoding="utf-8-sig"))
+
+    def test_small_realistic_fixture_imports_end_to_end(self):
+        with tempfile.TemporaryDirectory() as raw_dir:
+            directory = Path(raw_dir)
+            transformed = directory / "transformed.csv"
+            summaries = directory / "Liquidaciones.csv"
+            transformed_headers = sorted(TRANSFORMED_REQUIRED_COLUMNS)
+            transformed_row = {header: "" for header in transformed_headers}
+            transformed_row.update({
+                "periodo": "202601",
+                "codigo": "PORT-001",
+                "Rut": "11111111-1",
+                "nombre": "Persona Sintetica",
+                "Division": "Pruebas",
+                "Codigo A.F.P.": "AFP TEST",
+                "Isapre": "SALUD TEST",
+                "diastr": "30",
+                "codigo_item": "A000",
+                "categoria_item": "totales",
+                "requiere_confirmacion": "false",
+                "monto": "750000",
+            })
+            with transformed.open("w", encoding="utf-8", newline="") as handle:
+                writer = csv.DictWriter(handle, fieldnames=transformed_headers, delimiter=";")
+                writer.writeheader()
+                writer.writerow(transformed_row)
+
+            summary_headers = sorted(SUMMARY_REQUIRED_COLUMNS)
+            summary_row = {header: "0" for header in summary_headers}
+            summary_row.update({
+                "Número de Documento*": "202601-PORT-001",
+                "Código de Ficha": "PORT-001",
+                "RUT Empresa*": "76000000-0",
+                "Sueldo Líquido*": "750000",
+            })
+            with summaries.open("w", encoding="utf-8", newline="") as handle:
+                writer = csv.DictWriter(handle, fieldnames=summary_headers, delimiter=";")
+                writer.writeheader()
+                writer.writerow(summary_row)
+
+            call_command(
+                "import_payroll_data",
+                transformed=transformed,
+                summaries=summaries,
+                descriptions_dir=directory / "descriptions",
+            )
+
+        self.assertTrue(Employee.objects.filter(codigo_ficha="PORT-001").exists())
+        self.assertEqual(PayrollEntry.objects.filter(employee__codigo_ficha="PORT-001").count(), 1)
+        self.assertEqual(PayrollSummary.objects.get(employee__codigo_ficha="PORT-001").sueldo_liquido, 750000)
 
 
 class ManualEmployeeFlowTests(TestCase):
@@ -167,7 +221,11 @@ class BackupCommandTests(TestCase):
                     "Applet_auditlog",
                 ]:
                     connection.execute(f'create table "{table}" (id integer primary key)')
-            call_command("validate_backup_restore", backup_path=backup_path)
+            sqlite_databases = {
+                "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": backup_path}
+            }
+            with patch.object(settings, "DATABASES", sqlite_databases):
+                call_command("validate_backup_restore", backup_path=backup_path)
         finally:
             shutil.rmtree(output_dir, ignore_errors=True)
 

@@ -1,0 +1,3 @@
+# Celestial ERP: backup PostgreSQL diario a las 02:00 (America/Santiago).
+CRON_TZ=America/Santiago
+0 2 * * * /home/roy/Escritorio/ETL/tools/automatic_postgresql_backup.sh

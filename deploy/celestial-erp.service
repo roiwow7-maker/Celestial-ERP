@@ -1,0 +1,20 @@
+[Unit]
+Description=Celestial ERP Django (Gunicorn)
+After=network.target postgresql.service
+
+[Service]
+Type=notify
+User=celestial
+Group=celestial
+WorkingDirectory=/opt/celestial-erp/Celestial_ERP
+EnvironmentFile=/etc/celestial-erp/erp.env
+ExecStart=/opt/celestial-erp/venv/bin/gunicorn Celestial_ERP.wsgi:application --bind 127.0.0.1:8000 --workers 3 --timeout 120 --access-logfile - --error-logfile -
+Restart=on-failure
+RestartSec=5
+PrivateTmp=true
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/opt/celestial-erp/logs /opt/celestial-erp/uploads /opt/celestial-erp/reports /opt/celestial-erp/backups
+
+[Install]
+WantedBy=multi-user.target

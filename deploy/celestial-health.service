@@ -1,0 +1,10 @@
+[Unit]
+Description=Salud PostgreSQL Celestial ERP
+
+[Service]
+Type=oneshot
+User=celestial
+Group=celestial
+WorkingDirectory=/opt/celestial-erp/Celestial_ERP
+EnvironmentFile=/etc/celestial-erp/erp.env
+ExecStart=/opt/celestial-erp/venv/bin/python manage.py check_postgresql_operational_health --fail-on-warning

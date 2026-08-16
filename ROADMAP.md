@@ -1,8 +1,8 @@
 # Celestial ERP Roadmap
 
-Fecha de referencia: 2026-08-07
+Fecha de referencia: 2026-08-16
 
-Version actual del sistema: `1.1.1a`.
+Version actual del sistema: `1.2.1`.
 
 Hitos previos integrados:
 
@@ -21,6 +21,12 @@ Hitos previos integrados:
 - `1.0.10`: PostgreSQL activado como base principal y contenido historico validado.
 - `1.1.1`: backup PostgreSQL verificado, pantalla administrativa adaptada y preparacion segura para GitHub.
 - `1.1.1a`: README principal consolidado, instalacion segura, operacion PostgreSQL y navegacion documental.
+- `1.1.1b`: licencia propietaria chilena para exposicion del codigo como portafolio.
+- `1.1.11`: operacion PostgreSQL reforzada con restauracion aislada, pruebas, comparacion, monitoreo, deploy y ETL de integracion.
+- `1.1.11a`: backup PostgreSQL automatico diario con bloqueo concurrente, verificacion, retencion y log operativo.
+- `1.1.11b`: usuarios nominales creados, credenciales administrativas rotadas y matriz de los cuatro roles validada.
+- `1.2.0` (en preparacion): frontend nativo Next.js, API Django v1, escritorio Electron, reportes, ETL, administracion y experiencia movil implementados.
+- `1.2.1`: suite Django completa validada con 51 pruebas sobre PostgreSQL temporal aislado.
 
 ## v0.3 - Plataforma base
 - [x] DATA_scope remuneraciones
@@ -125,33 +131,65 @@ Hitos previos integrados:
 ### Prioridad critica
 
 - [x] v1.1.1 - Implementar backups PostgreSQL con `pg_dump`, retencion y registro de auditoria
-- [ ] v1.1.2 - Implementar y probar restauracion PostgreSQL con `pg_restore` en una base aislada
+- [x] v1.1.2 - Implementar y probar restauracion PostgreSQL con `pg_restore` en una base aislada
 - [x] v1.1.3 - Adaptar la pantalla, estado del sistema y permisos de backups para PostgreSQL
-- [ ] v1.1.4 - Mover credenciales PostgreSQL a variables de entorno obligatorias y retirar valores sensibles del codigo
+- [x] v1.1.4 - Mover credenciales PostgreSQL a variables de entorno obligatorias y retirar valores sensibles del codigo
 
 ### Prioridad alta
 
-- [ ] v1.1.5 - Ejecutar y adaptar toda la suite automatizada usando PostgreSQL
-- [ ] v1.1.6 - Comparar automaticamente conteos, sumas y reglas de negocio entre SQLite y PostgreSQL
-- [ ] v1.1.7 - Crear usuarios nominales, rotar credenciales administrativas y validar los cuatro roles
-- [ ] v1.1.8 - Preparar ejecucion productiva con WSGI/ASGI, servicio persistente, HTTPS y `DEBUG=false`
-- [ ] v1.1.9 - Definir monitoreo de conexion, espacio, rendimiento, logs y fallos de backup
+- [x] v1.1.5 - Ejecutar y adaptar toda la suite automatizada usando PostgreSQL
+- [x] v1.1.6 - Comparar automaticamente conteos, sumas y reglas de negocio entre SQLite y PostgreSQL
+- [x] v1.1.7 - Crear usuarios nominales, rotar credenciales administrativas y validar los cuatro roles
+- [x] v1.1.8 - Preparar ejecucion productiva con WSGI, servicio persistente, HTTPS y `DEBUG=false`
+- [x] v1.1.9 - Definir monitoreo de conexion, espacio, rendimiento, logs y fallos de backup
 
 ### Prioridad media
 
-- [ ] v1.1.10 - Programar limpieza y retencion de archivos sensibles en `uploads/`
-- [ ] v1.1.11 - Ampliar pruebas de integracion ETL con archivos reales pequenos y errores por fila/columna
+- [x] v1.1.10 - Programar limpieza y retencion de archivos sensibles en `uploads/`
+- [x] v1.1.11 - Ampliar pruebas de integracion ETL con archivos pequenos representativos y errores por fila/columna
 - [ ] v1.1.12 - Validar reglas oficiales de remuneraciones y clasificacion de items con el area de negocio
-- [ ] v1.1.13 - Evaluar cola de trabajos dedicada si las cargas simultaneas superan el proceso background actual
+- [x] v1.1.13 - Evaluar cola de trabajos dedicada si las cargas simultaneas superan el proceso background actual
 
 ### Evolucion funcional posterior
 
-- [ ] Contabilidad: cierres, aprobaciones y exportacion formal de asientos
-- [ ] Inventario: kardex, cierres y documentos de recepcion/despacho
-- [ ] Compras y ventas: integracion con stock y contabilidad segun reglas aprobadas
-- [ ] Reportes: PDF server-side solo para documentos que requieran formato fijo
-- [ ] IA local: mantener como servicio LAN separado y avanzar solo con un caso de uso aprobado
+- [ ] v1.2.5 - Contabilidad: aprobacion/contabilizacion/anulacion auditada, cierres y exportacion formal de asientos
+- [ ] v1.2.6 - Inventario: documentos de recepcion/despacho/ajuste, kardex valorizado, reversas y cierres
+- [ ] v1.2.7 - Compras y ventas: integracion idempotente con stock y contabilidad segun reglas aprobadas
+- [ ] v1.2.8 - Reportes: PDF server-side para documentos de formato fijo, versionados y auditados
+- [ ] v1.2.9 - IA local: servicio LAN separado para un unico caso de uso aprobado y de solo lectura
+
+La revision tecnica, dependencias, decisiones de negocio y criterios de cierre se detallan en `docs/24_REVISION_EVOLUCION_FUNCIONAL.md`.
+
+## v1.2 - Frontend real multiplataforma (en preparacion)
+
+### Experiencia web y escritorio
+
+- [x] Frontend nativo en Next.js y TypeScript, sin incrustar las vistas HTML de Django
+- [x] Inicio de sesion, sesion autenticada y cierre de sesion conectados al backend
+- [x] Navegacion y operaciones CRUD para remuneraciones, asistencia, contabilidad, inventario, compras y ventas
+- [x] API Django v1 para sesion, catalogos, recursos, reportes, cargas ETL y administracion de usuarios
+- [x] Empaquetado Electron con servidor Next.js standalone y dependencias incluidas
+- [x] Diseno responsive con menu movil, tablas en tarjetas y formularios adaptados a smartphone
+
+### Reportes, ETL y administracion
+
+- [x] Reportes nativos de remuneraciones, asistencia, contabilidad, inventario y comercio
+- [x] Graficos y filtros por modulo
+- [x] Estilos de impresion para guardar o imprimir los reportes como PDF desde el navegador
+- [x] Carga masiva conectada al proceso ETL existente, con historial, estado y descargas
+- [x] Administracion de usuarios, roles y estados restringida al modulo de seguridad
+- [x] Acceso LAN del frontend mediante `0.0.0.0`, manteniendo Django detrás del proxy de Next.js
+
+### Validacion pendiente antes de publicar v1.2.0
+
+- [x] `manage.py check`
+- [x] ESLint, comprobacion TypeScript y build de produccion del frontend
+- [x] Verificacion funcional de endpoints de reportes, usuarios, cargas y filtros
+- [x] v1.2.1 - Ejecutar la suite Django completa en una base PostgreSQL temporal aislada: 51 pruebas OK
+- [ ] v1.2.2 - Probar el AppImage generado en un equipo limpio y validar actualizacion/reinstalacion
+- [ ] v1.2.3 - Validar navegacion completa desde al menos un smartphone real en la red local
+- [ ] v1.2.4 - Aplicar y validar HTTPS y reglas de firewall del servidor antes de cualquier exposicion fuera de la LAN
 
 ## Proximo paso recomendado
 
-Continuar con `v1.1.2` y `v1.1.4`: probar una restauracion PostgreSQL completa en una base aislada y retirar las credenciales de la configuracion versionada. El backup manual PostgreSQL ya esta operativo y verificado; la automatizacion debe ejecutarse mediante un planificador del sistema, no durante una peticion web. El frontend real queda planificado en `docs/21_PLAN_FRONTEND_REAL.md`.
+Completar `v1.2.2` con la prueba del AppImage en un equipo limpio y continuar con la validacion fisica en smartphone para `v1.2.3`. La configuracion de despliegue HTTPS queda preparada, pero `v1.2.4` solo puede cerrarse al aplicarla con dominio, certificado y acceso administrativo reales. En paralelo, cerrar `v1.1.12` con la aprobacion formal del area de remuneraciones.

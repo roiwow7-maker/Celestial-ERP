@@ -4,9 +4,13 @@ import os
 import secrets
 from pathlib import Path
 
+from dotenv import load_dotenv
+from django.core.exceptions import ImproperlyConfigured
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 PROJECT_ROOT = BASE_DIR.parent
+load_dotenv(PROJECT_ROOT / ".env")
 LOG_DIR = PROJECT_ROOT / "logs"
 LOG_DIR.mkdir(exist_ok=True)
 ERP_SETTINGS_ENV = os.environ.get("ERP_SETTINGS_ENV", "dev").lower()
@@ -32,17 +36,10 @@ def local_secret_key() -> str:
     return secret
 
 
-def postgres_password() -> str:
-    value = os.environ.get("POSTGRES_PASSWORD")
-    if value:
-        return value
-    password_path = BASE_DIR / ".postgres_password"
-    if password_path.exists():
-        return password_path.read_text(encoding="utf-8").strip()
-    return ""
-
-
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", local_secret_key())
+POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
+if not POSTGRES_PASSWORD:
+    raise ImproperlyConfigured("Define POSTGRES_PASSWORD en el entorno o en un archivo .env privado.")
 
 ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost")
 CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS", "")
@@ -100,7 +97,7 @@ DATABASES = {
         "NAME": os.environ.get("POSTGRES_DB", "celestial_erp"),
         # PostgreSQL normaliza a minusculas los roles creados sin comillas.
         "USER": os.environ.get("POSTGRES_USER", "admin_cerp"),
-        "PASSWORD": postgres_password(),
+        "PASSWORD": POSTGRES_PASSWORD,
         "HOST": os.environ.get("POSTGRES_HOST", "127.0.0.1"),
         "PORT": os.environ.get("POSTGRES_PORT", "5432"),
         "CONN_MAX_AGE": int(os.environ.get("POSTGRES_CONN_MAX_AGE", "60")),
@@ -137,6 +134,8 @@ SECURE_SSL_REDIRECT = env_bool("DJANGO_SECURE_SSL_REDIRECT", default=False)
 SECURE_HSTS_SECONDS = int(os.environ.get("DJANGO_SECURE_HSTS_SECONDS", "0"))
 SECURE_HSTS_INCLUDE_SUBDOMAINS = env_bool("DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS", default=False)
 SECURE_HSTS_PRELOAD = env_bool("DJANGO_SECURE_HSTS_PRELOAD", default=False)
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+USE_X_FORWARDED_HOST = env_bool("DJANGO_USE_X_FORWARDED_HOST", default=False)
 
 LOGGING = {
     "version": 1,

@@ -2,7 +2,7 @@
 
 ERP web modular para remuneraciones, asistencia, contabilidad, inventario, compras y ventas. Incluye un pipeline ETL para transformar liquidaciones historicas, control de acceso por roles, auditoria, API interna y respaldos PostgreSQL verificados.
 
-> Version actual: **1.1.1a** · Backend Django con PostgreSQL · Operacion local/LAN controlada
+> Version actual: **1.2.1** · Backend Django con PostgreSQL · Frontend Next.js/Electron · Operacion local/LAN controlada
 
 ![Arquitectura general de Celestial ERP](docs/assets/arquitectura_general.svg)
 
@@ -366,4 +366,8 @@ Cada mejora debe:
 
 ## Licencia
 
-El repositorio todavia no incluye una licencia de distribucion. Hasta definirla, el codigo no debe asumirse como software de uso, modificacion o redistribucion libre.
+Celestial ERP se publica como **software propietario visible para fines de portafolio**. No es software libre ni de codigo abierto. La visualizacion del repositorio no concede autorizacion para operarlo, modificarlo, redistribuirlo o explotarlo comercialmente.
+
+Consulta la [Licencia Propietaria de Celestial ERP para Portafolio](LICENSE.md), preparada con referencia a la Ley chilena N.º 17.336. Los componentes de terceros conservan sus propias licencias.
+
+Antes de comercializar el sistema o aceptar contribuciones externas, la licencia y la titularidad deben ser revisadas por un abogado habilitado en Chile.

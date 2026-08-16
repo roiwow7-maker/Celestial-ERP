@@ -1,8 +1,8 @@
 # Celestial ERP Version Log
 
-Fecha de referencia: 2026-08-07
+Fecha de referencia: 2026-08-16
 
-Este registro resume la evolucion funcional del proyecto desde una base inicial hasta la version actual `1.1.1`. Las versiones tempranas agrupan hitos historicos reconstruidos desde el estado del repositorio y la documentacion disponible.
+Este registro resume la evolucion funcional del proyecto desde una base inicial hasta la version actual `1.2.1`. Las versiones tempranas agrupan hitos historicos reconstruidos desde el estado del repositorio y la documentacion disponible.
 
 ## 0.0.x - Exploracion y base de datos inicial
 
@@ -127,7 +127,32 @@ Este registro resume la evolucion funcional del proyecto desde una base inicial 
 ## 1.1.x - Operacion PostgreSQL
 
 - `1.1.1`: respaldo PostgreSQL en formato custom mediante `pg_dump`, verificacion con `pg_restore --list`, retencion y ejecucion desde la pantalla administrativa. Version centralizada y repositorio preparado para GitHub sin bases, respaldos, CSV, Excel ni secretos.
+- `1.1.1a`: README principal reconstruido desde la documentacion tecnica y operativa, con instalacion, arquitectura, modulos, seguridad, ETL, backups, pruebas, privacidad y roadmap.
+- `1.1.1b`: licencia propietaria para portafolio basada en el marco chileno, con reserva de derechos, evaluacion limitada, excepciones legales, componentes de terceros y licenciamiento comercial separado.
+- `1.1.11`: restauracion PostgreSQL validada en un cluster aislado; credenciales obligatorias por entorno; 49 pruebas ejecutadas sobre PostgreSQL; comparacion automatica con SQLite; monitoreo, timers, Gunicorn/nginx y limpieza de uploads preparados; prueba ETL representativa incorporada; cola dedicada evaluada.
+- `1.1.11a`: backup PostgreSQL automatico diario, protegido contra ejecuciones simultaneas, con verificacion `pg_restore --list`, retencion de 30 dias/7 copias minimas y log local.
+- `1.1.11b`: cuatro cuentas nominales creadas para Administrador, RRHH, Contabilidad y Solo lectura; credenciales temporales generadas de forma segura, superusuario historico rotado y permisos efectivos validados.
 - Frontend real planificado por fases en `docs/21_PLAN_FRONTEND_REAL.md` con Next.js/TypeScript, API Django y despliegue progresivo.
+
+## 1.2.0 - Frontend real multiplataforma (en preparacion)
+
+- Frontend nativo desarrollado con Next.js, React y TypeScript, sin depender de incrustar los `static` ni las vistas HTML de Django.
+- API Django v1 incorporada para autenticacion y sesion, catalogos, recursos CRUD, reportes, cargas ETL y administracion de usuarios.
+- Vistas funcionales conectadas para remuneraciones, asistencia, contabilidad, inventario, compras y ventas.
+- Reportes nativos con indicadores, graficos, filtros por modulo y estilos de impresion para generar PDF desde el navegador.
+- Carga masiva conectada al ETL existente, con ejecucion asincronica, historial, consulta de estado y descarga de resultados.
+- Administracion de usuarios y roles disponible para perfiles con acceso al modulo de seguridad.
+- Interfaz responsive para smartphone con menu lateral movil, formularios de una columna, tablas convertidas en tarjetas y graficos adaptables.
+- Ejecucion LAN del frontend habilitada mediante `0.0.0.0`; Django permanece en `127.0.0.1` y se consume a traves del proxy de Next.js.
+- Aplicacion de escritorio Electron preparada para iniciar el build standalone de Next.js y empaquetarse como AppImage.
+- Validaciones completadas: `manage.py check`, ESLint, TypeScript, build de produccion y comprobaciones funcionales de reportes, usuarios, ETL y filtros.
+- Pendiente para los siguientes incrementos: prueba del AppImage en un equipo limpio, validacion final desde un smartphone real y cierre de HTTPS/firewall.
+
+## 1.2.1 - Validacion completa sobre PostgreSQL
+
+- Suite Django completa ejecutada mediante `tools/run_postgresql_tests.py` sobre un cluster PostgreSQL temporal y aislado de los datos reales.
+- 51 pruebas superadas, comprobacion del sistema sin observaciones y base temporal eliminada al finalizar.
+- Version de Django y del paquete Electron alineada en `1.2.1` para mantener una numeracion incremental unica.
 
 ### Actualizacion documental post `0.9.4`
 
@@ -153,7 +178,12 @@ Este registro resume la evolucion funcional del proyecto desde una base inicial 
 
 ## Proximas lineas
 
-- `1.1.2`: Restauracion PostgreSQL probada en una base aislada.
-- `1.1.3`: Automatizacion programada y monitoreo de backups.
-- `1.1.4`: Credenciales PostgreSQL obligatorias mediante variables de entorno.
-- `1.2.0`: Primer flujo vertical del frontend real.
+- `1.1.12`: Validacion formal de reglas de remuneraciones con el area de negocio.
+- `1.2.2`: Prueba del AppImage y reinstalacion en un equipo Linux limpio.
+- `1.2.3`: Validacion fisica de la experiencia responsive desde smartphone en LAN.
+- `1.2.4`: Aplicacion y validacion de HTTPS, servicios persistentes y firewall productivo.
+- `1.2.5`: Cierres, aprobaciones, anulaciones y exportacion formal de asientos contables.
+- `1.2.6`: Kardex valorizado, cierres y documentos de recepcion/despacho de inventario.
+- `1.2.7`: Integracion de compras y ventas con inventario y contabilidad bajo reglas aprobadas.
+- `1.2.8`: PDF server-side para documentos que requieran formato fijo y reproducible.
+- `1.2.9`: Primer caso de uso aprobado de IA local como servicio LAN separado y de solo lectura.

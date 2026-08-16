@@ -1,0 +1,25 @@
+[Unit]
+Description=Celestial ERP Frontend Next.js
+After=network.target celestial-erp.service
+Requires=celestial-erp.service
+
+[Service]
+Type=simple
+User=celestial
+Group=celestial
+WorkingDirectory=/opt/celestial-erp/Celestial_ERP/frontend
+EnvironmentFile=/etc/celestial-erp/erp.env
+Environment=NODE_ENV=production
+Environment=HOSTNAME=127.0.0.1
+Environment=PORT=3000
+Environment=DJANGO_BACKEND_URL=http://127.0.0.1:8000
+ExecStart=/usr/bin/node /opt/celestial-erp/Celestial_ERP/frontend/.next-build/standalone/server.js
+Restart=on-failure
+RestartSec=5
+PrivateTmp=true
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

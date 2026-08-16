@@ -1,0 +1,64 @@
+{
+  "name": "frontend",
+  "version": "1.2.1",
+  "description": "Frontend de escritorio y web para Celestial ERP",
+  "author": "Celestial ERP",
+  "private": true,
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "next dev -H 0.0.0.0",
+    "dev:desktop": "concurrently --kill-others-on-fail \"npm:backend\" \"npm:dev\" \"npm:electron:dev\"",
+    "backend": "node scripts/start-backend.mjs",
+    "electron:dev": "wait-on http://127.0.0.1:3000 && electron .",
+    "build": "node scripts/build-next.mjs",
+    "build:desktop": "npm run build && node scripts/prepare-electron.mjs && electron-builder",
+    "start": "next start -H 0.0.0.0",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit"
+  },
+  "build": {
+    "appId": "cl.celestial.erp",
+    "productName": "Celestial ERP",
+    "asar": true,
+    "files": [
+      "electron/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": ".next-build/standalone",
+        "to": "app"
+      }
+    ],
+    "directories": {
+      "output": "dist-electron"
+    },
+    "linux": {
+      "executableName": "celestial-erp",
+      "target": ["AppImage"],
+      "category": "Office"
+    },
+    "win": {
+      "target": ["nsis"]
+    }
+  },
+  "dependencies": {
+    "next": "16.3.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "concurrently": "^10.0.4",
+    "electron": "^43.4.0",
+    "electron-builder": "^26.15.3",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.1",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "wait-on": "^9.1.0"
+  }
+}

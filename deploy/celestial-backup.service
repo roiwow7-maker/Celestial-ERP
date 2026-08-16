@@ -1,0 +1,11 @@
+[Unit]
+Description=Backup verificado Celestial ERP PostgreSQL
+After=postgresql.service
+
+[Service]
+Type=oneshot
+User=celestial
+Group=celestial
+WorkingDirectory=/opt/celestial-erp/Celestial_ERP
+EnvironmentFile=/etc/celestial-erp/erp.env
+ExecStart=/opt/celestial-erp/venv/bin/python manage.py backup_database

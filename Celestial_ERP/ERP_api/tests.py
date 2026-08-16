@@ -46,3 +46,39 @@ class ApiIndexTests(TestCase):
         self.assertContains(response, "Resumen remuneraciones")
         self.assertContains(response, "Disponible")
         self.assertNotContains(response, "Requiere permiso DATA_scope.access_payroll_module")
+
+
+class ApiV1Tests(TestCase):
+    def setUp(self):
+        self.client = Client(enforce_csrf_checks=True)
+        self.user = User.objects.create_user(username="frontend_user", password="testpass123")
+        content_type = ContentType.objects.get(app_label="DATA_scope", model="employee")
+        self.user.user_permissions.add(
+            Permission.objects.get(codename="access_payroll_module", content_type=content_type),
+            Permission.objects.get(codename="view_employee", content_type=content_type),
+        )
+
+    def test_session_bootstraps_csrf_and_reports_anonymous_user(self):
+        response = self.client.get(reverse("erp_api:v1_session"))
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.json()["authenticated"])
+        self.assertIn("csrftoken", response.cookies)
+
+    def test_login_and_native_resource_contract(self):
+        bootstrap = self.client.get(reverse("erp_api:v1_session"))
+        token = bootstrap.cookies["csrftoken"].value
+        response = self.client.post(
+            reverse("erp_api:v1_login"),
+            data='{"username":"frontend_user","password":"testpass123"}',
+            content_type="application/json",
+            HTTP_X_CSRFTOKEN=token,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json()["authenticated"])
+
+        response = self.client.get(reverse("erp_api:v1_resource_collection", args=["employees"]))
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["key"], "employees")
+        self.assertIn("fields", payload)
+        self.assertIn("items", payload)

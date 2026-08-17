@@ -4,6 +4,8 @@ Fecha de referencia: 2026-07-13
 
 Modulo operativo documentado desde `v0.9.7`.
 
+> Documento historico: PostgreSQL reemplazo a SQLite como base principal en `1.0.10`. Este procedimiento solo sirve para recuperación, consulta del origen historico o instalaciones heredadas; no representa la operacion `1.2.1`.
+
 ## Objetivo
 
 Mientras no se pueda instalar PostgreSQL, Celestial ERP queda orientado a operacion local o red interna liviana con SQLite. Esto permite seguir avanzando sin bloquear desarrollo, siempre que se respeten limites de concurrencia, backups y limpieza de archivos sensibles.

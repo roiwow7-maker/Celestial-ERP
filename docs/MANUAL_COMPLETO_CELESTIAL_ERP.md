@@ -1,8 +1,10 @@
 # Manual completo Celestial ERP
 
-Fecha de referencia: 2026-07-20
+Fecha de referencia: 2026-08-16
 
-Version documentada: `1.0.8`
+Version documentada: `1.2.1`
+
+> Las secciones detalladas que describen SQLite o Next.js como futuro se conservan como contexto historico. Para operacion vigente consultar `25_ESTADO_ACTUAL_1_2_1.md`, `22_OPERACION_POSTGRESQL_PRODUCCION.md` y `23_VALIDACION_FRONTEND_1_2.md`.
 
 ## Proposito del documento
 
@@ -12,7 +14,7 @@ Este manual consolida la documentacion operativa de Celestial ERP en un solo doc
 
 Celestial ERP es una plataforma Django para gestionar datos historicos y operativos de remuneraciones. El sistema nacio como un ETL para liquidaciones historicas y evoluciono a una webapp con modulos de remuneraciones, contabilidad, inventario, compras/ventas, asistencia, auditoria, backups, API interna y administracion multiusuario.
 
-La version actual es `1.0.8`. PostgreSQL esta preparado documentalmente, pero la operacion actual sigue sobre SQLite por limitaciones de permisos e infraestructura. La migracion real queda para `v1.0.9` y `v1.0.10`.
+La version actual es `1.2.1`. PostgreSQL es la base principal; Django actua como backend/API y Next.js/Electron proporciona el frontend real para escritorio, navegador y smartphone en LAN.
 
 ## 2. Alcance Funcional
 
@@ -339,14 +341,14 @@ No migrar sin:
 Rutina recomendada:
 
 - Diario: revisar acceso, errores visibles y ultimo backup.
-- Semanal: ejecutar `check_sqlite_operational_health`.
+- Semanal: ejecutar `check_postgresql_operational_health`.
 - Mensual: validar restauracion de un backup.
 - Antes de cambios grandes: backup manual y pruebas.
 - Despues de cargas ETL: revisar conteos, reportes y auditoria.
 
 ## 15. Archivos Clave
 
-- `Celestial_ERP/Applet/services.py`: version y servicios centrales.
+- `Celestial_ERP/Applet/version.py`: fuente unica de version.
 - `run_etl.py`: orquestador ETL.
 - `dataload.py`: transformacion historica.
 - `build_liquidaciones_csvs.py`: CSV equivalentes.

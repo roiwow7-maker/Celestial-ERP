@@ -2,6 +2,8 @@
 
 Fecha de referencia: 2026-07-13
 
+> Revision historica. Desde esta evaluacion se completaron PostgreSQL, settings separados, usuarios nominales, backups/restauracion, 51 pruebas y frontend Next.js/Electron. Estado vigente: `docs/25_ESTADO_ACTUAL_1_2_1.md`.
+
 ## 1. Criterio de evaluacion
 
 Clasificacion usada:
@@ -13,7 +15,7 @@ Clasificacion usada:
 
 ## 2. Resumen general
 
-El sistema evoluciono desde una base ETL y admin Django hacia una webapp ERP local/red interna con modulos de remuneraciones, contabilidad, inventario, compras/ventas y asistencia. La version vigente es `1.0.3`. La base tecnica es usable para operacion local controlada, pero aun no debe considerarse produccion amplia: PostgreSQL, despliegue formal, HTTPS y reglas oficiales siguen dependiendo de infraestructura/autorizacion.
+El sistema evoluciono desde una base ETL y admin Django hacia un ERP Django/PostgreSQL con frontend Next.js/Electron. La version vigente es `1.2.1`. HTTPS productivo y reglas oficiales de negocio siguen dependiendo de infraestructura y aprobacion externa.
 
 ## 3. Evaluacion por item
 
@@ -36,7 +38,7 @@ El sistema evoluciono desde una base ETL y admin Django hacia una webapp ERP loc
 | Usuario administrador | Medio | Existen roles base (`ERP Lectura`, `ERP Operador ETL`, `ERP Administrador Datos`) y el admin local fue asociado al rol administrador. | La clave temporal debe rotarse y deben crearse usuarios nominales. | Usar `setup_access_control --admin-password` y crear usuarios individuales. |
 | Encoding de textos | Fuerte | Se escanearon archivos `.py`, `.md` y `.csv` sin marcadores mojibake conocidos; los headers actuales se leen en UTF-8. | Nuevos archivos fuente podrian venir con encoding defectuoso. | Mantener validacion al ingresar nuevas fuentes. |
 | Dependencias | Fuerte | `requirements.txt` declara Django, pandas y openpyxl con versiones exactas usadas por el entorno actual. | Cambios futuros de version deben probarse antes de actualizar. | Mantener upgrades controlados con pruebas. |
-| Pruebas automatizadas | Medio | Hay 41 pruebas para modelos, auditoria granular, sincronizacion asistencia-remuneraciones, validacion de headers, roles, reglas de negocio y modulos ERP base. | Falta cobertura de ETL completo con fixtures reales pequenos. | Agregar pruebas de integracion de importacion. |
+| Pruebas automatizadas | Fuerte | La suite `1.2.1` ejecuta 51 pruebas sobre PostgreSQL temporal e incluye integracion ETL representativa y API v1. | Faltan pruebas end-to-end en navegador y dispositivos externos. | Agregar E2E después de estabilizar los flujos `1.2.5-1.2.7`. |
 | Manejo de errores ETL | Medio | El importador valida columnas antes de cargar; la carga web muestra salida y errores del proceso ETL. | Falta reporte estructurado por fila/columna en transformaciones previas. | Generar reporte de errores detallado en `run_etl.py`. |
 | Auditoria | Fuerte | Existe modelo `ImportRun` con estado, hashes SHA-256, rutas, conteos y errores. | Aun no asocia cada fila importada a una corrida especifica. | Evaluar relacionar datos con corrida si se requiere trazabilidad completa. |
 | Backups | Fuerte | Existe comando `backup_sqlite`, script `backup_erp.ps1`, backup automatico y politica documentada de retencion/restauracion. | Falta validar restauracion periodica en ambiente real. | Probar restauracion con calendario operativo. |

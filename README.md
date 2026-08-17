@@ -12,18 +12,23 @@ Celestial ERP comenzo como un proceso ETL para liquidaciones historicas y evoluc
 
 Actualmente estan operativos:
 
+- frontend nativo responsive en Next.js/TypeScript, accesible desde navegador y smartphone en LAN;
+- aplicacion de escritorio Electron empaquetable como AppImage;
 - portal web, login, navegacion por permisos y Django Admin personalizado;
 - remuneraciones, trabajadores, periodos, items, movimientos y liquidaciones;
 - carga ETL web y por consola, con seguimiento de corridas y validaciones;
 - asistencia diaria, reportes mensuales e integracion con remuneraciones;
 - contabilidad base, inventario, compras y ventas;
-- reportes, exportaciones CSV e impresion/PDF desde navegador;
+- reportes nativos con indicadores, graficos, filtros e impresion/PDF desde navegador;
+- carga masiva conectada al ETL, con historial y seguimiento de ejecucion;
+- administracion de usuarios y roles desde el frontend para perfiles autorizados;
 - auditoria estructurada por usuario, rol, objeto y cambios;
-- API JSON interna protegida;
-- backups PostgreSQL manuales mediante `pg_dump`, verificados con `pg_restore`;
-- configuracion separada para desarrollo y produccion.
+- API Django v1 protegida para sesion, recursos CRUD, reportes, ETL y usuarios;
+- backups PostgreSQL manuales y automaticos mediante `pg_dump`, verificados con `pg_restore`;
+- restauracion PostgreSQL probada en un cluster temporal aislado;
+- configuracion de desarrollo, operacion LAN y despliegue productivo con Gunicorn, Next.js, systemd y nginx.
 
-El siguiente ciclo se enfoca en restauracion PostgreSQL probada, automatizacion externa de backups, endurecimiento de credenciales y construccion progresiva de un frontend Next.js/TypeScript.
+La version `1.2.1` cerro la validacion automatizada con 51 pruebas sobre PostgreSQL temporal. Los siguientes incrementos cubren validacion del AppImage en un equipo limpio, prueba fisica desde smartphone, HTTPS/firewall y evolucion funcional de contabilidad, inventario y comercio.
 
 ## Modulos
 
@@ -35,37 +40,37 @@ El siguiente ciclo se enfoca en restauracion PostgreSQL probada, automatizacion 
 | Contabilidad | `Accounting` | Plan de cuentas, centros de costo, mapeos, asientos y reportes iniciales |
 | Inventario | `Inventory` | Productos, bodegas, stock, movimientos y valorizacion |
 | Compras y ventas | `Commerce` | Proveedores, clientes, ordenes de compra y venta |
-| API interna | `ERP_api` | Salud, estado, modulos y consultas de remuneraciones protegidas |
+| API interna | `ERP_api` | Sesion, catalogos, CRUD, reportes, cargas ETL y usuarios protegidos |
+| Frontend | `frontend` | Next.js responsive, proxy seguro a Django y empaquetado Electron |
 
 ## Arquitectura
 
 ```text
-Navegador
-   |
-   v
-Django (templates + API + permisos + auditoria + ETL)
-   |
-   v
-PostgreSQL
+Navegador / smartphone / Electron
+                |
+                v
+        Next.js (puerto 3000)
+                |
+                v
+ Django API (puerto 8000, privado)
+                |
+                v
+           PostgreSQL
 ```
 
-La evolucion prevista mantiene Django como autoridad de negocio y acceso a datos:
-
-```text
-Navegador -> Nginx/HTTPS -> Next.js
-                        -> API Django -> PostgreSQL
-```
-
-El navegador y el futuro frontend nunca deben conectarse directamente a PostgreSQL.
+En produccion, nginx publica HTTPS y envia el trafico a Next.js. Django mantiene permisos, reglas de negocio, auditoria y ETL. Ni el navegador ni Electron se conectan directamente a PostgreSQL.
 
 ## Tecnologias
 
 - Python 3.12+
 - Django 6.0
 - PostgreSQL y `psycopg` 3
+- Node.js 24 LTS y npm 11
+- Next.js 16, React 19 y TypeScript
+- Electron y electron-builder para escritorio
 - pandas y openpyxl para ETL
 - Bootstrap 5.3.3 servido localmente
-- HTML, CSS y JavaScript sin dependencia de CDN
+- HTML y CSS responsive sin dependencia operativa de CDN
 - `pg_dump` y `pg_restore` para respaldos PostgreSQL
 
 Las versiones declaradas se encuentran en [`requirements.txt`](requirements.txt).
@@ -76,6 +81,7 @@ Las versiones declaradas se encuentran en [`requirements.txt`](requirements.txt)
 - PostgreSQL en ejecucion.
 - Base y usuario PostgreSQL creados.
 - Herramientas cliente `pg_dump` y `pg_restore` para respaldos.
+- Node.js `>=20.9` para Next.js; se recomienda la version indicada en `Celestial_ERP/frontend/.nvmrc`.
 - Acceso local o LAN controlado; no se recomienda exponer `runserver` a internet.
 
 ## Instalacion rapida
@@ -145,6 +151,29 @@ Abrir:
 - API interna: <http://127.0.0.1:8000/api/>
 
 En Windows tambien puede utilizarse [`start_erp_web.ps1`](start_erp_web.ps1).
+
+### 5. Preparar el frontend real
+
+En otra terminal:
+
+```bash
+cd Celestial_ERP/frontend
+npm ci
+npm run dev
+```
+
+Abrir <http://127.0.0.1:3000>. Next.js escucha en `0.0.0.0:3000` para permitir pruebas LAN, mientras Django permanece privado en `127.0.0.1:8000`.
+
+Comprobaciones y empaquetado de escritorio:
+
+```bash
+npm run lint
+npm run typecheck
+npm run build
+npm run build:desktop
+```
+
+El AppImage se genera en `Celestial_ERP/frontend/dist-electron/` y esta excluido del repositorio por ser un artefacto local.
 
 ## Roles y seguridad
 
@@ -224,7 +253,7 @@ Con PostgreSQL, el comando:
 
 Los respaldos se guardan en `backups/`, carpeta excluida de Git. Deben copiarse cifrados a una ubicacion independiente.
 
-Estado pendiente importante: probar una restauracion PostgreSQL completa en una base aislada y programar `backup_database` mediante el planificador del sistema. No debe ejecutarse un backup pesado dentro de cada peticion web.
+La restauracion PostgreSQL fue validada en un cluster temporal aislado. `deploy/` incluye servicios y timers de ejemplo para backup, retencion, limpieza y monitoreo; deben instalarse solamente en un servidor autorizado y con credenciales protegidas.
 
 ## Comandos utiles
 
@@ -263,7 +292,14 @@ Suite por aplicaciones:
 python manage.py test Applet DATA_scope ERP_api Accounting Inventory Commerce Attendance
 ```
 
-La cuenta PostgreSQL utilizada para ejecutar la suite debe poder crear la base temporal de pruebas. Las pruebas relacionadas exclusivamente con respaldos SQLite se mantienen como cobertura historica y deben continuar aisladas de la base productiva.
+Suite completa en PostgreSQL temporal aislado:
+
+```bash
+cd ..
+./venv/bin/python tools/run_postgresql_tests.py
+```
+
+La validacion de `1.2.1` ejecuto 51 pruebas correctamente. El script crea un cluster temporal, ejecuta la suite y lo elimina al finalizar sin tocar la base productiva.
 
 ## Estructura del repositorio
 
@@ -277,8 +313,10 @@ Celestial-ERP/
 │   ├── Commerce/
 │   ├── DATA_scope/
 │   ├── ERP_api/
+│   ├── frontend/              # Next.js, React, TypeScript y Electron
 │   ├── Inventory/
 │   └── manage.py
+├── deploy/                    # systemd, nginx, timers y entorno de ejemplo
 ├── docs/                      # Manuales, arquitectura y operacion
 ├── tools/                     # Herramientas auxiliares ETL/Excel
 ├── run_etl.py                 # Orquestador ETL
@@ -312,6 +350,9 @@ Por tema:
 - [Deploy LAN](docs/18_DEPLOY_LAN.md)
 - [PostgreSQL, Nginx y Next.js](docs/20_POSTGRESQL_NGINX_NEXTJS.md)
 - [Plan del frontend real](docs/21_PLAN_FRONTEND_REAL.md)
+- [Operacion PostgreSQL y produccion](docs/22_OPERACION_POSTGRESQL_PRODUCCION.md)
+- [Validacion frontend 1.2.x](docs/23_VALIDACION_FRONTEND_1_2.md)
+- [Revision de evolucion funcional](docs/24_REVISION_EVOLUCION_FUNCIONAL.md)
 - [Publicacion segura en GitHub](GITHUB_PUBLICACION.md)
 
 Algunos documentos describen etapas historicas sobre SQLite. Para decisiones actuales prevalecen este README, [`ROADMAP.md`](ROADMAP.md), [`version_log.md`](version_log.md) y los documentos `20`/`21`.
@@ -339,12 +380,12 @@ Si un secreto o dato privado entra al historial, eliminarlo en un commit posteri
 
 Prioridades inmediatas:
 
-1. restauracion PostgreSQL completa y verificable;
-2. automatizacion y monitoreo externo de backups;
-3. credenciales obligatorias mediante variables/secretos protegidos;
-4. suite automatizada completa sobre PostgreSQL;
-5. usuarios nominales y validacion LAN;
-6. primer flujo vertical del frontend Next.js/TypeScript.
+1. validar el AppImage en un equipo Linux limpio (`1.2.2`);
+2. completar la prueba fisica desde smartphone en LAN (`1.2.3`);
+3. aplicar HTTPS, servicios persistentes y firewall en servidor autorizado (`1.2.4`);
+4. implementar aprobaciones, anulaciones y cierres contables (`1.2.5`);
+5. implementar kardex y documentos de inventario (`1.2.6`);
+6. integrar compras y ventas con stock y contabilidad (`1.2.7`).
 
 El detalle se mantiene en [`ROADMAP.md`](ROADMAP.md) y [Plan del frontend real](docs/21_PLAN_FRONTEND_REAL.md).
 

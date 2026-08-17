@@ -1,5 +1,7 @@
 # PostgreSQL, Nginx y frontend Next.js
 
+> Estado `1.2.1`: PostgreSQL y Next.js ya estan implementados. La configuracion productiva vigente usa nginx hacia Next.js en `127.0.0.1:3000`; Next.js proxy hacia Django en `127.0.0.1:8000`. Las fases de migracion desde SQLite se conservan como historial.
+
 ## 1. Objetivo y arquitectura
 
 Este documento define el procedimiento para evolucionar Celestial ERP desde SQLite y vistas Django hacia PostgreSQL, Django como backend/API, Next.js como frontend y Nginx como unico punto de entrada.
@@ -525,4 +527,3 @@ Politica minima:
 - Next.js, self-hosting: <https://nextjs.org/docs/app/guides/self-hosting>
 - Next.js, Backend for Frontend: <https://nextjs.org/docs/app/guides/backend-for-frontend>
 - Nginx, proxy HTTP: <https://nginx.org/en/docs/http/ngx_http_proxy_module.html>
-

@@ -1,8 +1,8 @@
 ﻿# Documentacion tecnica ampliada - Celestial ERP
 
-Fecha de referencia: 2026-07-13
+Fecha de referencia: 2026-08-16
 
-Version documentada: `1.0.8`
+Version documentada: `1.2.1`
 
 Esta carpeta contiene documentacion detallada de todo lo que vive en la carpeta `ETL`. Se deja aqui por solicitud operativa, junto a los assets existentes de diagramas.
 
@@ -28,5 +28,5 @@ Esta carpeta contiene documentacion detallada de todo lo que vive en la carpeta 
 
 ## Regla de mantenimiento
 
-Cuando cambie una ruta, modelo, comando o version visible del sistema, actualizar primero el codigo y despues estos documentos. La version central vive en `Celestial_ERP/Applet/services.py` como `ERP_VERSION`.
+Cuando cambie una ruta, modelo, comando o version visible del sistema, actualizar primero el codigo y despues estos documentos. La version central vive en `Celestial_ERP/Applet/version.py` como `ERP_VERSION`.
 

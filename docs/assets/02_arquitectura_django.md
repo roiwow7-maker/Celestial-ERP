@@ -2,7 +2,9 @@
 
 Fecha de referencia: 2026-07-13
 
-Version documentada: `1.0.8`
+Version documentada: `1.2.1`
+
+> Django sigue siendo la autoridad de negocio, pero desde `1.2.0` se complementa con Next.js/Electron y la API v1. Consultar `../25_ESTADO_ACTUAL_1_2_1.md`.
 
 ## Proyecto
 
@@ -34,7 +36,7 @@ Celestial_ERP/Celestial_ERP/
 | `Inventory` | Productos, bodegas, stock, movimientos y valorizacion. |
 | `Commerce` | Proveedores, clientes, compras, ventas y reportes comerciales. |
 | `Attendance` | Asistencia historica diaria, mensual y por trabajador. |
-| `ERP_api` | API JSON interna para salud, estado y resumen payroll. |
+| `ERP_api` | API v1 para sesion, recursos CRUD, reportes, ETL y usuarios. |
 
 ## Settings
 

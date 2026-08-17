@@ -1,5 +1,7 @@
 # v1.0.4-v1.0.8 - Base estable previa a PostgreSQL
 
+> Documento historico. La migracion descrita fue completada en `1.0.10`; el estado vigente `1.2.1` se resume en `25_ESTADO_ACTUAL_1_2_1.md`.
+
 Fecha de referencia: 2026-07-14
 
 Version operativa: `1.0.8`

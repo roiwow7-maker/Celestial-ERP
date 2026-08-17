@@ -2,6 +2,8 @@
 
 Fecha: 2026-07-13
 
+> Revision historica. Arquitectura vigente `1.2.1`: clientes -> Next.js/Electron -> API Django -> PostgreSQL. Consultar `docs/25_ESTADO_ACTUAL_1_2_1.md`.
+
 ## Criterio de despliegue
 
 El sistema no esta pensado para internet. El objetivo es uso local o red interna controlada.
@@ -24,8 +26,9 @@ Arquitectura activa:
 - `Inventory`: productos, bodegas, stock, movimientos y valorizacion.
 - `Commerce`: proveedores, clientes, compras, ventas y reportes comerciales.
 - `Attendance`: asistencia historica diaria, mensual y por trabajador.
-- `ERP_api`: endpoints JSON iniciales.
-- SQLite local: valido para prototipo y operacion local controlada.
+- `ERP_api`: API v1 para sesion, CRUD, reportes, ETL y usuarios.
+- `frontend`: Next.js responsive y Electron.
+- PostgreSQL: base principal, accesible solo desde Django.
 
 ## Backup automatico
 

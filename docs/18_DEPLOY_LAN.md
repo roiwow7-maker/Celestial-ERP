@@ -4,9 +4,11 @@ Fecha de referencia: 2026-07-13
 
 Hito cerrado desde `v1.0.3`.
 
+> Actualizacion `1.2.1`: para uso movil se publica Next.js en `0.0.0.0:3000`; Django permanece en `127.0.0.1:8000` y se consume por proxy. Para produccion usar `deploy/celestial-frontend.service` y `deploy/nginx-celestial-erp.conf`, no `runserver` expuesto.
+
 ## Alcance
 
-Este deploy es para red interna controlada, no internet publico. Mientras no exista infraestructura formal, el objetivo es operar de forma liviana con SQLite, backups frecuentes y usuarios nominales.
+Este deploy es para red interna controlada, no internet publico. PostgreSQL es la base principal y solo el frontend debe quedar accesible desde clientes LAN.
 
 ## Variables Minimas
 

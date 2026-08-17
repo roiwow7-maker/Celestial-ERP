@@ -1,12 +1,14 @@
 # Celestial ERP - Documentacion general
 
-Fecha de referencia: 2026-07-13
+Fecha de referencia: 2026-08-16
+
+> Actualizacion `1.2.1`: PostgreSQL es la base principal y ya existe frontend nativo Next.js/Electron, API v1, reportes con graficos/filtros, ETL web, administracion de usuarios y diseño responsive. Los conteos siguientes son una fotografia historica; consultar `25_ESTADO_ACTUAL_1_2_1.md` para el estado vigente.
 
 ## Resumen ejecutivo
 
 Celestial ERP es una plataforma local/red interna construida en Django para operar datos historicos de remuneraciones. El sistema nacio como un ETL de payroll y hoy incluye portal web, dashboard, reportes, carga controlada, auditoria, backups, API inicial y control de acceso por roles.
 
-La version funcional actual es `1.0.8`. El foco de v0.5 fue operacion RRHH controlada, la linea `0.6.x` cerro la base operativa robusta sin PostgreSQL, `0.7.x` activo la base contable, `0.8.x` activo inventario, `0.9.x` activo compras/ventas, asistencia, SQLite reforzado, auditoria granular e integracion asistencia-remuneraciones, y `1.0.8` deja cerrados testing, documentacion, deploy LAN, backups restaurables, auditoria por rol, plan de migracion, IA local separada y preparacion PostgreSQL documentada.
+La version funcional actual es `1.2.1`. La evolucion completa desde ETL/SQLite hasta PostgreSQL, API Django v1 y frontend Next.js/Electron se registra en `version_log.md`.
 
 ## Estado actual de datos
 
@@ -32,7 +34,8 @@ La version funcional actual es `1.0.8`. El foco de v0.5 fue operacion RRHH contr
 | Inventory | Activo | Productos, bodegas, stock, movimientos y valorizacion. |
 | Commerce | Activo | Proveedores, clientes, compras, ventas y reportes comerciales iniciales. |
 | Attendance | Activo | Asistencia diaria, historico por trabajador, reporte mensual, exportacion CSV e impresion/PDF. |
-| ERP_api | Activo inicial | Endpoints JSON de salud, estado, modulos, resumen payroll y periodos. |
+| ERP_api | Activo v1 | Sesion, catalogos, recursos CRUD, reportes, cargas ETL y administracion de usuarios. |
+| Frontend | Activo | Next.js responsive para web/LAN y Electron para escritorio. |
 | Django Admin | Activo | Administracion interna de usuarios, grupos, datos y auditoria. |
 
 ## Acceso y usuarios

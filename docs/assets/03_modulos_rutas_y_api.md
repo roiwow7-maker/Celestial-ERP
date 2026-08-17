@@ -2,7 +2,9 @@
 
 Fecha de referencia: 2026-07-13
 
-Version documentada: `1.0.8`
+Version documentada: `1.2.1`
+
+> Next.js consume las rutas `/api/v1/` a traves de su proxy `/backend/`; las rutas Django historicas siguientes siguen disponibles como respaldo.
 
 ## Rutas globales
 

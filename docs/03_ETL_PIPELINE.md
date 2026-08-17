@@ -1,10 +1,10 @@
 # ETL Pipeline
 
-Fecha de referencia: 2026-07-20
+Fecha de referencia: 2026-08-16
 
 ## Estado del flujo
 
-Estado actual: **flujo ETL base operativo dentro de Celestial ERP v1.0.8**.
+Estado actual: **flujo ETL operativo en Celestial ERP v1.2.1**, accesible por consola, vistas Django y carga masiva nativa del frontend con historial/estado.
 
 El flujo ETL ya permite transformar historicos de remuneraciones, separar categorias, generar archivos equivalentes a liquidaciones, crear Excel final e importar datos al ERP Django.
 

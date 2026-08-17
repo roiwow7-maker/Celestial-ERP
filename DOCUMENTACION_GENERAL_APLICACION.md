@@ -2,7 +2,9 @@
 
 Fecha de referencia: 2026-07-13
 
-Celestial ERP es una aplicacion local/red interna para gestionar datos historicos de remuneraciones y operacion ERP inicial. Combina un pipeline ETL en Python con una webapp Django. La version funcional actual es `1.0.3`.
+> Documento historico actualizado: la version vigente es `1.2.1`, con PostgreSQL, API Django v1 y frontend Next.js/Electron. Consultar `docs/25_ESTADO_ACTUAL_1_2_1.md` para el estado operativo actual.
+
+Celestial ERP es una aplicacion local/red interna para gestionar datos historicos de remuneraciones y operacion ERP. Combina ETL Python, backend Django/PostgreSQL y frontend Next.js/Electron. La version funcional actual es `1.2.1`.
 
 ## Que hace hoy
 

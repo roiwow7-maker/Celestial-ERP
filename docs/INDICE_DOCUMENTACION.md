@@ -1,18 +1,19 @@
 # Indice maestro de documentacion
 
-Fecha de referencia: 2026-07-14
+Fecha de referencia: 2026-08-16
 
-Version operativa: `1.0.8`
+Version operativa: `1.2.1`
 
 Este indice ordena la documentacion propia de la carpeta `ETL`. No incluye Markdown de `venv/` ni paquetes instalados porque pertenecen a dependencias externas.
 
 ## Lectura Recomendada
 
-1. `docs/00_DOCUMENTACION_GENERAL.md`
-2. `ROADMAP.md`
-3. `version_log.md`
-4. `docs/assets/01_version_y_estado.md`
-5. `docs/assets/02_arquitectura_django.md`
+1. `README.md`
+2. `docs/25_ESTADO_ACTUAL_1_2_1.md`
+3. `ROADMAP.md`
+4. `version_log.md`
+5. `docs/23_VALIDACION_FRONTEND_1_2.md`
+6. `docs/24_REVISION_EVOLUCION_FUNCIONAL.md`
 
 ## Documentacion Principal
 
@@ -39,6 +40,11 @@ Este indice ordena la documentacion propia de la carpeta `ETL`. No incluye Markd
 | `docs/18_DEPLOY_LAN.md` | Deploy local/red interna. |
 | `docs/19_V10_PRE_POSTGRESQL_IA_BACKUPS.md` | Cierre v1.0.4-v1.0.8: backups, auditoria, migracion, IA y PostgreSQL preparado. |
 | `docs/20_POSTGRESQL_NGINX_NEXTJS.md` | Procedimiento para PostgreSQL separado, Django API, frontend Next.js y direccionamiento Nginx. |
+| `docs/21_PLAN_FRONTEND_REAL.md` | Plan original y estado de implementacion del frontend Next.js/Electron. |
+| `docs/22_OPERACION_POSTGRESQL_PRODUCCION.md` | Operacion PostgreSQL, servicios persistentes, backups y produccion. |
+| `docs/23_VALIDACION_FRONTEND_1_2.md` | Evidencia pendiente de AppImage, smartphone, HTTPS y firewall. |
+| `docs/24_REVISION_EVOLUCION_FUNCIONAL.md` | Revision de contabilidad, inventario, comercio, PDF e IA local. |
+| `docs/25_ESTADO_ACTUAL_1_2_1.md` | Resumen canonico del estado operativo vigente. |
 | `docs/MANUAL_COMPLETO_CELESTIAL_ERP.md` | Manual consolidado: uso, implementacion, gestion interna, ETL, backups, seguridad y roadmap. |
 | `docs/Celestial_ERP_Manual_Completo.pdf` | Version PDF del manual consolidado. |
 
@@ -75,4 +81,4 @@ Este indice ordena la documentacion propia de la carpeta `ETL`. No incluye Markd
 | Archivo | Uso |
 | --- | --- |
 | `ROADMAP.md` | Roadmap vigente. |
-| `version_log.md` | Bitacora de versiones desde `0.0.1` hasta `1.0.8`. |
+| `version_log.md` | Bitacora de versiones desde `0.0.1` hasta `1.2.1` y proximos incrementos. |

@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Celestial ERP Frontend
 
-## Getting Started
+Frontend real de Celestial ERP construido con Next.js 16, React 19, TypeScript y Electron. Django conserva autenticacion, permisos, reglas de negocio, auditoria, ETL y acceso exclusivo a PostgreSQL.
 
-First, run the development server:
+## Requisitos
+
+- Node.js 24 recomendado mediante `.nvmrc` (Next.js requiere Node `>=20.9`).
+- Backend Django disponible en `http://127.0.0.1:8000`.
+
+## Desarrollo
 
 ```bash
+nvm use
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abrir `http://127.0.0.1:3000`. El servidor escucha en `0.0.0.0` para pruebas LAN; `/backend/` se envía a Django mediante el proxy interno.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Para iniciar backend, frontend y Electron en desarrollo:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run dev:desktop
+```
 
-## Learn More
+## Validacion
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run lint
+npm run typecheck
+npm run build
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Escritorio
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run build:desktop
+```
 
-## Deploy on Vercel
+El AppImage se genera en `dist-electron/`. `dist-electron/`, `release-electron/`, builds, variables privadas y dependencias instaladas estan excluidos de Git.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Configuracion
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Copiar `.env.example` solo como referencia. `DJANGO_BACKEND_URL` debe apuntar a Django por una direccion privada. No incluir credenciales en variables `NEXT_PUBLIC_*` ni conectar el frontend directamente a PostgreSQL.
+
+## Estado 1.2.1
+
+- Sesion Django y CSRF integrados.
+- CRUD por modulo mediante API v1.
+- Reportes con filtros, graficos e impresion/PDF.
+- Carga masiva ETL con historial y estado.
+- Administracion autorizada de usuarios y roles.
+- Diseño responsive para smartphone.
+- Build standalone incorporado al AppImage.

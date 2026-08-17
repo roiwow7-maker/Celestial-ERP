@@ -1,10 +1,10 @@
 # Applet - Portal y orquestador
 
-Fecha de referencia: 2026-07-20
+Fecha de referencia: 2026-08-16
 
 ## Estado del modulo
 
-Estado actual: **base operativa v1.0.8**.
+Estado actual: **operativo en v1.2.1**. Applet sigue disponible como portal Django y respaldo administrativo; el acceso diario nuevo utiliza el frontend Next.js y la API v1.
 
 Applet actua como portal/orquestador del ERP. Centraliza navegacion, login, roles, auditoria, backups, estado del sistema, Kanban general y accesos a modulos existentes.
 

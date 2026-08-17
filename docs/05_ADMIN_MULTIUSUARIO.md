@@ -1,10 +1,10 @@
 # Administracion y multiusuario
 
-Fecha de referencia: 2026-07-13
+Fecha de referencia: 2026-08-16
 
 ## Proposito
 
-El sistema esta pensado para uso local o red interna controlada. La version `1.0.8` incorpora login obligatorio, roles reales, permisos finos, restricciones por modulo, modulos base de remuneraciones, contabilidad, inventario, comercio y asistencia, backups restaurables y auditoria validada por usuario/rol.
+El sistema esta pensado para uso local o red interna controlada. La version `1.2.1` mantiene Django Admin como respaldo técnico y agrega administracion nativa de usuarios/roles en Next.js, restringida por `Applet.access_security_module`.
 
 ## Admin Django
 

@@ -2,6 +2,8 @@
 
 Esta carpeta contiene documentacion especifica por modulo y una guia general del sistema.
 
+> Estado vigente: `1.2.1`. Comenzar por `25_ESTADO_ACTUAL_1_2_1.md`. Los documentos de SQLite y versiones `0.x`/`1.0.x` se conservan como historial y no describen la base productiva actual.
+
 ## Archivos principales
 
 - `INDICE_DOCUMENTACION.md`: indice maestro ordenado de toda la documentacion propia del proyecto.
@@ -25,6 +27,12 @@ Esta carpeta contiene documentacion especifica por modulo y una guia general del
 - `17_DOCUMENTACION_OPERATIVA_CERRADA.md`: documentos y rutina operativa base.
 - `18_DEPLOY_LAN.md`: despliegue local/red interna controlada.
 - `19_V10_PRE_POSTGRESQL_IA_BACKUPS.md`: cierre v1.0.4-v1.0.8 con backups restaurables, auditoria por rol, plan de migracion, IA local separada y PostgreSQL preparado.
+- `20_POSTGRESQL_NGINX_NEXTJS.md`: arquitectura PostgreSQL, Django, Next.js y nginx; incluye decisiones historicas y actuales.
+- `21_PLAN_FRONTEND_REAL.md`: plan del frontend y estado de cumplimiento.
+- `22_OPERACION_POSTGRESQL_PRODUCCION.md`: operacion y despliegue productivo preparado.
+- `23_VALIDACION_FRONTEND_1_2.md`: pruebas externas pendientes para AppImage, smartphone y HTTPS.
+- `24_REVISION_EVOLUCION_FUNCIONAL.md`: analisis de los siguientes modulos avanzados.
+- `25_ESTADO_ACTUAL_1_2_1.md`: resumen canonico vigente.
 - `MANUAL_COMPLETO_CELESTIAL_ERP.md`: manual consolidado de uso, implementacion, gestion interna, ETL, operacion y seguridad.
 - `Celestial_ERP_Manual_Completo.pdf`: version PDF del manual consolidado.
 - `Celestial_ERP_Manual_Completo.html`: version imprimible desde navegador.
@@ -38,7 +46,7 @@ Por solicitud operativa, `assets/` contiene tambien una documentacion tecnica am
 
 - `assets/README.md`: indice de la documentacion ampliada.
 - `assets/00_mapa_carpeta_etl.md`: mapa del workspace.
-- `assets/01_version_y_estado.md`: version y estado actual `1.0.8`.
+- `assets/01_version_y_estado.md`: version y estado actual `1.2.1`.
 - `assets/02_arquitectura_django.md`: arquitectura Django.
 - `assets/03_modulos_rutas_y_api.md`: rutas y API.
 - `assets/04_modelos_datos_y_formularios.md`: modelos, formularios y admin.

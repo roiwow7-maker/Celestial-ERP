@@ -2,6 +2,8 @@
 
 Fecha de referencia: 2026-08-07
 
+> Estado de ejecucion al 2026-08-16: frontend Next.js/TypeScript, API v1, Electron, reportes, ETL, usuarios y responsive movil implementados en `1.2.0`; validacion PostgreSQL cerrada en `1.2.1`. Permanecen las pruebas externas `1.2.2-1.2.4` descritas en `23_VALIDACION_FRONTEND_1_2.md`.
+
 ## Objetivo
 
 Construir una interfaz moderna para usuarios de RRHH, Contabilidad, Inventario y Ventas sin reescribir las reglas de negocio que ya funcionan en Django. Django continuara siendo la autoridad para autenticacion, permisos, auditoria, ETL y acceso a PostgreSQL.
@@ -33,44 +35,44 @@ Navegador -> Nginx/HTTPS -> Frontend Next.js
 
 ### Fase 0 - Seguridad y contrato tecnico
 
-- [ ] Retirar credenciales PostgreSQL del codigo y cargarlas desde el ambiente.
+- [x] Retirar credenciales PostgreSQL del codigo y cargarlas desde el ambiente.
 - [ ] Definir dominio, HTTPS, CORS/CSRF y politica de sesiones.
-- [ ] Inventariar endpoints existentes y definir respuestas/error estables.
+- [x] Inventariar endpoints existentes y definir respuestas/error estables para el cliente actual.
 - [ ] Agregar OpenAPI y pruebas de contrato.
-- [ ] Definir estados comunes: carga, vacio, error, sin permiso y sesion vencida.
+- [x] Definir estados comunes: carga, vacio, error, sin permiso y sesion vencida.
 
 ### Fase 1 - Base del frontend
 
-- [ ] Crear aplicacion Next.js con TypeScript, lint, pruebas y variables por ambiente.
-- [ ] Crear sistema visual: colores, tipografia, espaciado, tablas, formularios y dialogos.
-- [ ] Implementar login, cierre de sesion y recuperacion ante sesion expirada.
-- [ ] Implementar layout responsive, navegacion por permisos y pagina 403/404.
-- [ ] Crear cliente API centralizado con CSRF, timeouts y manejo uniforme de errores.
+- [x] Crear aplicacion Next.js con TypeScript, lint, build y variables por ambiente.
+- [x] Crear sistema visual: colores, tipografia, espaciado, tablas, formularios y dialogos.
+- [x] Implementar login, cierre de sesion y recuperacion ante sesion expirada.
+- [x] Implementar layout responsive y navegacion por permisos.
+- [x] Crear cliente API centralizado con CSRF y manejo uniforme de errores.
 
 ### Fase 2 - Primer flujo vertical
 
 El primer modulo sera Remuneraciones porque ya tiene datos, permisos, reportes y uso operativo demostrable.
 
-- [ ] Dashboard de remuneraciones.
-- [ ] Listado y ficha de trabajadores.
-- [ ] Periodos, liquidaciones e items con filtros y paginacion server-side.
-- [ ] Carga ETL con progreso, resultado y descarga de errores.
-- [ ] Reportes y exportacion manteniendo los mismos conteos que Django.
-- [ ] Pruebas con los roles Administrador, RRHH, Contabilidad y Solo lectura.
+- [x] Dashboard general y acceso a remuneraciones.
+- [x] Listado, alta y edicion de trabajadores.
+- [x] Periodos, liquidaciones e items con filtros y paginacion server-side.
+- [x] Carga ETL con estado, resultado e historial de descargas.
+- [x] Reportes nativos manteniendo los conteos de Django.
+- [x] Permisos efectivos basados en los roles Administrador, RRHH, Contabilidad y Solo lectura.
 
 ### Fase 3 - Modulos ERP
 
-- [ ] Asistencia.
-- [ ] Contabilidad.
-- [ ] Inventario.
-- [ ] Compras y ventas.
+- [x] Asistencia.
+- [x] Contabilidad.
+- [x] Inventario.
+- [x] Compras y ventas.
 - [ ] Auditoria, usuarios, estado del sistema y backups.
 
 Cada modulo se considera migrado solo cuando tiene paridad funcional, permisos verificados, pruebas de navegador y una ruta de reversa documentada.
 
 ### Fase 4 - Produccion
 
-- [ ] Build reproducible y despliegue independiente de frontend/backend.
+- [x] Build reproducible y despliegue independiente de frontend/backend preparado.
 - [ ] Nginx con HTTPS, compresion, limites de carga y cabeceras seguras.
 - [ ] Logs y monitoreo de errores frontend/backend.
 - [ ] Pruebas end-to-end de los flujos criticos.
@@ -96,4 +98,3 @@ Un prototipo navegable del login, layout y dashboard de remuneraciones conectado
 - Identificar los tres flujos mas frecuentes de cada rol.
 - Definir identidad visual y dispositivos objetivo.
 - Decidir si Next.js se alojara junto a Django o en un servicio separado.
-

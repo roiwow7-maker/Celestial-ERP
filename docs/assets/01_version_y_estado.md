@@ -1,31 +1,30 @@
 ﻿# Version y estado del sistema
 
-Fecha de referencia: 2026-07-13
+Fecha de referencia: 2026-08-16
 
-Version actual: `1.0.8`
+Version actual: `1.2.1`
 
 ## Donde vive la version
 
 La version central del sistema vive en:
 
 ```text
-Celestial_ERP/Applet/services.py
+Celestial_ERP/Applet/version.py
 ```
 
 Constante:
 
 ```python
-ERP_VERSION = "1.0.8"
+ERP_VERSION = "1.2.1"
 ```
 
 ## Donde se muestra
 
 | Lugar | Detalle |
 | --- | --- |
-| Navbar web | `Celestial_ERP/Applet/templates/shared/topbar.html` muestra `v1.0.8`. |
-| Django Admin | `Applet/admin.py` configura `site_header`, `site_title` e `index_title` con `v1.0.8`. |
+| Portal y Admin | El context processor y la configuracion administrativa consumen `ERP_VERSION`. |
 | API | `ERP_api/views.py` expone la version en `/api/`, `/api/health/` y `/api/system-status/`. |
-| Documentacion | `ROADMAP.md`, `version_log.md` y documentos en `docs/` mencionan `1.0.8`. |
+| Documentacion | `README.md`, `ROADMAP.md`, `version_log.md` y `docs/25_ESTADO_ACTUAL_1_2_1.md`. |
 
 ## Estado funcional cerrado en v0.6.8
 

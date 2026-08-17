@@ -1,10 +1,10 @@
 # ERP_api - API interna y explorador visual
 
-Fecha de referencia: 2026-07-13
+Fecha de referencia: 2026-08-16
 
 ## Proposito
 
-ERP_api expone endpoints JSON simples para estado del sistema y resumen de remuneraciones. Tambien incluye un explorador visual en `/api/` para revisar las rutas en cascada desde la webapp, sin abrir cada endpoint manualmente.
+ERP_api conserva los endpoints iniciales y agrega una API v1 consumida por Next.js para sesion, catalogos, recursos CRUD, reportes, cargas ETL y usuarios.
 
 Es una API inicial para integracion local o herramientas internas, no una API publica de internet.
 
@@ -25,6 +25,14 @@ El explorador visual respeta los permisos del usuario: las rutas restringidas se
 | `/api/modules/` | Modulos activos y proximos |
 | `/api/payroll/summary/` | Conteos principales de remuneraciones |
 | `/api/payroll/periods/` | Ultimos periodos |
+| `/api/v1/session/` | Estado de sesion, usuario y permisos efectivos |
+| `/api/v1/login/` | Inicio de sesion JSON con CSRF |
+| `/api/v1/logout/` | Cierre de sesion |
+| `/api/v1/catalog/` | Catalogo de recursos visibles |
+| `/api/v1/resources/<recurso>/` | Listado, alta y consulta CRUD autorizada |
+| `/api/v1/reports/` | Reportes, filtros y series para graficos |
+| `/api/v1/uploads/` | Carga masiva ETL e historial |
+| `/api/v1/users/` | Administracion protegida de usuarios y roles |
 
 ## Explorador visual
 

@@ -1,10 +1,12 @@
 # Operacion local y backups
 
-Fecha de referencia: 2026-07-13
+Fecha de referencia: 2026-08-16
+
+> Vigencia: la politica SQLite de este documento se conserva como procedimiento historico y de reversa. Desde `1.0.10` la base principal es PostgreSQL; para operacion vigente consultar `22_OPERACION_POSTGRESQL_PRODUCCION.md`.
 
 ## Criterio
 
-Celestial ERP se opera en ambiente local o red interna controlada. La base actual usa SQLite, por lo que el respaldo principal consiste en copiar el archivo `db.sqlite3` con nombre fechado.
+Celestial ERP se opera en ambiente local o red interna controlada. PostgreSQL es la base actual y sus respaldos se generan con `pg_dump`, se verifican con `pg_restore --list` y cuentan con retencion/automatizacion preparada. SQLite solo aplica al respaldo historico conservado.
 
 ## Politica formal de retencion
 

@@ -1,12 +1,24 @@
 # Testing amplio
 
-Fecha de referencia: 2026-07-13
+Fecha de referencia: 2026-08-16
 
 Hito cerrado desde `v1.0.1`.
 
 ## Objetivo
 
-Mantener una suite minima pero amplia para validar que los modulos base siguen funcionando mientras el sistema opera con SQLite.
+Mantener una suite amplia sobre PostgreSQL aislado y comprobaciones de frontend para impedir regresiones sin tocar datos productivos.
+
+## Validacion vigente 1.2.1
+
+```bash
+./venv/bin/python tools/run_postgresql_tests.py
+cd Celestial_ERP/frontend
+npm run lint
+npm run typecheck
+npm run build
+```
+
+Resultado registrado: 51 pruebas Django correctas sobre un cluster PostgreSQL temporal, más ESLint, TypeScript y build Next.js correctos.
 
 ## Comando Principal
 

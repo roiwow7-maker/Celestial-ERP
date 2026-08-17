@@ -2,7 +2,7 @@
 
 Fecha de referencia: 2026-07-13
 
-Version documentada: `1.0.8`
+Version documentada: `1.2.1`
 
 ## Checklist despues de cambios
 
@@ -33,14 +33,14 @@ python manage.py validate_business_rules
 
 Actualizar en este orden:
 
-1. `Celestial_ERP/Applet/services.py`
+1. `Celestial_ERP/Applet/version.py`
 2. templates visibles si tienen texto hardcodeado
 3. `ROADMAP.md`
 4. `version_log.md`
 5. `docs/`
 6. `docs/assets/`
 
-La version actual es `1.0.8`.
+La version actual es `1.2.1`.
 
 ## Pendientes reales
 
@@ -50,7 +50,7 @@ La version actual es `1.0.8`.
 | Cerrado | Auditoria granular avanzada | Existe filtro por objeto/campo estructurado y cambios JSON. |
 | Media | Cola real de trabajos | El background simple existe; cola dedicada solo si crece el volumen. |
 | Media | Rotacion por tiers de backups | Hoy hay retencion simple por dias y minimo de copias. |
-| Media | PostgreSQL | Movido al final de v1.0.x por permisos/infraestructura. |
+| Cerrado | PostgreSQL | Base principal desde `1.0.10`, con backup y restauracion validados. |
 | Baja | PDF server-side | Hoy se puede imprimir/exportar desde navegador. |
 
 ## Roadmap resumido
@@ -90,7 +90,9 @@ Cerrada como base inicial comercial, de asistencia, operacion SQLite reforzada, 
 
 ## Recomendacion operativa con hardware limitado
 
-Mantener SQLite mientras:
+Estas condiciones corresponden a la etapa historica anterior a `1.0.10`. En `1.2.1`, mantener PostgreSQL y conservar SQLite solo como respaldo de reversa.
+
+Historicamente se mantuvo SQLite mientras:
 
 - el uso sea local o de pocos usuarios
 - no haya escrituras concurrentes pesadas
@@ -98,7 +100,7 @@ Mantener SQLite mientras:
 - se limpie `uploads/`
 - se validen cargas antes de importarlas
 
-Postergar PostgreSQL hasta el final de `v1.0.x`, despues de testing, documentacion, LAN, backups, auditoria validada e IA local separada.
+La migracion PostgreSQL se completo en `1.0.10`.
 
 ## IA local
 

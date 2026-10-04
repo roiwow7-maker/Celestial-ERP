@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import "./public.css";
 
 export const metadata: Metadata = {
   title: "Celestial ERP",

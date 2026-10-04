@@ -16,7 +16,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "--output-dir",
             type=Path,
-            default=settings.PROJECT_ROOT / "backups",
+            default=settings.ERP_DATA_ROOT / "backups",
             help="Carpeta donde se guardara el respaldo.",
         )
         parser.add_argument("--retention-days", type=int, default=0, help="Borra backups mas antiguos que N dias.")

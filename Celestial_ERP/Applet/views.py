@@ -177,7 +177,7 @@ def backups(request):
         {
             "latest_backup": latest_backup,
             "backup_error": backup_error,
-            "backup_dir": settings.PROJECT_ROOT / "backups",
+            "backup_dir": settings.ERP_DATA_ROOT / "backups",
             "auto_backup_enabled": auto_backup_enabled(),
             "auto_backup_interval": auto_backup_interval_minutes(),
         },

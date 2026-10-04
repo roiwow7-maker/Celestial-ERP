@@ -3,6 +3,7 @@ from __future__ import annotations
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
+from django.db import connection
 
 
 TEMPORARY_PASSWORDS = ["root", "admin", "password", "123456", "test", "test-password"]
@@ -51,6 +52,20 @@ class Command(BaseCommand):
         if not settings.CSRF_COOKIE_SECURE and not settings.DEBUG:
             warnings.append("CSRF_COOKIE_SECURE desactivado fuera de DEBUG.")
 
+        ok.append(f"Empresa: {settings.ERP_COMPANY_ID} · {settings.ERP_COMPANY_NAME}")
+        if connection.vendor == "postgresql":
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT rolsuper, rolcreatedb, rolcreaterole FROM pg_roles WHERE rolname = current_user")
+                privileges = cursor.fetchone()
+                if any(privileges):
+                    warnings.append("El usuario de aplicación tiene privilegios globales PostgreSQL.")
+                else:
+                    ok.append("Usuario PostgreSQL sin superusuario, CREATE DATABASE ni CREATE ROLE.")
+        if settings.ERP_COMPANY_ID != "default" and settings.ERP_DATA_ROOT.stat().st_mode & 0o077:
+            warnings.append("El directorio de la empresa permite acceso a otros usuarios del sistema.")
+        else:
+            ok.append("Directorio de empresa verificado.")
+
         User = get_user_model()
         active_users = User.objects.filter(is_active=True)
         if not active_users.exists():
@@ -62,7 +77,7 @@ class Command(BaseCommand):
         for user in active_users:
             for password in TEMPORARY_PASSWORDS:
                 if user.check_password(password):
-                    risky_users.append(f"{user.username}/{password}")
+                    risky_users.append(user.username)
                     break
         if risky_users:
             warnings.append("Usuarios con clave temporal conocida: " + ", ".join(risky_users))

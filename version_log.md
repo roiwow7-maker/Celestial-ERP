@@ -1,8 +1,29 @@
 # Celestial ERP Version Log
 
-Fecha de referencia: 2026-08-16
+Fecha de referencia: 2026-10-04
 
-Este registro resume la evolucion funcional del proyecto desde una base inicial hasta la version actual `1.2.1`. Las versiones tempranas agrupan hitos historicos reconstruidos desde el estado del repositorio y la documentacion disponible.
+Este registro resume la evolución funcional del proyecto hasta la versión actual
+`1.3.1`. Las versiones tempranas agrupan hitos históricos reconstruidos desde el
+estado del repositorio y la documentación disponible.
+
+## 1.3.1 — 2026-10-04
+
+- Sitio público de Celestial ERP con páginas de Inicio, Nosotros, Servicios, Contacto y Trabaja con nosotros.
+- Navbar flotante compartida, menú móvil, tema claro/oscuro persistente y contraste corregido para la marca.
+- Interfaz fluida comprobada en 13 tamaños de pantalla y ambos temas, sin desbordamiento horizontal.
+- Login separado de la portada en `/login`, con detección automática de empresa por dominio institucional.
+- Portal autenticado trasladado a `/portal`, con redirección de enlaces históricos y rechazo de empresas desconocidas.
+- Formularios de contacto y postulación con validación de RUT chileno, adjuntos PDF/DOC/DOCX de hasta 10 MiB y transporte SMTP configurable.
+- Validación del acceso real a `rgamer-store`, cierre de sesión, proxy multiempresa, TypeScript y ESLint.
+
+## 1.3.0 — 2026-09-27
+
+- Selector de empresas con backends, bases PostgreSQL, sesiones y archivos independientes.
+- Herramientas de alta, registro y arranque; primera cuenta nominal con credencial privada.
+- Seguridad: validación de origen, identidad de backend, cookies por empresa, bloqueo temporal de login, caducidad por inactividad, validación de contraseñas y permisos de administración.
+- Corrección de autodesactivación e integridad al editar movimientos de stock; auditoría de API y backups privados.
+- Pruebas de aislamiento en PostgreSQL temporal y documentación de límites de operación local.
+- Detalle: `docs/25_MULTIEMPRESA_SEGURIDAD.md`.
 
 ## 0.0.x - Exploracion y base de datos inicial
 
@@ -178,6 +199,9 @@ Este registro resume la evolucion funcional del proyecto desde una base inicial 
 
 ## Proximas lineas
 
+- `1.3.2`: Configuración y validación de un proveedor SMTP real para contacto y postulaciones.
+- `1.3.3`: MFA y recuperación segura de cuentas antes de exposición externa.
+- `1.3.4`: HTTPS, firewall, limitación de solicitudes y servicios persistentes por empresa.
 - `1.1.12`: Validacion formal de reglas de remuneraciones con el area de negocio.
 - `1.2.2`: Prueba del AppImage y reinstalacion en un equipo Linux limpio.
 - `1.2.3`: Validacion fisica de la experiencia responsive desde smartphone en LAN.

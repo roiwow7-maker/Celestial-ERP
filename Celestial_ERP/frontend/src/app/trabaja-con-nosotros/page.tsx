@@ -1,0 +1,8 @@
+"use client";
+import { useState, type FormEvent } from "react";
+import { isValidRut } from "@/lib/rut";
+export default function CareersPage() {
+  const [message, setMessage] = useState("");
+  async function submit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); const form = event.currentTarget; const data = new FormData(form); if (!isValidRut(String(data.get("rut")))) { setMessage("El RUT no es válido."); return; } setMessage("Enviando…"); const response = await fetch("/api/contact", { method: "POST", body: data }); setMessage(response.ok ? "Postulación enviada correctamente." : (await response.json()).error ?? "No fue posible enviar la postulación."); if (response.ok) form.reset(); }
+  return <main className="public-inner"><a href="/" className="public-back">← Celestial ERP</a><span className="eyebrow">TRABAJA CON NOSOTROS</span><h1>Construyamos herramientas que hagan más simple el trabajo.</h1><p>Completa tus datos y adjunta tu curriculum vitae.</p><form className="contact-form" onSubmit={submit} encType="multipart/form-data"><input type="hidden" name="type" value="career"/><label>Nombre completo<input name="name" required /></label><label>RUT<input name="rut" placeholder="12.345.678-5" required /></label><label>Edad<input name="age" type="number" min="18" max="100" required /></label><label>Género<select name="gender" required><option value="">Seleccionar</option><option>Masculino</option><option>Femenino</option><option>Otro</option></select></label><label>Correo<input name="email" type="email" required /></label><label>Curriculum vitae<input name="cv" type="file" accept=".pdf,.doc,.docx" required /></label><button className="primary-button">Enviar postulación</button>{message && <p>{message}</p>}</form></main>;
+}

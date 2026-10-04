@@ -1,8 +1,8 @@
 # Celestial ERP Roadmap
 
-Fecha de referencia: 2026-08-16
+Fecha de referencia: 2026-10-04
 
-Version actual del sistema: `1.2.1`.
+Version actual del sistema: `1.3.1`.
 
 Hitos previos integrados:
 
@@ -27,6 +27,8 @@ Hitos previos integrados:
 - `1.1.11b`: usuarios nominales creados, credenciales administrativas rotadas y matriz de los cuatro roles validada.
 - `1.2.0` (en preparacion): frontend nativo Next.js, API Django v1, escritorio Electron, reportes, ETL, administracion y experiencia movil implementados.
 - `1.2.1`: suite Django completa validada con 51 pruebas sobre PostgreSQL temporal aislado.
+- `1.3.0`: separación multiempresa por backend, base PostgreSQL, sesión y archivos.
+- `1.3.1`: sitio público responsive, login independiente por correo institucional y portal aislado por empresa.
 
 ## v0.3 - Plataforma base
 - [x] DATA_scope remuneraciones
@@ -160,7 +162,7 @@ Hitos previos integrados:
 
 La revision tecnica, dependencias, decisiones de negocio y criterios de cierre se detallan en `docs/24_REVISION_EVOLUCION_FUNCIONAL.md`.
 
-## v1.2 - Frontend real multiplataforma (en preparacion)
+## v1.2 - Frontend real multiplataforma
 
 ### Experiencia web y escritorio
 
@@ -180,7 +182,7 @@ La revision tecnica, dependencias, decisiones de negocio y criterios de cierre s
 - [x] Administracion de usuarios, roles y estados restringida al modulo de seguridad
 - [x] Acceso LAN del frontend mediante `0.0.0.0`, manteniendo Django detrás del proxy de Next.js
 
-### Validacion pendiente antes de publicar v1.2.0
+### Validación y despliegue
 
 - [x] `manage.py check`
 - [x] ESLint, comprobacion TypeScript y build de produccion del frontend
@@ -190,6 +192,41 @@ La revision tecnica, dependencias, decisiones de negocio y criterios de cierre s
 - [ ] v1.2.3 - Validar navegacion completa desde al menos un smartphone real en la red local
 - [ ] v1.2.4 - Aplicar y validar HTTPS y reglas de firewall del servidor antes de cualquier exposicion fuera de la LAN
 
+## v1.3 - Multiempresa, seguridad y sitio público
+
+### Entrega 1.3.0
+
+- [x] Registro de empresas con backend y base PostgreSQL independientes
+- [x] Cookies, sesiones, archivos operativos y respaldos separados por empresa
+- [x] Proxy con validación de origen e identidad del backend seleccionado
+- [x] Bloqueo temporal de intentos de login, caducidad de sesión y permisos de administración
+- [x] Configuración de módulos habilitados por empresa
+- [x] Herramientas para preparar, registrar, iniciar y comprobar el aislamiento de empresas
+
+### Entrega 1.3.1
+
+- [x] Sitio público con Inicio, Nosotros, Servicios, Contacto y Trabaja con nosotros
+- [x] Navbar compartida, tema claro/oscuro y menú móvil accesible
+- [x] Diseño fluido comprobado en 13 tamaños, desde 320 px hasta formato 32:9
+- [x] Login independiente en `/login`, separado de la portada
+- [x] Detección automática de empresa por dominio del correo institucional
+- [x] Portal autenticado en `/portal`, con rechazo de empresas desconocidas
+- [x] Compatibilidad de enlaces históricos `/?company=<id>` mediante redirección segura
+- [x] Formularios de contacto y postulación con RUT chileno y documentos limitados
+- [x] Integración SMTP preparada mediante variables privadas de entorno
+
+### Pendientes antes de exposición pública
+
+- [ ] Incorporar MFA y recuperación segura de cuentas
+- [ ] Aplicar HTTPS, firewall y limitación de solicitudes en el proxy público
+- [ ] Cifrar respaldos y probar copias externas por empresa
+- [ ] Separar el rol PostgreSQL de migraciones del rol operativo
+- [ ] Centralizar auditoría y alertas con retención independiente
+- [ ] Validar correo saliente con un proveedor SMTP real
+
 ## Proximo paso recomendado
 
-Completar `v1.2.2` con la prueba del AppImage en un equipo limpio y continuar con la validacion fisica en smartphone para `v1.2.3`. La configuracion de despliegue HTTPS queda preparada, pero `v1.2.4` solo puede cerrarse al aplicarla con dominio, certificado y acceso administrativo reales. En paralelo, cerrar `v1.1.12` con la aprobacion formal del area de remuneraciones.
+Configurar y validar un proveedor SMTP real, completar `v1.2.2` con la prueba del
+AppImage en un equipo limpio y continuar con la validación física en smartphone.
+HTTPS, firewall y MFA deben cerrarse antes de exponer el sistema fuera de una LAN
+controlada. En paralelo, falta la aprobación formal de reglas de remuneraciones.

@@ -17,7 +17,7 @@ class Command(BaseCommand):
         parser.add_argument("--dry-run", action="store_true", help="Solo lista carpetas que serian eliminadas.")
 
     def handle(self, *args, **options):
-        uploads_dir = settings.PROJECT_ROOT / "uploads"
+        uploads_dir = settings.ERP_DATA_ROOT / "uploads"
         if not uploads_dir.exists():
             self.stdout.write("No existe carpeta uploads.")
             return

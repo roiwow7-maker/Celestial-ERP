@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import logging
+
 from .models import AuditLog
 
 
@@ -30,4 +32,4 @@ def log_event(
         )
     except Exception:
         # La auditoria no debe botar una pantalla operativa.
-        return
+        logging.getLogger("Applet").exception("No fue posible registrar un evento de auditoría")

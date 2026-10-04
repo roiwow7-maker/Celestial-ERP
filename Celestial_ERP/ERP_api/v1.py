@@ -9,8 +9,8 @@ from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.core.exceptions import PermissionDenied
-from django.db import models
+from django.core.exceptions import PermissionDenied, ValidationError
+from django.db import models, transaction
 from django.db.models import Count, Sum
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -32,7 +32,9 @@ from Commerce.models import PurchaseOrder, SalesOrder
 from Commerce.services import commerce_summary
 from Inventory.models import StockBalance, Warehouse
 from Inventory.services import inventory_summary
-from Applet.services import ensure_role_groups
+from Applet.audit import log_event
+from Applet.models import CompanySettings
+from .user_security import save_user
 from DATA_scope.models import ImportRun, PayrollSummary
 
 
@@ -121,8 +123,9 @@ def field_schema(name, field):
 
 def parse_body(request):
     try:
-        return json.loads(request.body or "{}")
-    except json.JSONDecodeError:
+        data = json.loads(request.body or "{}")
+        return data if isinstance(data, dict) else None
+    except (json.JSONDecodeError, UnicodeDecodeError):
         return None
 
 
@@ -130,12 +133,32 @@ def parse_body(request):
 @require_http_methods(["GET"])
 def session_view(request):
     if not request.user.is_authenticated:
-        return response({"authenticated": False})
+        return response({"authenticated": False, "company": {"id": settings.ERP_COMPANY_ID, "name": settings.ERP_COMPANY_NAME}})
+    settings_row, _ = CompanySettings.objects.get_or_create(id=1, defaults={"enabled_modules": ["payroll", "attendance", "accounting", "inventory", "commerce"]})
     return response({
         "authenticated": True,
+        "company": {"id": settings.ERP_COMPANY_ID, "name": settings.ERP_COMPANY_NAME},
         "user": {"id": request.user.pk, "username": request.user.username, "name": request.user.get_full_name() or request.user.username},
         "permissions": sorted(request.user.get_all_permissions()),
+        "enabled_modules": settings_row.enabled_modules,
     })
+
+
+@require_http_methods(["GET", "PATCH"])
+def company_modules(request):
+    require_user(request)
+    if request.method == "PATCH" and not request.user.has_perm("Applet.manage_company_modules"):
+        raise PermissionDenied
+    row, _ = CompanySettings.objects.get_or_create(id=1, defaults={"enabled_modules": ["payroll", "attendance", "accounting", "inventory", "commerce"]})
+    if request.method == "PATCH":
+        data = parse_body(request) or {}
+        allowed = {"payroll", "attendance", "accounting", "inventory", "commerce"}
+        modules = data.get("enabled_modules")
+        if not isinstance(modules, list) or not all(isinstance(value, str) and value in allowed for value in modules):
+            return response({"error": "Módulos inválidos."}, 400)
+        row.enabled_modules = sorted(set(modules)); row.save(update_fields=["enabled_modules", "updated_at"])
+        log_event(request, "modules_updated", "security", changes={"enabled_modules": row.enabled_modules})
+    return response({"enabled_modules": row.enabled_modules})
 
 
 @require_http_methods(["POST"])
@@ -143,19 +166,28 @@ def login_view(request):
     data = parse_body(request)
     if data is None:
         return response({"error": "JSON inválido."}, 400)
-    user = authenticate(request, username=data.get("username", ""), password=data.get("password", ""))
+    username = data.get("username", "")
+    user = authenticate(request, username=username, password=data.get("password", ""))
+    if user is None and "@" in str(username):
+        candidate = get_user_model().objects.filter(email__iexact=str(username).strip(), is_active=True).first()
+        if candidate and candidate.check_password(data.get("password", "")):
+            user = candidate
     if user is None or not user.is_active:
         return response({"error": "Usuario o contraseña incorrectos."}, 400)
     login(request, user)
+    settings_row, _ = CompanySettings.objects.get_or_create(id=1, defaults={"enabled_modules": ["payroll", "attendance", "accounting", "inventory", "commerce"]})
     return response({
         "authenticated": True,
+        "company": {"id": settings.ERP_COMPANY_ID, "name": settings.ERP_COMPANY_NAME},
         "user": {"id": user.pk, "username": user.username, "name": user.get_full_name() or user.username},
         "permissions": sorted(user.get_all_permissions()),
+        "enabled_modules": settings_row.enabled_modules,
     })
 
 
 @require_http_methods(["POST"])
 def logout_view(request):
+    log_event(request, "logout", "security")
     logout(request)
     return response({"ok": True})
 
@@ -237,6 +269,7 @@ def uploads(request):
         return response({"uploads": rows, "can_import": request.user.has_perm("DATA_scope.import_payroll_data"), "can_clear": request.user.has_perm("DATA_scope.clear_payroll_data")})
     uploaded = request.FILES.get("file")
     if not uploaded: return response({"error": "Selecciona un archivo CSV, XLSX o XLS."}, 400)
+    if uploaded.size > settings.ERP_UPLOAD_MAX_BYTES: return response({"error": "El archivo supera el tamaño permitido."}, 413)
     name = get_valid_filename(uploaded.name)
     if Path(name).suffix.lower() not in {".csv", ".xlsx", ".xls"}: return response({"error": "Formato no soportado."}, 400)
     wants_import = request.POST.get("import") == "true"
@@ -244,8 +277,8 @@ def uploads(request):
     if wants_import and not request.user.has_perm("DATA_scope.import_payroll_data"): raise PermissionDenied
     if wants_clear and not request.user.has_perm("DATA_scope.clear_payroll_data"): raise PermissionDenied
     run_id = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
-    upload_dir = settings.PROJECT_ROOT / "uploads" / run_id
-    upload_dir.mkdir(parents=True, exist_ok=True)
+    upload_dir = settings.ERP_DATA_ROOT / "uploads" / run_id
+    upload_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
     input_path = upload_dir / name
     with input_path.open("wb") as handle:
         for chunk in uploaded.chunks(): handle.write(chunk)
@@ -266,7 +299,7 @@ def uploads(request):
 @require_http_methods(["GET"])
 def upload_status(request, run_id):
     upload_permission(request)
-    status_path = settings.PROJECT_ROOT / "uploads" / run_id / "job_status.json"
+    status_path = settings.ERP_DATA_ROOT / "uploads" / run_id / "job_status.json"
     if not status_path.exists(): return response({"error": "Carga no encontrada."}, 404)
     data = json.loads(status_path.read_text(encoding="utf-8"))
     for item in data.get("downloads", []): item["url"] = f"/cargas/descargar/{run_id}/{item['relative_path']}"
@@ -281,13 +314,12 @@ def security_permission(request):
 @require_http_methods(["GET", "POST"])
 def users(request):
     security_permission(request)
-    User = get_user_model(); ensure_role_groups()
+    User = get_user_model()
     if request.method == "POST":
-        data = parse_body(request) or {}
-        if not data.get("username") or not data.get("password"): return response({"error": "Usuario y contraseña son obligatorios."}, 400)
-        if User.objects.filter(username=data["username"]).exists(): return response({"error": "El usuario ya existe."}, 400)
-        user = User.objects.create_user(username=data["username"], password=data["password"], first_name=data.get("first_name", ""), last_name=data.get("last_name", ""), email=data.get("email", ""))
-        user.groups.set(Group.objects.filter(name__in=data.get("roles", [])))
+        data = parse_body(request)
+        if data is None: return response({"error": "JSON inválido."}, 400)
+        user, errors = save_user(request, data)
+        if errors: return response({"errors": errors}, 400)
         return response({"id": user.id}, 201)
     rows = [{"id": user.id, "username": user.username, "name": user.get_full_name(), "email": user.email, "active": user.is_active, "staff": user.is_staff, "superuser": user.is_superuser, "roles": list(user.groups.values_list("name", flat=True)), "last_login": scalar(user.last_login)} for user in User.objects.prefetch_related("groups").order_by("username")]
     return response({"users": rows, "roles": list(Group.objects.values_list("name", flat=True))})
@@ -296,12 +328,10 @@ def users(request):
 @require_http_methods(["PATCH"])
 def user_detail(request, user_id):
     security_permission(request)
-    user = get_object_or_404(get_user_model(), pk=user_id); data = parse_body(request) or {}
-    if user == request.user and data.get("active") is False: return response({"error": "No puedes desactivar tu propia cuenta."}, 400)
-    for field in ("first_name", "last_name", "email", "is_active", "is_staff"):
-        if field in data: setattr(user, field, data[field])
-    if data.get("password"): user.set_password(data["password"])
-    user.save(); user.groups.set(Group.objects.filter(name__in=data.get("roles", list(user.groups.values_list("name", flat=True)))))
+    data = parse_body(request)
+    if data is None: return response({"error": "JSON inválido."}, 400)
+    user, errors = save_user(request, data, user_id)
+    if errors: return response({"errors": errors}, 400)
     return response({"ok": True})
 
 
@@ -321,8 +351,13 @@ def resource_collection(request, resource):
         if form.is_valid():
             instance = form.save(commit=False)
             if hasattr(instance, "created_by_id"): instance.created_by = request.user
-            if resource == "stock-movements": apply_stock_movement(instance)
-            else: instance.save()
+            try:
+                with transaction.atomic():
+                    if resource == "stock-movements": apply_stock_movement(instance)
+                    else: instance.save()
+                    log_event(request, "create", module, object_type=model.__name__, object_id=instance.pk)
+            except ValidationError as exc:
+                return response({"error": " ".join(exc.messages)}, 400)
             return response({"item": serialize_instance(instance, form_class)}, 201)
         return response({"errors": form.errors.get_json_data()}, 400)
 
@@ -355,8 +390,12 @@ def resource_detail(request, resource, object_id):
     if not request.user.has_perm(f"{model._meta.app_label}.change_{model._meta.model_name}"):
         raise PermissionDenied
     data = parse_body(request)
+    if data is None: return response({"error": "JSON inválido."}, 400)
+    if resource == "stock-movements":
+        return response({"error": "Los movimientos de stock no se editan. Registra un movimiento compensatorio."}, 409)
     form = form_class(data=data, instance=instance)
     if form.is_valid():
         instance = form.save()
+        log_event(request, "update", _module, object_type=model.__name__, object_id=instance.pk, changes={"fields": form.changed_data})
         return response({"item": serialize_instance(instance, form_class)})
     return response({"errors": form.errors.get_json_data()}, 400)

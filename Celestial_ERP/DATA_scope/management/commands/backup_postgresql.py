@@ -17,7 +17,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "--output-dir",
             type=Path,
-            default=settings.PROJECT_ROOT / "backups",
+            default=settings.ERP_DATA_ROOT / "backups",
             help="Carpeta donde se guardara el respaldo.",
         )
         parser.add_argument("--retention-days", type=int, default=30)
@@ -37,9 +37,11 @@ class Command(BaseCommand):
             raise CommandError("No se encontro pg_restore en PATH.")
 
         output_dir: Path = options["output_dir"]
-        output_dir.mkdir(parents=True, exist_ok=True)
+        output_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         target = output_dir / f"postgres_{database['NAME']}_{timestamp}.dump"
+
+        target.touch(mode=0o600, exist_ok=False)
 
         env = os.environ.copy()
         if database.get("PASSWORD"):

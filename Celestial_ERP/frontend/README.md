@@ -15,7 +15,10 @@ npm ci
 npm run dev
 ```
 
-Abrir `http://127.0.0.1:3000`. El servidor escucha en `0.0.0.0` para pruebas LAN; `/backend/` se envía a Django mediante el proxy interno.
+Abrir `http://127.0.0.1:3000` para el sitio público o
+`http://127.0.0.1:3000/login` para iniciar sesión. El portal autenticado utiliza
+`/portal?company=<id>`. El servidor escucha en `0.0.0.0` para pruebas LAN;
+`/backend/` se envía a Django mediante el proxy interno.
 
 Para iniciar backend, frontend y Electron en desarrollo:
 
@@ -43,7 +46,7 @@ El AppImage se genera en `dist-electron/`. `dist-electron/`, `release-electron/`
 
 Copiar `.env.example` solo como referencia. `DJANGO_BACKEND_URL` debe apuntar a Django por una direccion privada. No incluir credenciales en variables `NEXT_PUBLIC_*` ni conectar el frontend directamente a PostgreSQL.
 
-## Estado 1.2.1
+## Estado 1.3.1
 
 - Sesion Django y CSRF integrados.
 - CRUD por modulo mediante API v1.
@@ -51,4 +54,6 @@ Copiar `.env.example` solo como referencia. `DJANGO_BACKEND_URL` debe apuntar a 
 - Carga masiva ETL con historial y estado.
 - Administracion autorizada de usuarios y roles.
 - Diseño responsive para smartphone.
+- Sitio público multi página con tema claro/oscuro y navegación adaptable.
+- Login independiente con detección de empresa por correo institucional y portal aislado por empresa.
 - Build standalone incorporado al AppImage.

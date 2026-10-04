@@ -32,7 +32,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "--output",
             type=Path,
-            default=settings.PROJECT_ROOT / "reports" / "business_rules_validation.csv",
+            default=settings.ERP_DATA_ROOT / "reports" / "business_rules_validation.csv",
             help="CSV de salida con diferencias detectadas.",
         )
         parser.add_argument("--fail-on-mismatch", action="store_true", help="Retorna error si hay diferencias.")

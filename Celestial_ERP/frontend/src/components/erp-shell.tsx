@@ -2,7 +2,7 @@
 
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 
-type Session = { authenticated: boolean; user?: { name: string }; permissions?: string[] };
+type Session = { authenticated: boolean; user?: { name: string }; permissions?: string[]; enabled_modules?: string[] };
 type Option = { value: string; label: string };
 type Field = { name: string; label: string; required: boolean; type: string; help_text: string; options?: Option[] };
 type Item = Record<string, string | number | boolean | null> & { id: number; label: string };
@@ -17,9 +17,16 @@ const groups = [
   { label: "Compras y ventas", color: "#ec4899", items: [["suppliers", "Proveedores"], ["customers", "Clientes"], ["purchases", "Compras"], ["sales", "Ventas"]] },
 ] as const;
 
-const api = (path: string) => `/backend/api/v1/${path}`;
-const specialViews = new Set(["reports", "uploads", "users"]);
-const csrf = () => document.cookie.match(/(?:^|; )csrftoken=([^;]+)/)?.[1] ?? "";
+// Una navegación completa descarta peticiones y estado de la empresa anterior.
+function changeCompany() {
+  // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+  window.location.assign("/login");
+}
+const companyId = () => new URLSearchParams(window.location.search).get("company") ?? "default";
+const backend = () => `/backend/company/${encodeURIComponent(companyId())}`;
+const api = (path: string) => `${backend()}/api/v1/${path}`;
+const specialViews = new Set(["reports", "uploads", "users", "modules"]);
+const csrf = () => document.cookie.split(";").map((part) => part.trim()).find((part) => part.startsWith(`erp_${companyId()}_csrftoken=`))?.split("=").slice(1).join("=") ?? "";
 
 async function jsonFetch(path: string, init?: RequestInit) {
   const response = await fetch(api(path), { credentials: "same-origin", ...init, headers: { "Content-Type": "application/json", "X-CSRFToken": csrf(), ...init?.headers } });
@@ -32,7 +39,7 @@ async function jsonFetch(path: string, init?: RequestInit) {
   return data;
 }
 
-export function ErpShell() {
+export function ErpShell({ company }: { company: { id: string; name: string } }) {
   const [session, setSession] = useState<Session | null>(null);
   const [active, setActive] = useState("dashboard");
   const [resource, setResource] = useState<Resource | null>(null);
@@ -52,6 +59,11 @@ export function ErpShell() {
 
   useEffect(() => { jsonFetch("session/").then(setSession).catch(() => setSession({ authenticated: false })); }, []);
   useEffect(() => {
+    if (session && !session.authenticated) {
+      window.location.replace(`/login?company=${encodeURIComponent(company.id)}`);
+    }
+  }, [session, company.id]);
+  useEffect(() => {
     if (!session?.authenticated) return;
     const task = window.setTimeout(() => {
       if (active === "dashboard") {
@@ -63,27 +75,28 @@ export function ErpShell() {
   }, [active, session?.authenticated]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!session) return <Centered message="Iniciando Celestial ERP…" />;
-  if (!session.authenticated) return <Login onLogin={setSession} />;
+  if (!session.authenticated) return <Centered message="Redirigiendo al inicio de sesión…" />;
 
   const selectResource = (key: string) => { setActive(key); setSearch(""); setEditing(undefined); setMobileMenu(false); };
   return (
     <main className="native-shell">
       {mobileMenu && <button className="mobile-overlay" aria-label="Cerrar menú" onClick={() => setMobileMenu(false)} />}
       <aside className={`native-sidebar ${mobileMenu ? "mobile-open" : ""}`}>
-        <div className="brand"><div className="brand-mark">C</div><div><strong>Celestial</strong><span>ERP · Frontend Next.js</span></div></div>
+        <div className="brand"><div className="brand-mark">C</div><div><strong>Celestial</strong><span>{company.name}</span></div></div>
         <nav className="native-nav">
           <section><button className={active === "dashboard" ? "active" : ""} onClick={() => selectResource("dashboard")}>Resumen general</button></section>
-          {groups.map((group) => <section key={group.label}><h3><i style={{ background: group.color }} />{group.label}</h3>{group.items.map(([key, label]) => <button className={active === key ? "active" : ""} key={key} onClick={() => selectResource(key)}>{label}</button>)}</section>)}
+          {groups.filter((group) => session.enabled_modules?.includes(group.label === "Remuneraciones" ? "payroll" : group.label === "Asistencia" ? "attendance" : group.label === "Contabilidad" ? "accounting" : group.label === "Inventario" ? "inventory" : "commerce")).map((group) => <section key={group.label}><h3><i style={{ background: group.color }} />{group.label}</h3>{group.items.map(([key, label]) => <button className={active === key ? "active" : ""} key={key} onClick={() => selectResource(key)}>{label}</button>)}</section>)}
           <section><h3><i style={{ background: "#8b5cf6" }} />Análisis y operación</h3><button className={active === "reports" ? "active" : ""} onClick={() => selectResource("reports")}>Reportes PDF</button>{session.permissions?.includes("DATA_scope.upload_payroll_data") && <button className={active === "uploads" ? "active" : ""} onClick={() => selectResource("uploads")}>Carga masiva ETL</button>}</section>
           {session.permissions?.includes("Applet.access_security_module") && <section><h3><i style={{ background: "#ef4444" }} />Administración</h3><button className={active === "users" ? "active" : ""} onClick={() => selectResource("users")}>Usuarios y roles</button></section>}
+          {session.permissions?.includes("Applet.manage_company_modules") && <section><button className={active === "modules" ? "active" : ""} onClick={() => selectResource("modules")}>Módulos de la empresa</button></section>}
         </nav>
-        <div className="user-card"><span>{session.user?.name}</span><button onClick={async () => { await jsonFetch("logout/", { method: "POST", body: "{}" }); setSession({ authenticated: false }); }}>Salir</button></div>
+        <div className="user-card"><button type="button" onClick={changeCompany}>Cambiar empresa</button><span>{session.user?.name}</span><button onClick={async () => { await jsonFetch("logout/", { method: "POST", body: "{}" }); setSession({ authenticated: false }); }}>Salir</button></div>
       </aside>
       <section className="native-workspace">
-        <header className="native-header no-print"><button className="mobile-menu-button" type="button" aria-label="Abrir menú" aria-expanded={mobileMenu} onClick={() => setMobileMenu(true)}>☰</button><div className="mobile-heading"><small>GESTIÓN / {resource?.module ?? "ERP"}</small><h1>{active === "dashboard" ? "Resumen general" : active === "reports" ? "Reportes" : active === "uploads" ? "Carga masiva ETL" : active === "users" ? "Usuarios y roles" : resource?.title ?? "Cargando…"}</h1></div>{active !== "dashboard" && !specialViews.has(active) && <div className="header-actions"><form onSubmit={(event) => { event.preventDefault(); void load(); }}><input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar…" aria-label="Buscar registros" /></form>{resource?.can_add && <button className="primary-button" onClick={() => setEditing(null)}>+ Nuevo</button>}</div>}</header>
+        <header className="native-header no-print"><button className="mobile-menu-button" type="button" aria-label="Abrir menú" aria-expanded={mobileMenu} onClick={() => setMobileMenu(true)}>☰</button><div className="mobile-heading"><small>GESTIÓN / {resource?.module ?? "ERP"}</small><h1>{active === "dashboard" ? "Resumen general" : active === "reports" ? "Reportes" : active === "uploads" ? "Carga masiva ETL" : active === "users" ? "Usuarios y roles" : active === "modules" ? "Módulos de la empresa" : resource?.title ?? "Cargando…"}</h1></div>{active !== "dashboard" && !specialViews.has(active) && <div className="header-actions"><form onSubmit={(event) => { event.preventDefault(); void load(); }}><input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar…" aria-label="Buscar registros" /></form>{resource?.can_add && <button className="primary-button" onClick={() => setEditing(null)}>+ Nuevo</button>}</div>}</header>
         <div className="native-content">
           {error && <div className="alert-error">{error}<button onClick={() => void load()}>Reintentar</button></div>}
-          {busy ? <Centered message="Consultando datos…" /> : active === "dashboard" ? <Dashboard items={catalog} onOpen={selectResource} /> : active === "reports" ? <ReportsView /> : active === "uploads" ? <UploadsView /> : active === "users" ? <UsersView /> : resource && <ResourceTable resource={resource} onEdit={setEditing} />}
+          {busy ? <Centered message="Consultando datos…" /> : active === "dashboard" ? <Dashboard items={catalog} onOpen={selectResource} /> : active === "reports" ? <ReportsView /> : active === "uploads" ? <UploadsView /> : active === "users" ? <UsersView /> : active === "modules" ? <ModulesView /> : resource && <ResourceTable resource={resource} onEdit={setEditing} />}
         </div>
       </section>
       {editing !== undefined && resource && <ResourceForm resource={resource} item={editing} onClose={() => setEditing(undefined)} onSaved={() => { setEditing(undefined); void load(); }} />}
@@ -119,7 +132,7 @@ function UploadsView() {
   async function submit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); setBusy(true); setError(""); const data = new FormData(event.currentTarget); try { const response = await fetch(api("uploads/"), { method: "POST", credentials: "same-origin", headers: { "X-CSRFToken": csrf() }, body: data }); const payload = await response.json(); if (!response.ok) throw new Error(payload.error); setJob(payload); void refresh(); } catch (reason) { setError(reason instanceof Error ? reason.message : "Falló la carga."); } finally { setBusy(false); } }
   return <div className="operations-grid"><form className="operation-card" onSubmit={submit}><h2>Nueva carga masiva</h2><p>Procesa CSV, XLSX o XLS con el pipeline ETL oficial.</p>{error && <div className="alert-error">{error}</div>}<label className="drop-zone">Seleccionar archivo<input name="file" type="file" accept=".csv,.xlsx,.xls" required /></label><div className="form-grid compact"><label>Formato<select name="source_format" defaultValue="auto"><option value="auto">Detectar automáticamente</option><option value="horizontal">Horizontal</option><option value="vertical">Vertical</option></select></label><label>RUT empresa<input name="rut_empresa" /></label><label className="check-field"><input name="import" value="true" type="checkbox" />Importar al ERP</label><label className="check-field"><input name="excel" value="true" type="checkbox" />Generar Excel</label><label className="check-field danger"><input name="clear" value="true" type="checkbox" />Limpiar datos antes</label></div><button className="primary-button" disabled={busy}>{busy ? "Subiendo…" : "Iniciar procesamiento"}</button>{job && <JobStatus job={job} />}</form><section className="operation-card"><h2>Historial de importaciones</h2><div className="history-list">{history.map((item) => <div key={String(item.id)}><span className={`status-badge ${item.status}`}>{String(item.status)}</span><strong>{new Date(String(item.created_at)).toLocaleString("es-CL")}</strong><small>{String(item.entry_count)} movimientos · {String(item.summary_count)} liquidaciones</small></div>)}</div></section></div>;
 }
-function JobStatus({ job }: { job: Record<string, unknown> }) { return <div className="job-status"><strong>Estado: {String(job.status)}</strong><span>{String(job.input_name ?? "")}</span>{Boolean(job.error) && <p>{String(job.error)}</p>}{Array.isArray(job.downloads) && job.downloads.map((item: { label: string; url: string }) => <a key={item.url} href={`/backend${item.url}`}>{item.label}</a>)}</div>; }
+function JobStatus({ job }: { job: Record<string, unknown> }) { return <div className="job-status"><strong>Estado: {String(job.status)}</strong><span>{String(job.input_name ?? "")}</span>{Boolean(job.error) && <p>{String(job.error)}</p>}{Array.isArray(job.downloads) && job.downloads.map((item: { label: string; url: string }) => <a key={item.url} href={`${backend()}${item.url}`}>{item.label}</a>)}</div>; }
 
 type UserRow = { id:number; username:string; name:string; email:string; active:boolean; staff:boolean; superuser:boolean; roles:string[]; last_login:string|null };
 function UsersView() {
@@ -130,13 +143,15 @@ function UsersView() {
   const roleFields=(selectedRoles:string[])=><fieldset><legend>Roles</legend>{roles.map((role)=><label className="check-field" key={role}><input name="roles" value={role} type="checkbox" defaultChecked={selectedRoles.includes(role)}/>{role}</label>)}</fieldset>;
   return <div className="data-card">{error&&<div className="alert-error">{error}</div>}<div className="admin-summary"><div><strong>{users.length}</strong><span>usuarios registrados</span></div><p>El acceso efectivo combina estado de cuenta, roles y permisos Django.</p><button className="primary-button" onClick={()=>setCreating(true)}>+ Crear usuario</button></div><div className="user-grid">{users.map((user)=><button key={user.id} onClick={()=>setSelected(user)}><span className={`avatar ${user.active?"":"inactive"}`}>{user.username[0]?.toUpperCase()}</span><div><strong>{user.name||user.username}</strong><small>@{user.username} · {user.roles.join(", ")||"Sin rol"}</small></div><i>{user.active?"Activo":"Desactivado"}</i></button>)}</div>{selected&&<div className="modal-backdrop" onMouseDown={()=>setSelected(null)}><form className="resource-modal narrow" onSubmit={save} onMouseDown={(e)=>e.stopPropagation()}><header><div><small>CONTROL DE ACCESO</small><h2>{selected.username}</h2></div><button type="button" onClick={()=>setSelected(null)}>×</button></header><div className="form-grid compact"><label className="check-field"><input name="active" type="checkbox" defaultChecked={selected.active}/>Cuenta activa</label><label className="check-field"><input name="staff" type="checkbox" defaultChecked={selected.staff}/>Acceso administrativo</label><label>Nueva contraseña<input name="password" type="password" placeholder="Dejar vacío para conservar"/></label>{roleFields(selected.roles)}</div><footer><button className="primary-button">Guardar accesos</button></footer></form></div>}{creating&&<div className="modal-backdrop" onMouseDown={()=>setCreating(false)}><form className="resource-modal narrow" onSubmit={create} onMouseDown={(e)=>e.stopPropagation()}><header><div><small>NUEVA CUENTA</small><h2>Crear usuario</h2></div><button type="button" onClick={()=>setCreating(false)}>×</button></header><div className="form-grid compact"><label>Usuario<input name="username" required/></label><label>Contraseña inicial<input name="password" type="password" required/></label><label>Nombre<input name="first_name"/></label><label>Apellido<input name="last_name"/></label><label>Correo<input name="email" type="email"/></label>{roleFields([])}</div><footer><button className="primary-button">Crear cuenta</button></footer></form></div>}</div>;
 }
-function humanize(value:string){return value.replaceAll("__"," ").replaceAll("_"," ").replace(/^./,(letter)=>letter.toUpperCase());}
 
-function Login({ onLogin }: { onLogin: (session: Session) => void }) {
-  const [error, setError] = useState(""); const [busy, setBusy] = useState(false);
-  async function submit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); setBusy(true); setError(""); const form = new FormData(event.currentTarget); try { onLogin(await jsonFetch("login/", { method: "POST", body: JSON.stringify({ username: form.get("username"), password: form.get("password") }) })); } catch (reason) { setError(reason instanceof Error ? reason.message : "No fue posible ingresar."); } finally { setBusy(false); } }
-  return <main className="login-screen"><form className="login-card" onSubmit={submit}><div className="brand-mark large">C</div><p>CELESTIAL ERP</p><h1>Bienvenido</h1><span>Ingresa con tu cuenta nominal del sistema</span>{error && <div className="alert-error">{error}</div>}<label>Usuario<input name="username" autoComplete="username" required /></label><label>Contraseña<input name="password" type="password" autoComplete="current-password" required /></label><button className="primary-button" disabled={busy}>{busy ? "Ingresando…" : "Iniciar sesión"}</button></form></main>;
+function ModulesView() {
+  const choices = [{ id: "payroll", label: "Remuneraciones" }, { id: "attendance", label: "Asistencia" }, { id: "accounting", label: "Contabilidad" }, { id: "inventory", label: "Inventario" }, { id: "commerce", label: "Compras y ventas" }];
+  const [enabled, setEnabled] = useState<string[]>([]); const [busy, setBusy] = useState(true); const [saved, setSaved] = useState(false); const [error, setError] = useState("");
+  useEffect(() => { jsonFetch("company-modules/").then((data) => setEnabled(data.enabled_modules)).catch((reason) => setError(reason.message)).finally(() => setBusy(false)); }, []);
+  async function save() { setBusy(true); setSaved(false); try { const data = await jsonFetch("company-modules/", { method: "PATCH", body: JSON.stringify({ enabled_modules: enabled }) }); setEnabled(data.enabled_modules); setSaved(true); } catch (reason) { setError(reason instanceof Error ? reason.message : "No fue posible guardar."); } finally { setBusy(false); } }
+  return <div className="data-card modules-card"><div className="data-summary"><strong>Configuración modular</strong><span>Activa solo los servicios contratados por esta empresa</span></div>{error && <div className="alert-error">{error}</div>}<div className="module-switches">{choices.map((choice) => <label key={choice.id}><input type="checkbox" checked={enabled.includes(choice.id)} onChange={(event) => setEnabled((current) => event.target.checked ? [...current, choice.id] : current.filter((id) => id !== choice.id))} /> <span><strong>{choice.label}</strong><small>Visible en el menú y disponible para sus usuarios</small></span></label>)}</div><div className="module-actions"><button className="primary-button" disabled={busy} onClick={() => void save()}>{busy ? "Guardando…" : "Guardar módulos"}</button>{saved && <span>Configuración guardada</span>}</div></div>;
 }
+function humanize(value:string){return value.replaceAll("__"," ").replaceAll("_"," ").replace(/^./,(letter)=>letter.toUpperCase());}
 
 function ResourceTable({ resource, onEdit }: { resource: Resource; onEdit: (item: Item) => void }) {
   const columns = useMemo(() => resource.fields.slice(0, 7), [resource]);

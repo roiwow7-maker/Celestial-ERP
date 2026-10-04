@@ -51,8 +51,12 @@ STANDARD_DATA_MODELS = [
 ]
 CUSTOM_PERMISSIONS = {
     "Administrador": [
+        "auth.add_user",
+        "auth.change_user",
+        "auth.view_user",
         "Applet.access_admin_module",
         "Applet.access_security_module",
+        "Applet.manage_company_modules",
         "Applet.run_backups",
         "Accounting.access_accounting_module",
         "Accounting.manage_accounting_config",
@@ -157,7 +161,7 @@ def role_permissions(role_name: str):
 
 
 def latest_backup_file():
-    backup_dir = settings.PROJECT_ROOT / "backups"
+    backup_dir = settings.ERP_DATA_ROOT / "backups"
     if not backup_dir.exists():
         return None
 

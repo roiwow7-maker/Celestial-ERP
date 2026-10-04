@@ -2,9 +2,18 @@
 
 ERP web modular para remuneraciones, asistencia, contabilidad, inventario, compras y ventas. Incluye un pipeline ETL para transformar liquidaciones historicas, control de acceso por roles, auditoria, API interna y respaldos PostgreSQL verificados.
 
-> Version actual: **1.2.1** · Backend Django con PostgreSQL · Frontend Next.js/Electron · Operacion local/LAN controlada
+> Version actual: **1.3.1** · Backend Django con PostgreSQL · Frontend Next.js/Electron · Operacion local/LAN controlada
 
 ![Arquitectura general de Celestial ERP](docs/assets/arquitectura_general.svg)
+
+## Multiempresa y sitio público (1.3.1)
+
+Cada empresa puede operar con su propio backend, base PostgreSQL, credenciales,
+sesiones, archivos ETL y respaldos. El correo institucional identifica la empresa
+durante el inicio de sesión, sin exponer un selector manual. El sitio público incluye
+Inicio, Nosotros, Servicios, Contacto y Trabaja con nosotros, con tema claro/oscuro y
+diseño adaptable. La configuración local y los pendientes de seguridad para producción
+están en [Multiempresa y seguridad](docs/25_MULTIEMPRESA_SEGURIDAD.md).
 
 ## Estado del proyecto
 
@@ -14,7 +23,7 @@ Actualmente estan operativos:
 
 - frontend nativo responsive en Next.js/TypeScript, accesible desde navegador y smartphone en LAN;
 - aplicacion de escritorio Electron empaquetable como AppImage;
-- portal web, login, navegacion por permisos y Django Admin personalizado;
+- sitio público responsive, login independiente, portal por empresa, navegación por permisos y Django Admin personalizado;
 - remuneraciones, trabajadores, periodos, items, movimientos y liquidaciones;
 - carga ETL web y por consola, con seguimiento de corridas y validaciones;
 - asistencia diaria, reportes mensuales e integracion con remuneraciones;
@@ -28,7 +37,10 @@ Actualmente estan operativos:
 - restauracion PostgreSQL probada en un cluster temporal aislado;
 - configuracion de desarrollo, operacion LAN y despliegue productivo con Gunicorn, Next.js, systemd y nginx.
 
-La version `1.2.1` cerro la validacion automatizada con 51 pruebas sobre PostgreSQL temporal. Los siguientes incrementos cubren validacion del AppImage en un equipo limpio, prueba fisica desde smartphone, HTTPS/firewall y evolucion funcional de contabilidad, inventario y comercio.
+La versión `1.3.1` incorpora la separación multiempresa, el sitio público y el login
+independiente. Los siguientes incrementos cubren validación del AppImage en un equipo
+limpio, prueba física desde smartphone, SMTP real, MFA, HTTPS/firewall y evolución
+funcional de contabilidad, inventario y comercio.
 
 ## Modulos
 
@@ -162,7 +174,10 @@ npm ci
 npm run dev
 ```
 
-Abrir <http://127.0.0.1:3000>. Next.js escucha en `0.0.0.0:3000` para permitir pruebas LAN, mientras Django permanece privado en `127.0.0.1:8000`.
+Abrir <http://127.0.0.1:3000>. El acceso se encuentra en <http://127.0.0.1:3000/login>
+y el portal autenticado utiliza `/portal?company=<id>`. Next.js escucha en
+`0.0.0.0:3000` para permitir pruebas LAN, mientras Django permanece privado en
+`127.0.0.1:8000`.
 
 Comprobaciones y empaquetado de escritorio:
 

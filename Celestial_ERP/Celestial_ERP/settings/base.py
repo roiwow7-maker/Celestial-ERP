@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import secrets
+import re
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -10,8 +11,19 @@ from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 PROJECT_ROOT = BASE_DIR.parent
-load_dotenv(PROJECT_ROOT / ".env")
-LOG_DIR = PROJECT_ROOT / "logs"
+profile = os.environ.get("ERP_ENV_FILE")
+if profile and not Path(profile).is_file():
+    raise ImproperlyConfigured("ERP_ENV_FILE no existe.")
+load_dotenv(Path(profile) if profile else PROJECT_ROOT / ".env", override=bool(profile))
+ERP_COMPANY_ID = os.environ.get("ERP_COMPANY_ID", "default")
+if not re.fullmatch(r"[a-z][a-z0-9_-]{0,39}", ERP_COMPANY_ID):
+    raise ImproperlyConfigured("ERP_COMPANY_ID inválido.")
+ERP_COMPANY_NAME = os.environ.get("ERP_COMPANY_NAME", "Empresa actual")
+ERP_DATA_ROOT = Path(os.environ.get("ERP_DATA_ROOT", str(PROJECT_ROOT if ERP_COMPANY_ID == "default" else PROJECT_ROOT / "tenant-data" / ERP_COMPANY_ID))).resolve()
+if ERP_COMPANY_ID != "default" and ERP_DATA_ROOT == PROJECT_ROOT:
+    raise ImproperlyConfigured("Cada empresa necesita un ERP_DATA_ROOT independiente.")
+ERP_DATA_ROOT.mkdir(parents=True, exist_ok=True, mode=0o700)
+LOG_DIR = ERP_DATA_ROOT / "logs"
 LOG_DIR.mkdir(exist_ok=True)
 ERP_SETTINGS_ENV = os.environ.get("ERP_SETTINGS_ENV", "dev").lower()
 
@@ -36,7 +48,9 @@ def local_secret_key() -> str:
     return secret
 
 
-SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", local_secret_key())
+if ERP_COMPANY_ID != "default" and not os.environ.get("DJANGO_SECRET_KEY"):
+    raise ImproperlyConfigured("Cada empresa necesita su propia DJANGO_SECRET_KEY.")
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY") or local_secret_key()
 POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
 if not POSTGRES_PASSWORD:
     raise ImproperlyConfigured("Define POSTGRES_PASSWORD en el entorno o en un archivo .env privado.")
@@ -66,6 +80,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "Applet.security.SecurityBoundaryMiddleware",
     "Applet.middleware.AutoBackupMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -107,7 +122,7 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator", "OPTIONS": {"min_length": 12}},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
@@ -211,3 +226,18 @@ LOGGING = {
         },
     },
 }
+
+# Sesiones independientes en cada base; el proxy también separa sus cookies.
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_AGE = int(os.environ.get("ERP_SESSION_MAX_AGE", "28800"))
+ERP_SESSION_IDLE_SECONDS = int(os.environ.get("ERP_SESSION_IDLE_SECONDS", "1800"))
+ERP_LOGIN_ATTEMPTS = int(os.environ.get("ERP_LOGIN_ATTEMPTS", "5"))
+ERP_LOGIN_WINDOW_SECONDS = int(os.environ.get("ERP_LOGIN_WINDOW_SECONDS", "900"))
+ERP_UPLOAD_MAX_BYTES = int(os.environ.get("ERP_UPLOAD_MAX_BYTES", "26214400"))
+FILE_UPLOAD_PERMISSIONS = 0o600
+FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o700
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = "same-origin"
+X_FRAME_OPTIONS = "DENY"

@@ -64,7 +64,7 @@ class Command(BaseCommand):
         else:
             warnings.append("No hay backup SQLite registrado en la carpeta operativa.")
 
-        uploads_dir = settings.PROJECT_ROOT / "uploads"
+        uploads_dir = settings.ERP_DATA_ROOT / "uploads"
         if uploads_dir.exists():
             upload_runs = len([path for path in uploads_dir.iterdir() if path.is_dir()])
             if upload_runs > 30:

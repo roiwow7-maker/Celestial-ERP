@@ -1,3 +1,3 @@
 """Version unica mostrada por el portal, Django Admin y la API."""
 
-ERP_VERSION = "1.2.1"
+ERP_VERSION = "1.3.1"

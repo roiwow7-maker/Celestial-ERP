@@ -1,95 +1,94 @@
 import type { NextRequest } from "next/server";
+import { companyRegistry } from "@/lib/company-registry";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
-
-const backendBase = (process.env.DJANGO_BACKEND_URL ?? "http://127.0.0.1:8000").replace(/\/$/, "");
-const proxyPrefix = "/backend";
-const hopByHopHeaders = new Set([
-  "connection",
-  "content-length",
-  "content-encoding",
-  "keep-alive",
-  "proxy-authenticate",
-  "proxy-authorization",
-  "te",
-  "trailer",
-  "transfer-encoding",
-  "upgrade",
-]);
-
 type RouteParameters = { params: Promise<{ path?: string[] }> };
+const skipped = new Set(["connection", "content-length", "content-encoding", "keep-alive", "proxy-authenticate", "proxy-authorization", "te", "trailer", "transfer-encoding", "upgrade", "set-cookie"]);
+const maxBody = 27 * 1024 * 1024;
 
-function rewriteLocation(location: string): string {
-  if (location.startsWith(backendBase)) return `${proxyPrefix}${location.slice(backendBase.length) || "/"}`;
-  if (location.startsWith("/") && !location.startsWith("//")) return `${proxyPrefix}${location}`;
-  return location;
-}
-
-function rewriteText(content: string): string {
-  const escapedBackend = backendBase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  return content
-    .replace(new RegExp(escapedBackend, "g"), proxyPrefix)
-    .replace(/(["'(=])\/(?!\/|backend(?:\/|["']))/g, `$1${proxyPrefix}/`);
+async function readBody(request: NextRequest) {
+  if (!request.body) return undefined;
+  const reader = request.body.getReader();
+  const chunks: Uint8Array[] = []; let size = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.length;
+    if (size > maxBody) { await reader.cancel(); throw new Error("BODY_TOO_LARGE"); }
+    chunks.push(value);
+  }
+  return Buffer.concat(chunks);
 }
 
 async function proxy(request: NextRequest, context: RouteParameters) {
-  await context.params;
-  const proxiedPath = request.nextUrl.pathname.slice(proxyPrefix.length) || "/";
-  const target = new URL(proxiedPath, `${backendBase}/`);
+  const { path = [] } = await context.params;
+  const companies = companyRegistry();
+  const scoped = path[0] === "company";
+  const company = companies.find((item) => item.id === (scoped ? path[1] : "default"));
+  if (!company) return Response.json({ error: "Empresa no disponible." }, { status: 404 });
+  const parts = scoped ? path.slice(2) : path;
+  if (parts.some((part) => /[\\/]/.test(part) || part === "." || part === "..")) return new Response(null, { status: 400 });
+  const prefix = scoped ? `/backend/company/${company.id}` : "/backend";
+  const cookiePrefix = scoped ? `erp_${company.id}_` : "";
+  const target = new URL("/" + parts.map(encodeURIComponent).join("/") + (parts.length && request.nextUrl.pathname.endsWith("/") ? "/" : ""), company.backend);
   target.search = request.nextUrl.search;
-
+  const safe = ["GET", "HEAD", "OPTIONS"].includes(request.method);
+  // Verificar el origen ANTES de traducirlo para Django.
+  if (!safe) {
+    const origin = request.headers.get("origin");
+    const allowedOrigins = process.env.ERP_PUBLIC_ORIGIN ? [process.env.ERP_PUBLIC_ORIGIN] : ["http://127.0.0.1:3000", "http://localhost:3000"];
+    if (!origin || !allowedOrigins.includes(origin) || request.headers.get("sec-fetch-site") === "cross-site") {
+      return Response.json({ error: "Origen de solicitud no permitido." }, { status: 403 });
+    }
+  }
   const headers = new Headers(request.headers);
-  headers.delete("content-length");
+  for (const key of [...headers.keys()]) {
+    if (skipped.has(key.toLowerCase()) || key.toLowerCase().startsWith("x-forwarded-") || ["forwarded", "authorization", "x-erp-company"].includes(key.toLowerCase())) headers.delete(key);
+  }
   headers.delete("accept-encoding");
+  const cookies = (request.headers.get("cookie") ?? "").split(";").map((part) => part.trim()).filter(Boolean);
+  const selectedCookies = ["sessionid", "csrftoken"].flatMap((name) => {
+    const scopedCookie = cookies.find((part) => part.startsWith(`${cookiePrefix}${name}=`));
+    if (scopedCookie) return [scoped ? scopedCookie.slice(cookiePrefix.length) : scopedCookie];
+    // Migrar únicamente la sesión histórica de default; nunca enviarla a otra empresa.
+    const legacy = company.id === "default" ? cookies.find((part) => part.startsWith(`${name}=`)) : undefined;
+    return legacy ? [legacy] : [];
+  });
+  headers.set("cookie", selectedCookies.join("; "));
   headers.set("host", target.host);
-  if (headers.has("origin")) headers.set("origin", backendBase);
-  if (headers.has("referer")) headers.set("referer", `${backendBase}/`);
-
+  headers.set("x-forwarded-proto", request.nextUrl.protocol.slice(0, -1));
+  if (headers.has("origin")) headers.set("origin", company.backend);
+  if (headers.has("referer")) headers.set("referer", `${company.backend}/`);
   let upstream: Response;
   try {
-    upstream = await fetch(target, {
-      method: request.method,
-      headers,
-      body: request.method === "GET" || request.method === "HEAD" ? undefined : await request.arrayBuffer(),
-      redirect: "manual",
-      cache: "no-store",
-    });
+    upstream = await fetch(target, { method: request.method, headers, body: safe ? undefined : await readBody(request), redirect: "manual", cache: "no-store", signal: AbortSignal.timeout(60000) });
   } catch (error) {
-    const detail = error instanceof Error ? error.message : "Error desconocido";
-    return new Response(
-      `<!doctype html><html lang="es"><meta charset="utf-8"><style>body{font:16px system-ui;background:#f8fafc;color:#172033;padding:48px}main{max-width:720px;margin:auto;background:white;padding:32px;border-radius:16px;box-shadow:0 15px 50px #0f172a18}code{background:#eef2ff;padding:3px 7px;border-radius:6px}</style><main><h1>Django no está disponible</h1><p>Inicia el backend en <code>${backendBase}</code> y vuelve a cargar esta vista.</p><p>${detail}</p></main></html>`,
-      { status: 502, headers: { "content-type": "text/html; charset=utf-8" } },
-    );
+    const large = error instanceof Error && error.message === "BODY_TOO_LARGE";
+    return Response.json({ error: large ? "El archivo supera el tamaño permitido." : "El servicio de esta empresa no está disponible." }, { status: large ? 413 : 502 });
   }
-
-  const responseHeaders = new Headers();
-  upstream.headers.forEach((value, key) => {
-    if (!hopByHopHeaders.has(key.toLowerCase()) && key.toLowerCase() !== "set-cookie") {
-      responseHeaders.append(key, value);
-    }
-  });
-  responseHeaders.delete("x-frame-options");
-  responseHeaders.delete("content-security-policy");
-
+  if (upstream.headers.get("x-erp-company") !== company.id) return Response.json({ error: "La identidad del servicio no coincide con la empresa seleccionada." }, { status: 502 });
+  const output = new Headers();
+  upstream.headers.forEach((value, key) => { if (!skipped.has(key.toLowerCase())) output.append(key, value); });
+  output.set("Cache-Control", "no-store, private");
+  const rewriteLocation = (location: string) => {
+    if (location.startsWith(company.backend + "/")) return prefix + location.slice(company.backend.length);
+    if (location.startsWith("/") && !location.startsWith("//")) return prefix + location;
+    return location;
+  };
   const location = upstream.headers.get("location");
-  if (location) responseHeaders.set("location", rewriteLocation(location));
-
-  const getSetCookie = (upstream.headers as Headers & { getSetCookie?: () => string[] }).getSetCookie;
-  const cookies = getSetCookie ? getSetCookie.call(upstream.headers) : [];
-  for (const cookie of cookies) responseHeaders.append("set-cookie", cookie);
-
-  const contentType = upstream.headers.get("content-type") ?? "";
-  if (contentType.includes("text/html") || contentType.includes("text/css") || contentType.includes("javascript")) {
-    return new Response(rewriteText(await upstream.text()), {
-      status: upstream.status,
-      headers: responseHeaders,
-    });
+  if (location) output.set("location", rewriteLocation(location));
+  for (const cookie of upstream.headers.getSetCookie()) {
+    // Nombre por empresa; Path=/ permite que React lea exclusivamente su token CSRF.
+    output.append("set-cookie", cookiePrefix + cookie.replace(/;\s*Domain=[^;]*/ig, "").replace(/;\s*Path=[^;]*/ig, "; Path=/"));
   }
-
-  return new Response(upstream.body, { status: upstream.status, headers: responseHeaders });
+  const contentType = upstream.headers.get("content-type") ?? "";
+  if (/text\/html|text\/css|javascript/.test(contentType)) {
+    const content = (await upstream.text()).replaceAll(company.backend + "/", prefix + "/").replace(/(["'(=])\/(?!\/|backend(?:\/|["']))/g, `$1${prefix}/`);
+    return new Response(content, { status: upstream.status, headers: output });
+  }
+  return new Response(upstream.body, { status: upstream.status, headers: output });
 }
-
 export const GET = proxy;
 export const POST = proxy;
 export const PUT = proxy;

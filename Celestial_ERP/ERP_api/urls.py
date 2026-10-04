@@ -7,6 +7,7 @@ app_name = "erp_api"
 
 urlpatterns = [
     path("v1/session/", v1.session_view, name="v1_session"),
+    path("v1/company-modules/", v1.company_modules, name="v1_company_modules"),
     path("v1/login/", v1.login_view, name="v1_login"),
     path("v1/logout/", v1.logout_view, name="v1_logout"),
     path("v1/catalog/", v1.catalog, name="v1_catalog"),

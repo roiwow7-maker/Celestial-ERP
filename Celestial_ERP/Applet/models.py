@@ -36,3 +36,18 @@ class AuditLog(models.Model):
 
     def __str__(self) -> str:
         return f"{self.created_at:%Y-%m-%d %H:%M:%S} - {self.module} - {self.action}"
+
+
+class LoginThrottle(models.Model):
+    """Contadores por empresa compartidos por todos sus workers; sin credenciales."""
+    key = models.CharField(max_length=64, primary_key=True)
+    failures = models.PositiveIntegerField(default=0)
+    expires_at = models.DateTimeField(db_index=True)
+
+
+class CompanySettings(models.Model):
+    enabled_modules = models.JSONField(default=list)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        permissions = [("manage_company_modules", "Puede activar módulos de la empresa")]

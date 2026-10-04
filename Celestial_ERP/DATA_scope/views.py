@@ -800,8 +800,8 @@ def upload_data(request):
         return render(request, "DATA_scope/upload.html", context)
 
     run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
-    upload_dir = settings.PROJECT_ROOT / "uploads" / run_id
-    upload_dir.mkdir(parents=True, exist_ok=True)
+    upload_dir = settings.ERP_DATA_ROOT / "uploads" / run_id
+    upload_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
     input_path = upload_dir / original_name
     with input_path.open("wb") as handle:
         for chunk in uploaded_file.chunks():
@@ -966,7 +966,7 @@ def upload_data(request):
 
 @module_permission_required("DATA_scope.upload_payroll_data")
 def upload_status(request, run_id: str):
-    upload_dir = settings.PROJECT_ROOT / "uploads" / run_id
+    upload_dir = settings.ERP_DATA_ROOT / "uploads" / run_id
     status_path = upload_dir / "job_status.json"
     if not status_path.exists():
         raise Http404("Estado de carga no encontrado.")
@@ -1002,7 +1002,7 @@ def upload_status(request, run_id: str):
 
 @module_permission_required("DATA_scope.download_upload_output")
 def download_upload_output(request, run_id: str, relative_path: str):
-    base_dir = (settings.PROJECT_ROOT / "uploads" / run_id).resolve()
+    base_dir = (settings.ERP_DATA_ROOT / "uploads" / run_id).resolve()
     target = (base_dir / relative_path).resolve()
     if base_dir not in target.parents and target != base_dir:
         raise Http404("Ruta invalida.")
